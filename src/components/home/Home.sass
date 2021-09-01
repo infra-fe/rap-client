@@ -1,0 +1,60 @@
+@import "../../assets/variables.sass"
+
+.Home
+  padding: 1.3rem
+  .Maiden
+    flex-grow: 1
+    display: flex
+    align-items: center
+    justify-content: center
+    .RepositoryCreateButton
+      padding: .4rem 0.65rem
+      font-size: 1rem
+  .card
+    margin-bottom: 1.3rem
+    border: 1px solid $border
+    border-radius: .5rem
+    overflow: hidden
+    .card-header
+      border-bottom: 1px solid $border
+      font-size: 1.2rem
+    .card-block
+      > p:last-child
+        margin-bottom: 0
+    a:hover
+        border-bottom: 1px solid $brand
+  .card:last-child
+    // margin-bottom: 0
+  .card.Logs
+    .Log
+      padding: 0.65rem 0
+      border-bottom: 1px solid #eff3f6
+      .Log-body
+        float: left
+        .Log-user
+          // margin-right: .5rem
+        .Log-avatar
+          margin-right: .75rem
+          width: 2.5rem
+          height: 2.5rem
+          border-radius: 50%
+        .Log-user-link
+          margin-right: .5rem
+        .Log-type
+          margin-right: .5rem
+        .Log-target
+          margin-right: .5rem
+          .slash
+            color: #999
+      .Log-footer
+        float: right
+        margin-left: .5rem
+        padding: .4rem 0
+        .Log-fromnow
+          color: #666
+        
+      // padding: 2.6rem 0.65rem
+      // text-align: center
+      // font-size: 2.6rem
+    .Log:last-child
+      border-bottom: 0

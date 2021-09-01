@@ -1,0 +1,446 @@
+@import "../../assets/variables.sass"
+
+.RepositoryEditor
+  > .header
+    position: relative
+    padding: 1.3rem
+    background-color: #fafbfc
+    > .title
+      font-size: 1.6em
+      margin-right: 0.65rem
+      .slash
+        color: #999
+    > .toolbar
+      display: inline-block
+      a, .fake-link
+        margin-right: 0.65rem
+    > .desc
+      white-space: pre-wrap
+      margin: 1rem 0 .5rem 0
+      color: #666
+
+.RelatedProjects 
+  display: flex
+  flex-wrap: wrap
+  align-items: stretch
+  margin: 0.65rem 0 -1rem
+  color: #888
+  > .Project
+    border: 1px solid #E6E6E6
+    background: #FFF
+    padding: 0 0.65rem
+    margin-bottom: 0.65rem
+    margin-right: 0.65rem
+    line-height: 2.44
+    .title
+      margin-right: .7rem
+    svg
+      transform: scale(1.2) translateY(-1px)
+  i
+    color: #888
+    font-style: normal
+    margin-left: .5rem
+
+.RepositorySearcher.dropdown
+  position: absolute
+  top: 1.3rem
+  right: 1.3rem
+  left: auto
+  > .dropdown-input
+    margin-bottom: 0
+    width: 20rem
+  > .dropdown-menu
+    position: absolute
+    right: 0
+    left: auto
+    display: block
+    min-width: 100%
+    max-height: 50rem
+    overflow: scroll
+    a.dropdown-item
+      &.dropdown-item-module
+        padding-left: 1.5rem
+        color: #333
+      &.dropdown-item-interface
+        padding-left: 1.5rem + 2.5rem
+        color: #333
+      &.dropdown-item-property
+        padding-left: 1.5rem + 2.5rem + 2.5rem
+        color: #666
+
+      > .label
+        margin-right: .5rem
+        color: #666
+
+      > .dropdown-item-clip
+        margin-right: .5rem
+        .highlight
+          font-weight: bold
+          color: $brand
+      
+      &:active
+        color: #FFF
+        > .label
+          color: #FFF
+        > .dropdown-item-clip
+          .highlight
+            color: #FFF
+
+.DuplicatedInterfacesWarning
+  margin-top: 2rem
+  .more-link
+    float: right
+
+
+.ModuleList
+  margin: 0
+  padding: 0 1.3rem
+  list-style: none
+  border-bottom: 1px solid #e1e4e8
+  background-color: #fafbfc
+  > li
+    position: relative
+    display: block
+    float: left
+    margin-bottom: -1px
+    padding: .8rem 0.78rem
+    border: 1px solid transparent
+    border-width: 3px 1px 0px 1px
+    border-radius: .4rem .4rem 0 0
+    &.active
+      // border: 1px solid $border
+      border-bottom-color: transparent
+      background-color: white
+      cursor: default
+    &.active:hover
+      background-color: white
+    > .Module
+      position: relative
+      a.name
+        color: #586069
+      .toolbar
+        // float: right
+        display: inline-block
+        a, .fake-link
+          margin-left: 0.325rem
+          font-size: 1rem
+          color: #999
+          &:hover
+            color: $brand
+  > li:hover > .Module
+    .toolbar
+        display: inline-block
+  > li.active > .Module
+      a.name
+        color: #333
+      .toolbar
+        display: inline-block
+        // font-size: 1rem
+
+.InterfaceWrapper
+  display: flex
+  flex-direction: row
+  background-color: #FFFFFF
+  padding: 1.3rem
+  .InterfaceList
+    width: 23rem
+    flex-shrink: 0
+  .InterfaceEditor
+    overflow-x: hidden
+    padding: 0 1px
+    flex-grow: 1
+
+.InterfaceList
+  position: sticky
+  top: 10px
+  height: calc(100vh - 10px)
+  .header
+    .newIntf
+      margin-bottom: 0.65rem
+    margin-bottom: 0.65rem
+  .scrollWrapper
+    border-radius: .4rem
+  .rcs-inner-handle
+    background-color: rgba(63, 81, 181, 0.3)
+  ul.body
+    margin: 0
+    padding: 0
+    list-style: none
+    max-height: calc(100vh - 115px)
+    li
+      position: relative
+      padding: 0.65rem 0.65rem
+      &:first-child
+        border-top-left-radius: .3rem
+      &:last-child
+        border-bottom: 0
+        border-bottom-left-radius: .3rem
+      .Interface
+        position: relative
+        padding-right: 2.6rem
+        .name
+          position: relative
+          font-size: 1.1rem
+          width: 100%
+          overflow: hidden
+          white-space: nowrap
+          text-overflow: ellipsis
+        .url 
+          font-size: 1rem
+          width: 100%
+          overflow: hidden
+          white-space: nowrap
+          text-overflow: ellipsis
+          color: rgba(0, 0, 0, 0.54)
+        .toolbar
+          display: none
+          position: absolute
+          right: 0
+          top: 0
+          font-size: 1rem
+          a, .fake-link
+            margin-left: 0.325rem
+            color: #999
+            &:hover
+              color: $brand
+        .locked
+          font-size: 1rem
+          color: $warning
+    li:hover
+      .toolbar
+        display: block
+    li.active
+      .Interface
+        .name a
+          color: #333
+          &:hover
+            color: #333
+        .toolbar
+          display: block
+
+
+.InterfaceEditor
+  margin-left: 1.3rem
+  position: relative
+  .InterfaceEditorToolbar
+    position: absolute
+    top: 0
+    right: 0
+    text-align: center
+    .btn.edit, .btn.save, .btn.cancel, .locker-success, .locker-warning
+      display: block
+      margin-bottom: 0.325rem
+      width: 12rem
+    .locker-success
+      display: inline-block
+      padding: 0.325rem 1.5rem
+      border-radius: 0.4rem
+      color: white
+      background-color: $success
+    .locker-warning
+      @extend .locker-success
+      background-color: $warning
+
+.InterfaceSummary
+  margin-bottom: 1.3rem
+  > .header
+    margin-bottom: .5rem
+    > .title
+      font-size: 1.6rem
+      margin-right: 0.65rem
+      .slash
+        color: #999
+    a.edit, a.delete
+      margin-right: .5rem
+  ul.body
+    color: #666
+    margin: 0
+    padding: 0
+    list-style: none
+    > li
+      margin-bottom: .2rem
+      .label
+        color: #666
+        margin-right: .3rem
+
+.PropertyList
+  margin-bottom: 1rem
+  padding-bottom: 1rem
+  margin-top: 1rem
+  > .header
+    margin-bottom: 0.65rem
+    > .title
+      font-size: 1.2rem
+      margin-right: 0.65rem
+      font-weight: bold
+    > .toolbar
+      float: right
+      .checked-button
+        background-color: rgba(63, 81, 181, 0.17)
+      .preview
+        margin: 0
+        input
+          margin-right: .5rem
+  > .body
+    margin-bottom: 0.65rem
+  > .footer
+    > .Previewer
+      display: flex
+      justify-content: space-between
+      flex-wrap: wrap
+      margin-top: 1.65rem
+      > .result-template,
+      > .result-mocked
+        width: 49%
+        > .header
+          margin-bottom: .5rem
+          .title
+            margin-right: 6px
+            font-weight: bold
+            font-size: 1.2rem
+        > pre.body
+          max-height: 90vh
+          height: 100%
+          overflow: auto
+      > .result-valid
+        padding-top: 2.5rem
+        text-align: center
+        color: #999
+
+@keyframes hightlight
+  0% 
+    background-color: unset
+  50%
+    background-color: #fff3cd
+  100% 
+    background-color: unset
+  
+.SortableTreeTable
+  .SortableTreeTableHeader,
+  .SortableTreeTableRow
+    .flex-row
+      display: flex
+      &.highlight
+        .thtd
+          animation: hightlight 1.5s 1
+      .thtd
+        border: 1px solid #eceeef
+        flex-grow: 1
+        // 垂直居中
+        display: flex
+        align-items: center
+        flex-direction: row
+        margin-right: -1px
+      .th
+        @extend .thtd
+        padding: .75rem
+        font-weight: bold
+      .td
+        @extend .thtd
+        padding: .5rem .75rem
+        margin-bottom: -1px
+      .th, .td
+        &.operations
+          padding: .5rem
+          width: 0.65rem
+        &.name
+          width: 20rem
+          flex-grow: 3
+        &.type
+          width: 7rem
+        &.rule
+          width: 10rem
+        &.value
+          width: 10rem
+        &.desc
+          width: 15rem
+      .th
+        .helper
+            margin-left: .5rem
+            color: #999
+            &:hover
+              color: $brand
+      .td
+        &.operations
+          height: auto
+          line-height: 1
+          justify-content: flex-end
+          a
+            color: #999
+            margin-right: .5rem
+            &:last-child
+              margin-right: 0
+            &:hover
+              color: $brand
+        &.payload
+          padding: .5rem .75rem
+          height: auto
+          line-height: 1.5
+        &.payload.name
+          justify-content: space-between
+          position: relative
+          .name-wrapper
+            flex-grow: 1
+          @for $i from 1 through 42
+            &.depth-#{$i}
+              padding-left: $i * 0.65rem + 0.75rem
+              &:after
+                display: block
+                content: ''
+                position: absolute
+                top: 0
+                bottom: 0
+                left: 0
+                width: $i * 0.65rem
+                opacity: .5
+                border-right: 1px dashed #707070
+        &.payload.value
+          max-height: 30vh
+          overflow: auto
+          hyphens: auto
+          overflow-wrap: break-word
+          span.value-container
+            white-space: pre
+            margin: auto 0
+        &.payload.required
+          padding: 0
+        &.payload.desc
+          word-break: break-word
+          white-space: pre-line
+.SortableTreeTable.editable
+  .flex-row    
+    .th, .td
+      &.operations
+        width: 4.5rem
+        padding: .5rem .75rem
+    .td
+      &.payload
+        padding: 0
+      &.payload.name
+        @for $i from 0 through 10
+          &.depth-#{$i}
+            padding-left: $i * 1.3rem
+            &:after
+              width: $i * 1.3rem 
+      &.payload.value
+        max-height: unset
+        overflow-wrap: break-word
+  input.editable, 
+  select.editable, 
+  textarea.editable
+    margin: 0
+    padding: .5rem .75rem
+    width: 100%
+    height: auto
+    border: none
+    border-radius: 0
+    line-height: 1.5
+    outline: none
+    box-shadow: none
+    background-color: transparent
+
+.Importer
+  .CodeMirror
+    height: 30rem
+  textarea.result
+    font-family: Menlo, Monaco, 'Courier New', monospace

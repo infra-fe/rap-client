@@ -1,0 +1,53 @@
+@import "../../assets/variables.sass"
+
+.Tester
+  .header
+    padding: 1.3rem 1.3rem 0.65rem 1.3rem
+    border-bottom: 1px solid #e1e4e8
+    background-color: #fafbfc
+    .card-mods, .card-itfs
+      display: flex
+      margin-bottom: 0.65rem
+      > .card-title
+        margin-bottom: 0
+        width: 3.25rem
+        min-width: 3.25rem
+        font-size: 1rem
+      > ul
+        margin-bottom: 0
+        padding-left: 0
+        list-style: none
+        > li
+          float: left
+          margin-right: 0.65rem
+          padding: 2px 0
+          width: 10rem
+          overflow: hidden
+          white-space: nowrap
+          text-overflow: ellipsis
+          a
+            color: #666
+        > li.active
+          a
+            color: $brand
+  .body
+    padding: 1.3rem
+    .card-props
+      margin-bottom: 1.3rem
+      ul.fields
+        list-style: none
+        padding-left: 0
+        > li.filed
+          float: left
+          margin-right: 0.65rem
+          width: 10rem
+          .label
+            margin-bottom: .5rem
+            padding-left: .5rem
+            font-weight: bold
+    .card-result
+      margin-top: 0.65rem
+      .card-title
+        font-size: 1rem
+        margin-bottom: 0.65rem
+

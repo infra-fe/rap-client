@@ -1,0 +1,75 @@
+@import "../../assets/variables.sass"
+.OrganizationListWrapper
+  padding: 1.3rem
+  > .header
+    margin-bottom: 1.3rem
+    .title
+      font-size: 1.3rem
+  > .toolbar
+    margin-bottom: 1.3rem
+    padding-bottom: 1.3rem
+    border-bottom: 1px solid #e1e4e8
+    select.OrganizationsTypeDropdown
+      margin-right: .5rem
+      font-size: 1rem
+    button.OrganizationCreateButton
+      padding: .4rem 0.65rem
+      font-size: 1rem
+    .form-control
+      margin-bottom: 0
+
+.OrganizationList
+  display: grid 
+  grid-template-columns: repeat(4, 1fr)
+  grid-column-gap: 20px
+  padding: 0 15px
+  .Organization.card
+    margin-bottom: 0.65rem
+    .card-block
+      position: relative
+      .name
+        font-size: 1.2rem
+        white-space: nowrap
+        overflow: hidden
+      .desc
+        margin-top: 0.65rem
+        height: 6rem
+        overflow: hidden
+        color: #666
+      .members
+        color: #666
+        .avatar
+          margin-right: .2rem
+          width: 2.5rem
+          height: 2.5rem
+          border-radius: 50%
+        .avatar.owner
+          margin-right: 0.65rem
+        .popover
+          white-space: nowrap
+      .toolbar
+        // display: none
+        position: absolute
+        top: 0.78rem
+        right: 1.25rem
+        background-color: white
+        > a, > .fake-link
+          margin: 0 0 0 0.325rem
+          font-size: 1rem
+          color: #999
+          &:hover
+            color: $brand
+    .card-block.card-footer
+      padding-top: 0
+      background-color: white
+      border-top: none
+      color: #666
+      .ownername
+        float: left
+      .fromnow
+        float: right
+  .Organization.card:hover
+    .card-block
+      .toolbar
+        display: block
+

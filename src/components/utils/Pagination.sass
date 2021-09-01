@@ -1,0 +1,35 @@
+@import "../../assets/variables.sass"
+
+.Pagination
+  display: flex
+  width: 100%
+  .summary
+    align-self: center
+    padding: 0.325rem 0
+    flex: 1
+  .page-list
+    display: flex
+    margin: 0
+    padding-left: 0
+    list-style: none
+    .page-item
+      margin: 0 .2rem
+      .page-link
+        display: inline-block
+        padding: 0.325rem 0.65rem
+        border-radius: 0.4rem
+        &:hover
+          color: white
+          background-color: $brand-hover
+    .page-item-disabled
+      @extend .page-item
+      .page-link
+        color: #ccc
+        pointer-events: none
+        cursor: not-allowed
+    .page-item-active
+      @extend .page-item
+      .page-link
+        color: white
+        background-color: $brand
+      
