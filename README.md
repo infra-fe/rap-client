@@ -53,14 +53,16 @@ npm run build
 serve -s ./build -p 80
 ```
 
-## Author
+## Author 作者
 
 * Owner: Shopee Infra FE Team
 * Contributers: [link](https://github.com/infra-fe/rap-client/graphs/contributors)
 
+* 所有人: Shopee Infra FE Team
+* 贡献者: [link](https://github.com/infra-fe/rap-client/graphs/contributors)
 
 
-### Tech Arch
+### Tech Arch 技术栈
 
 * Front-end (rap-client)
     * React / Redux / Saga / Router
