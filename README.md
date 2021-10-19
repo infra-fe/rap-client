@@ -1,22 +1,21 @@
-# RAP2-DOLORES CE version (front-end static build)
+# RAP-Client CE version (front-end static build)
 
-[![Build Status](https://travis-ci.org/thx/rap2-dolores.svg?branch=master)](https://travis-ci.org/thx/rap2-dolores)
 
 ### Intro
 
-RAP2 is a new project based on [RAP1](https://github.com/thx/RAP). It has two components:
-RAP2是在RAP1基础上重做的新项目，它包含两个组件(对应两个Github Repository)。
+RAP is a new project based on [RAP1](https://github.com/thx/RAP) & [RAP2](https://github.com/thx/rap2-delos). It has two components:
+RAP是在RAP1 & RAP2基础上重做的新项目，它包含两个组件(对应两个Github Repository)。
 
-* rap2-delos: back-end data API server based on Koa + MySQL [link](http://github.com/thx/rap2-delos)
-* rap2-dolores: front-end static build based on React [link](http://github.com/thx/rap2-dolores)
+* rap-server: back-end data API server based on Koa + MySQL [link](https://github.com/infra-fe/rap-client)
+* rap-client: front-end static build based on React [link](https://github.com/infra-fe/rap-server)
 
-* rap2-delos: 后端数据API服务器，基于Koa + MySQL[link](http://github.com/thx/rap2-delos)
-* rap2-dolores: 前端静态资源，基于React [link](http://github.com/thx/rap2-dolores)
+* rap-server:使用Koa + MySQL的后端API服务器 [link](https://github.com/infra-fe/rap-client)
+* rap-client: React前端App [link](https://github.com/infra-fe/rap-server)
 
-### Resources
+### Support 客户支持
 
-* [Official Site 官网: rap2.taobao.org](http://rap2.taobao.org)
-* DingDing Group ID 钉钉群: 31626736 (二群，一群已满）
+<img src="https://user-images.githubusercontent.com/1892986/137831764-8b9f52a9-040f-4867-ad1e-a7e9c7eb9a83.jpg" alt="wechat support" width=200 />
+
 
 ## Deployment 部署
 
@@ -56,21 +55,19 @@ serve -s ./build -p 80
 
 ## Author
 
-* Owner: Alimama FE Team
-* Author:
-  * Before v2.3: all by [@Nuysoft](https://github.com/nuysoft/), creator of [mockjs](mockjs.com).
-  * v2.4+ / CE version: [Bosn](http://github.com/bosn/)(creator of [RAP1](https://github.com/thx/RAP)) [Nuysoft](https://github.com/nuysoft/)
-  * We are looking for more and more contributors :)
+* Owner: Shopee Infra FE Team
+* Contributers: [link](https://github.com/infra-fe/rap-client/graphs/contributors)
+
 
 
 ### Tech Arch
 
-* Front-end (rap2-dolores)
+* Front-end (rap-client)
     * React / Redux / Saga / Router
     * Mock.js
     * SASS / Bootstrap 4 beta
     * server: nginx
-* Back-end (rap2-delos)
+* Back-end (rap-server)
     * Koa
     * Sequelize
     * MySQL
