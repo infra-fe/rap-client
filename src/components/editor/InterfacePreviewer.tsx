@@ -1,10 +1,11 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, Link, Mock, _ } from '../../family'
 import { Tree } from '../utils'
 import { serve } from '../../relatives/services/constant'
 import { GoLink, GoSync, GoBeaker, GoBug } from 'react-icons/go'
 
-/*eslint no-useless-escape: 0*/
+/* eslint no-useless-escape: 0*/
 const RE_KEY = /(.+)\|(?:\+(\d+)|([\+\-]?\d+-?[\+\-]?\d*)?(?:\.(\d+-?\d*))?)/
 
 class Previewer extends Component<any, any> {
@@ -45,7 +46,7 @@ class Previewer extends Component<any, any> {
         request: Mock.mock(scopedTemplate.request),
       }
       scopedData.response = Mock.mock(
-        Object.assign({}, _.pick(scopedData.request, extraKeys), scopedTemplate.response),
+        Object.assign({}, _.pick(scopedData.request, extraKeys), scopedTemplate.response)
       )
       scopedData.response = _.pick(scopedData.response, scopedKeys.response)
 
@@ -70,7 +71,9 @@ class Previewer extends Component<any, any> {
         <div className="Previewer">
           <div className="result-template">
             <div className="header">
-              <span className="title">{label}模板</span>
+              <Translation>
+                {(t) => <span className="title">{label}{t('Template')}</span>}
+              </Translation>
               {scope === 'response' ? (
                 <a
                   href={`${serve}/app/mock/template/${interfaceId}`}
@@ -94,13 +97,14 @@ class Previewer extends Component<any, any> {
                     return v
                   }
                 },
-                2,
+                2
               )}
             </pre>
           </div>
           <div className="result-mocked">
             <div className="header">
-              <span className="title">{label}数据</span>
+              <Translation>
+                {(t) => <span className="title">{label}{t('Data')}</span>}</Translation>
               {scope === 'response' ? (
                 <a
                   href={`${serve}/app/mock/data/${interfaceId}`}
@@ -120,28 +124,32 @@ class Previewer extends Component<any, any> {
             <pre className="body">{JSON.stringify(data, null, 2)}</pre>
           </div>
           {scope === 'response' ? (
-            <div className="result-valid col-12">
-              {!valid.length ? (
-                <span>
-                  <GoBeaker className="mr6 fontsize-20" />
-                  模板与数据匹配 √
-                </span>
-              ) : (
-                <span>
-                  <GoBug className="mr6 fontsize-20" />
-                  模板与数据不匹配
-                </span>
+            <Translation>
+              {(t) => (
+                <div className="result-valid col-12">
+                  {!valid.length ? (
+                    <span>
+                      <GoBeaker className="mr6 fontsize-20" />
+                      {t('Template matching with the data')} √
+                    </span>
+                  ) : (
+                    <span>
+                      <GoBug className="mr6 fontsize-20" />
+                      {t('Does not match with the data template')}
+                    </span>
+                  )}
+                </div>
               )}
-            </div>
+            </Translation>
           ) : null}
         </div>
       )
     } catch (ex) {
       if (scopedData) {
-        scopedData.response = `无法预览Mock数据，因为您编写规则导致如下错误：${ex.message}`
+        scopedData.response = `Unable to preview the mock data, because you write the rules and cause the following errors：${ex.message}`
       }
     }
-    return <div>发生错误...</div>
+    return <Translation>{(t) => <div>{t('There was an error...')}</div>}</Translation>
   }
   remock = (e: any) => {
     e.preventDefault()

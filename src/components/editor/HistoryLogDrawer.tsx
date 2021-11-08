@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { List, ListItem, ListItemText, Drawer, makeStyles, ListItemSecondaryAction, IconButton, TablePagination, Button } from '@material-ui/core'
 import { ENTITY_TYPE, TablePaginationProps } from 'utils/consts'
@@ -81,11 +82,12 @@ const FormattedRow = ({ row }: { row: HistoryLog }) => {
 const EMPTY = { rows: [], count: 0 }
 
 function HistoryLogDrawer({ entityId, entityType, open, onClose }:
-  { entityId: number, entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY, open: boolean, onClose: () => void }) {
+{ entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; open: boolean; onClose: () => void }) {
   const classes = useStyles()
   const [result, setResult] = useState<IPagerList<HistoryLog>>(EMPTY)
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(0)
+  const { t } = useTranslation()
   useEffect(() => {
     if (open) {
       RepositoryService.fetchHistoryLogs({ entityId, entityType, limit, offset: page * limit }).then(res => {
@@ -123,7 +125,7 @@ function HistoryLogDrawer({ entityId, entityType, open, onClose }:
         page={page}
         onPageChange={(_, val) => setPage(val)}
         onChangeRowsPerPage={e => { setLimit(parseInt(e.target.value, 10)); setPage(0) }}
-        {...TablePaginationProps}
+        {...TablePaginationProps(t)}
       />
     </Drawer>
   )

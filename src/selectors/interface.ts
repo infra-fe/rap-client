@@ -20,7 +20,7 @@ const interfaceSelector = (state: RootState) => {
 export const getCurrentInterface = createSelector(interfaceSelector, result => result)
 
 export const getCurrentInterfaceId = createSelector(
-  state => state.repository.data,
+  (state => state.repository.data) as any,
   getRouter,
   (repository: any, router: RootState['router']) => {
     const itfId = +((router.location as any).params || (router.location as any).query).itf
@@ -30,5 +30,5 @@ export const getCurrentInterfaceId = createSelector(
     const modId = +((router.location as any).params || (router.location as any).query).mod
     const mod = modId ? repository?.modules?.find((m: any) => m.id === modId) : repository?.modules[0]
     return mod?.interfaces?.[0]?.id
-  },
+  }
 )

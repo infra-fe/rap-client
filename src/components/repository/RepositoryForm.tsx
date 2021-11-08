@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
@@ -44,12 +45,6 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }))
 
-const schema = Yup.object().shape<Partial<Repository>>({
-  name: Yup.string()
-    .required(YUP_MSG.REQUIRED)
-    .max(20, YUP_MSG.MAX_LENGTH(20)),
-  description: Yup.string().max(1000, YUP_MSG.MAX_LENGTH(1000)),
-})
 
 const FORM_STATE_INIT: RepositoryFormData = {
   id: 0,
@@ -69,6 +64,14 @@ interface Props {
 }
 
 function RepositoryForm(props: Props) {
+  const { t } = useTranslation()
+  const msg = YUP_MSG(t)
+  const schema = Yup.object().shape({
+    name: Yup.string()
+      .required(msg.REQUIRED)
+      .max(20, msg.MAX_LENGTH(20)),
+    description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
+  })
   const { open, onClose, title, organizationId } = props
   let repository = props.repository as RepositoryFormData
   if (repository) {
@@ -94,8 +97,8 @@ function RepositoryForm(props: Props) {
     repository = { ...FORM_STATE_INIT, ...repository }
     repository.collaboratorIdstring = repository
       .collaborators!.map(x => {
-        return x.id
-      })
+      return x.id
+    })
       .join(',')
   } else {
     repository = { ...FORM_STATE_INIT }
@@ -131,13 +134,13 @@ function RepositoryForm(props: Props) {
                 addOrUpdateRepository(repository, () => {
                   dispatch(refresh())
                   onClose(true)
-                }),
+                })
               )
             }}
             render={({ isSubmitting, setFieldValue, values }) => {
               function loadUserOptions(
-                input: string,
-              ): Promise<{ label: string; value: number }[]> {
+                input: string
+              ): Promise<Array<{ label: string; value: number }>> {
                 return new Promise(async resolve => {
                   const users = await AccountService.fetchUserList({ name: input })
                   const options = _.differenceWith(users.data, values.members || [], _.isEqual)
@@ -145,20 +148,20 @@ function RepositoryForm(props: Props) {
                     options.map(x => ({
                       label: `${x.fullname} ${x.empId || x.email}`,
                       value: x.id,
-                    })),
+                    }))
                   )
                 })
               }
 
               const selectOrganization = organizations.find(
-                (x: any) => x.value === values.organizationId,
+                (x: any) => x.value === values.organizationId
               )
               return (
                 <Form>
                   <div className="rmodal-body">
                     {values.id > 0 && (
                       <div className={classes.formItem}>
-                        <div className={classes.formTitle}>拥有者</div>
+                        <div className={classes.formTitle}>{t('The owner')}</div>
 
                         {values.owner && values.owner.id === auth.id ? (
                           <UserList
@@ -167,11 +170,11 @@ function RepositoryForm(props: Props) {
                             selected={
                               values.owner
                                 ? [
-                                    {
-                                      label: values.owner.fullname,
-                                      value: values.owner.id,
-                                    },
-                                  ]
+                                  {
+                                    label: values.owner.fullname,
+                                    value: values.owner.id,
+                                  },
+                                ]
                                 : []
                             }
                             onChange={(users: any) => setFieldValue('newOwner', users[0])}
@@ -182,12 +185,12 @@ function RepositoryForm(props: Props) {
                       </div>
                     )}
                     <div className={classes.formItem}>
-                      <Field name="name" label="仓库名称" component={TextField} fullWidth={true} />
+                      <Field name="name" label={t('The name of the repository')} component={TextField} fullWidth={true} />
                     </div>
                     <div className={classes.formItem}>
                       <Field
                         name="description"
-                        label="说明(多行，支持Markdown)"
+                        label={t('Instructions (multiple lines, supporting the Markdown)')}
                         multiline={true}
                         component={TextField}
                         fullWidth={true}
@@ -195,7 +198,7 @@ function RepositoryForm(props: Props) {
                       />
                     </div>
                     <div className={classes.formItem}>
-                      <div className={classes.formTitle}>成员</div>
+                      <div className={classes.formTitle}>{t('Members of the')}</div>
                       <UserList
                         isMulti={true}
                         loadOptions={loadUserOptions}
@@ -207,7 +210,7 @@ function RepositoryForm(props: Props) {
                       />
                     </div>
                     <div className={classes.formItem}>
-                      <div className={classes.formTitle}>团队</div>
+                      <div className={classes.formTitle}>{t('Organization')}</div>
                       <Select
                         isMulti={false}
                         isClearable={true}
@@ -223,7 +226,7 @@ function RepositoryForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="collaboratorIdstring"
-                        label="协同仓库ID"
+                        label={t('Collaborative repository ID')}
                         component={TextField}
                         fullWidth={true}
                       />
@@ -237,10 +240,10 @@ function RepositoryForm(props: Props) {
                       className="mr1"
                       disabled={isSubmitting}
                     >
-                      提交
+                      {t('submit')}
                     </Button>
                     <Button onClick={() => onClose()} disabled={isSubmitting}>
-                      取消
+                      {t('cancel')}
                     </Button>
                   </div>
                 </Form>

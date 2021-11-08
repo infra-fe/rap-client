@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, connect, Link, Mock, URI, StoreStateRouterLocationURI } from '../../family'
 import { Spin, Tree } from '../utils'
@@ -48,22 +49,24 @@ class Tester extends Component<any, any> {
       <section className="Tester">
         <div className="header">
           <div className="card-mods clearfix">
-            <div className="card-title">模块：</div>
+            <Translation>{(t) => <div className="card-title">{t('Module')}：</div>}</Translation>
             <ul className="clearfix">
-              {repository.modules.map((item: any) =>
+              {repository.modules.map((item: any) => (
                 <li key={item.id} className={item.id === mod.id ? 'active' : ''}>
                   <Link to={uri.setSearch('mod', item.id).href()}>{item.name}</Link>
                 </li>
+              )
               )}
             </ul>
           </div>
           <div className="card-itfs clearfix">
-            <div className="card-title">接口：</div>
+            <Translation>{(t) => <div className="card-title">{t('API')}：</div>}</Translation>
             <ul className="clearfix">
-              {mod.interfaces.map((item: any) =>
+              {mod.interfaces.map((item: any) => (
                 <li key={item.id} className={item.id === itf.id ? 'active' : ''}>
                   <Link to={uri.setSearch('mod', mod.id).setSearch('itf', item.id).href()} onClick={() => this.switchItf(item)}>{item.name}</Link>
                 </li>
+              )
               )}
             </ul>
           </div>
@@ -71,14 +74,15 @@ class Tester extends Component<any, any> {
         <div className="body">
           <div className="card-props clearfix">
             <form onSubmit={e => { e.preventDefault(); this.handleRequest(itf) }}>
-              <div className="mb6 ml6 font-bold">业务系统：</div>
+              <Translation>{(t) => <div className="mb6 ml6 font-bold">{t('The business system:')}</div>}</Translation>
               <input value={this.state.target} onChange={e => this.setState({ target: e.target.value })} className="form-control" />
               <ul className="fields clearfix">
-                {Object.keys(requestData).map(key =>
+                {Object.keys(requestData).map(key => (
                   <li key={key} className="filed">
                     <div className="label">{key}</div>
                     <input value={requestData[key]} onChange={e => this.updateRequestData(e, key, e.target.value)} className="form-control" />
                   </li>
+                )
                 )}
               </ul>
               <button className="btn btn-success" type="submit">Submit</button>

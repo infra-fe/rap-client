@@ -56,9 +56,9 @@ export default {
     password,
     captcha,
   }: {
-    email: string;
-    password: string;
-    captcha: string;
+    email: string
+    password: string
+    captcha: string
   }) {
     return fetch(`${serve}/account/login`, {
       ...CREDENTIALS,
@@ -123,8 +123,8 @@ export default {
     email,
     captcha,
   }: {
-    email: string;
-    captcha: string;
+    email: string
+    captcha: string
   }) {
     return fetch(`${serve}/account/findpwd`, {
       ...CREDENTIALS,
@@ -148,11 +148,11 @@ export default {
     password,
     captcha,
   }: {
-    email: string;
-    code: string;
-    token: string;
-    password: string;
-    captcha: string;
+    email: string
+    code: string
+    token: string
+    password: string
+    captcha: string
   }) {
     return fetch(`${serve}/account/findpwd/reset`, {
       ...CREDENTIALS,

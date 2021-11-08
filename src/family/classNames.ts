@@ -2,7 +2,6 @@
 // 用法参见 https://github.com/JedWatson/classnames#usage
 function classNames() {
   const classes: string[] = []
-  // tslint:disable-next-line: prefer-for-of
   for (let i = 0; i < arguments.length; i++) {
     const arg = arguments[i]
     if (!arg) { continue }

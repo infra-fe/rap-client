@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import config from '../../config'
@@ -62,6 +63,7 @@ const useStyles = makeStyles(() => createStyles({
 }))
 
 export default function LoginForm() {
+  const {t} = useTranslation()
   const [bg] = useState(getBGImageUrl())
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -100,7 +102,7 @@ export default function LoginForm() {
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="email">邮箱</InputLabel>
+              <InputLabel htmlFor="email">{t('email')}</InputLabel>
               <Input
                 tabIndex={0}
                 value={email}
@@ -119,7 +121,7 @@ export default function LoginForm() {
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="password">密码</InputLabel>
+              <InputLabel htmlFor="password">{t('password')}</InputLabel>
               <Input
                 tabIndex={1}
                 name="password"
@@ -141,7 +143,7 @@ export default function LoginForm() {
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="captcha">验证码</InputLabel>
+              <InputLabel htmlFor="captcha">{t('Verification code')}</InputLabel>
               <Input
                 tabIndex={2}
                 name="captcha"
@@ -165,12 +167,14 @@ export default function LoginForm() {
               <Refresh />
             </div>
             <div className={classes.buttonWrapper}>
-              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/register'))}>注册</Button>
-              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>登录</Button>
+              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/register'))}>
+                {t('Register')}
+              </Button>
+              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>{t('Login')}</Button>
             </div>
           </ListItem>
           <ListItem className={classes.ctlend}>
-            <Link to="#" onClick={() => dispatch(push('/account/findpwd'))} className="operation ">忘记密码？</Link>
+            <Link to="#" onClick={() => dispatch(push('/account/findpwd'))} className="operation ">{t('Forgot password?')}</Link>
           </ListItem>
         </List>
       </Paper>

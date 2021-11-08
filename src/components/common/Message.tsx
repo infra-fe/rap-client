@@ -118,7 +118,7 @@ const Message = withStyles(styles)(
         return
       }
       this.setState({ open: false })
-    };
+    }
 
     handleExited = () => {
       this.processQueue()

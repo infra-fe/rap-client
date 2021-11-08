@@ -1,3 +1,4 @@
+import { useTranslation, Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, connect, _ } from '../../family'
 import InterfaceEditorToolbar from './InterfaceEditorToolbar'
@@ -13,11 +14,13 @@ import Spin from '../../components/utils/Spin'
 import { showMessage, MSG_TYPE } from 'actions/common'
 
 export const RequestPropertyList = (props: any) => {
-  return <PropertyList scope="request" title="请求参数" label="请求" {...props} />
+  const { t } = useTranslation()
+  return <PropertyList scope="request" title={t('Request Parameters')} label={t('request')} {...props} />
 }
-export const ResponsePropertyList = (props: any) => (
-  <PropertyList scope="response" title="响应内容" label="响应" {...props} />
-)
+export const ResponsePropertyList = (props: any) => {
+  const { t } = useTranslation()
+  return <PropertyList scope="response" title={t('Response Content')} label={t('Response')} {...props} />
+}
 type InterfaceEditorProps = {
   auth: any
   itf: any
@@ -99,7 +102,9 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
   fetchInterfaceProperties() {
     // 发现接口信息没有 properties 就发起请求
     if (this.state.properties === undefined) {
-      this.props.fetchInterface(this.state.itf.id, () => { })
+      this.props.fetchInterface(this.state.itf.id, () => {
+        // TODO:
+      })
     }
   }
 
@@ -120,18 +125,21 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     }
     return (
       <article className="InterfaceEditor">
-        <InterfaceEditorToolbar
-          locker={locker}
-          auth={auth}
-          repository={repository}
-          editable={editable}
-          itfId={itf.id}
-          moveInterface={this.handleMoveInterface}
-          handleEditInterface={this.handleEditInterface}
-          handleMoveInterface={this.handleMoveInterface}
-          handleSaveInterfaceAndProperties={this.handleSaveInterfaceAndProperties}
-          handleUnlockInterface={this.handleUnlockInterface}
-        />
+        <Translation>
+          {(t) =>(
+            <InterfaceEditorToolbar
+              locker={locker}
+              auth={auth}
+              repository={repository}
+              editable={editable}
+              itfId={itf.id}
+              moveInterface={this.handleMoveInterface}
+              handleEditInterface={this.handleEditInterface}
+              handleMoveInterface={this.handleMoveInterface}
+              handleSaveInterfaceAndProperties={(e) => this.handleSaveInterfaceAndProperties(e, t)}
+              handleUnlockInterface={this.handleUnlockInterface}
+            />
+          )}</Translation>
         <InterfaceSummary
           repository={repository}
           mod={mod}
@@ -170,18 +178,22 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
             />
           </>
         ) : (
-            <Spin />
-          )}
+          <Spin />
+        )}
 
         {this.state.moveInterfaceDialogOpen && (
-          <MoveInterfaceForm
-            title="移动/复制接口"
-            mod={mod}
-            repository={repository}
-            itfId={itf.id}
-            open={this.state.moveInterfaceDialogOpen}
-            onClose={() => this.setState({ moveInterfaceDialogOpen: false })}
-          />
+          <Translation>
+            {(t) => (
+              <MoveInterfaceForm
+                title={t('Move/copy interface')}
+                mod={mod}
+                repository={repository}
+                itfId={itf.id}
+                open={this.state.moveInterfaceDialogOpen}
+                onClose={() => this.setState({ moveInterfaceDialogOpen: false })}
+              />
+            )}
+          </Translation>
         )}
       </article>
     )
@@ -243,22 +255,22 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
       },
     })
   }
-  handleSaveInterfaceAndProperties = (e: any) => {
+  handleSaveInterfaceAndProperties = (e: any, t: any) => {
     e.preventDefault()
     const { itf } = this.state
     const { updateProperties, updateInterface } = this.props
     if (!itf.name.trim()) {
-      this.props.showMessage('名称不能为空', MSG_TYPE.WARNING)
+      this.props.showMessage(t('msg1'), MSG_TYPE.WARNING)
       return
     }
 
     if (!itf.url.trim()) {
-      this.props.showMessage('URL地址不能为空', MSG_TYPE.WARNING)
+      this.props.showMessage(t('msg2'), MSG_TYPE.WARNING)
       return
     }
 
     if (itf.url.substring(0, 4) !== 'http' && itf.url[0] !== '/') {
-      this.props.showMessage('合法的URL地址，需以 http 或 / 开头，例如/a/b 或者 https://www.taobao.com', MSG_TYPE.WARNING)
+      this.props.showMessage(t('msg3'), MSG_TYPE.WARNING)
       return
     }
 
@@ -267,7 +279,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     const getPKey = (p: Property) => `${p.name}|${p.parentId}|${p.scope}`
     for (const p of this.state.properties) {
       if (!p.name.trim()) {
-        this.props.showMessage(`有参数未命名，请检查...${p.description ? '描述为：' + p.description : ''}`, MSG_TYPE.WARNING)
+        this.props.showMessage(`${t('msg4')}...${p.description ? `${t('describe as')}：${p.description}` : ''}`, MSG_TYPE.WARNING)
         return
       }
       p.name = p.name.trim()
@@ -278,7 +290,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         pMap[key] = 1
       }
       if (pMap[key] > 1) {
-        this.props.showMessage(`参数${p.name}命名冲突，同层级不能有相同的属性名`, MSG_TYPE.WARNING)
+        this.props.showMessage(`${t('parameter')}${p.name}${t('name conflict')}，${t('msg5')}`, MSG_TYPE.WARNING)
         return
       }
     }
@@ -294,7 +306,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
       },
       () => {
         /** empty */
-      },
+      }
     )
     updateProperties(this.state.itf.id, this.state.properties, this.state.summaryState, () => {
       this.handleUnlockInterface()

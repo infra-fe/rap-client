@@ -23,11 +23,12 @@ class TagsInput extends Component<any, any> {
     const { placeholder } = this.props
     return (
       <div className="TagsInput clearfix" onClick={() => this.$seed.focus()}>
-        {this.state.value.map((item: any) =>
+        {this.state.value.map((item: any) => (
           <span key={item.id} className="tag">
             <span className="label">{item.label}</span>
             <span className="remove" onClick={() => this.handleRemove(item)}><GoX /></span>
           </span>
+        )
         )}
         <div className="dropdown">
           <input
@@ -40,7 +41,7 @@ class TagsInput extends Component<any, any> {
           />
           {this.state.options.length ? (
             <div className="dropdown-menu" ref={$options => { this.$options = $options }}>
-              {this.state.options.map((item: any) =>
+              {this.state.options.map((item: any) => (
                 <button
                   key={item.id}
                   className="dropdown-item"
@@ -48,6 +49,7 @@ class TagsInput extends Component<any, any> {
                 >
                   {item.label}
                 </button>
+              )
               )}
             </div>
           ) : null}

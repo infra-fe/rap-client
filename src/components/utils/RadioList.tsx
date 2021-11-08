@@ -21,12 +21,11 @@ class RadioList extends Component<any, any> {
   }
 
   render() {
-    // tslint:disable-next-line: no-this-assignment
     const that = this
     return (
       <div className="ctl-radio-list">
         {
-          this.props.data.map((item: any) =>
+          this.props.data.map((item: any) => (
             <label className="label mr8" key={item.value}>
               <input
                 className="input"
@@ -39,7 +38,8 @@ class RadioList extends Component<any, any> {
                 onChange={e => that.handleChange(e)}
               />
               {item.label}
-            </label>)
+            </label>
+          ))
         }
       </div>
     )

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, MouseEventHandler } from 'react'
 import { connect, Link, replace, moment } from '../../family'
 import { serve } from '../../relatives/services/constant'
@@ -8,7 +9,7 @@ import {
   GoPlug,
   GoTrashcan,
   GoPerson,
-  GoOrganization
+  GoOrganization,
 } from 'react-icons/go'
 import { RouterState } from 'connected-react-router'
 import { RootState } from 'actions/types'
@@ -28,7 +29,7 @@ interface Props {
 function Repository(props: Props) {
   const { auth, repository, editor, router } = props
   const [open, setOpen] = useState(false)
-
+  const { t } = useTranslation()
   const handleDeleteRepository: MouseEventHandler<HTMLAnchorElement> = e => {
     e.preventDefault()
     const { repository, router, replace } = props
@@ -66,7 +67,7 @@ function Repository(props: Props) {
             </span>
           ) : null}
           <RepositoryForm
-            title="编辑仓库"
+            title={t('Edit the repository')}
             open={open}
             onClose={() => setOpen(false)}
             repository={repository}
@@ -94,7 +95,7 @@ function Repository(props: Props) {
           </span>
         )}
         <span className="fromnow">
-          {moment(repository.updatedAt).fromNow()}更新
+          {moment(repository.updatedAt).fromNow()}{t(' update')}
         </span>
       </div>
     </Card>

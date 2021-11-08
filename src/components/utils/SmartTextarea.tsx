@@ -6,7 +6,7 @@ class SmartTextarea extends Component<any, any> {
     textarea.style.overflowY = 'hidden'
     textarea.style.height = 'auto'
     textarea.style.height = textarea.scrollHeight + 'px'
-  };
+  }
   componentDidMount() {
     this.resize()
     this.textarea.addEventListener('input', this.resize)

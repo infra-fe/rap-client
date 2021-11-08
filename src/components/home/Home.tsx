@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { push } from '../../family'
 import { useDispatch } from 'react-redux'
@@ -14,6 +15,7 @@ import RepositoryForm from 'components/repository/RepositoryForm'
 const Maiden = () => {
   const [creating, setCreating] = useState(false)
   const dispatch = useDispatch()
+  const { t } = useTranslation()
   return (
     <div className="Maiden">
       <Button
@@ -22,10 +24,10 @@ const Maiden = () => {
         color="primary"
         onClick={() => { setCreating(true) }}
       >
-        新建仓库
+        {t('Create Repository')}
       </Button>
       <RepositoryForm
-        title="新建仓库"
+        title={t('Create Repository')}
         open={creating}
         onClose={(ok: boolean) => {
           if (ok) {

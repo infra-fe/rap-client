@@ -24,7 +24,7 @@ export const theme = {
 
 const MuiTheme = (options?: ThemeOptions) => createTheme({
   ...theme as ThemeOptions,
-  ...(options || {})
+  ...(options || {}),
 })
 
 export default MuiTheme

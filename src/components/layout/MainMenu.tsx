@@ -1,4 +1,5 @@
-import React from 'react'
+import { useTranslation } from 'react-i18next'
+import React, {useEffect, useState} from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -10,25 +11,15 @@ import Popper from '@material-ui/core/Popper'
 import MenuItem from '@material-ui/core/MenuItem'
 import MenuList from '@material-ui/core/MenuList'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { GoLinkExternal } from 'react-icons/go'
 import { Link } from 'react-router-dom'
 import { User } from 'actions/types'
 import Logo from './Logo'
-import { push } from '../../family'
+import { push, moment, MOMENT_LOCALE } from '../../family'
 import { useDispatch } from 'react-redux'
 import { logout } from 'actions/account'
+import i18n, {resources} from '../../i18n'
 
-const options = [{
-  key: 'myAccount',
-  text: '我的账户',
-}, {
-  key: 'preferences',
-  text: '偏好设置',
-}, {
-  key: 'logout',
-  text: '注销',
-}]
-
+const getLangPrefix = (language: string) => language.substring(0, 2)
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -46,6 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         color: '#FFFFFF',
       },
+      textTransform: 'none',
     },
     right: {
       float: 'right',
@@ -69,10 +61,86 @@ const useStyles = makeStyles((theme: Theme) =>
     accountName: {
       color: '#FFFFFF',
     },
-  }),
+  })
 )
+function I18nButton() {
+  const [i18nOpen, setI18nOpen] = React.useState(false)
+  const i18nRef = React.useRef<HTMLButtonElement>(null)
+  const [language,setLanguage] = useState('en')
+  const classes = useStyles()
+  useEffect(() => {
+    const type = localStorage.getItem('i18nextLng')
+    if(type) {
+      setLanguage(getLangPrefix(type))
+    }
+  }, [])
+  const handleI18nToggle = () => {
+    setI18nOpen(prevOpen => !prevOpen)
+  }
+  const handleI18nClose = (event: React.MouseEvent<Document, MouseEvent>) => {
 
+    if (i18nRef && i18nRef.current && event.target instanceof Node && i18nRef.current.contains(event.target)) {
+      return
+    }
+
+    setI18nOpen(false)
+  }
+  const handleI18nClick = (_event: React.MouseEvent<HTMLLIElement, MouseEvent>, key: string) => {
+    setLanguage(key)
+    i18n.changeLanguage(getLangPrefix(key))
+    moment.locale(MOMENT_LOCALE[key])
+    setI18nOpen(false)
+  }
+  return (
+    <div style={{display: 'inline-block'}}>
+      <Button
+        color="inherit"
+        aria-haspopup="true"
+        onClick={handleI18nToggle}
+        ref={i18nRef}
+      >
+        <span className={`mr1 ${classes.accountName}`}>
+          {resources[language]?.name}
+          <ExpandMoreIcon fontSize="small" style={{ color: '#FFFFFF' }} />
+        </span>
+      </Button>
+      <Popper open={i18nOpen} anchorEl={i18nRef.current} role={undefined} transition={true}>
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleI18nClose}>
+                <MenuList>
+                  {Object.keys(resources).map(key => (
+                    <MenuItem key={key} onClick={(event) => handleI18nClick(event, key)}>
+                      {resources[key].name}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </div>
+  )
+}
 function AccountButton({ user }: { user: User }) {
+  const { t } = useTranslation()
+  const options = [{
+    key: 'myAccount',
+    text: t('My Account'),
+  }, {
+    key: 'preferences',
+    text: t('Preferences'),
+  }, {
+    key: 'logout',
+    text: t('Logout'),
+  }]
   const [open, setOpen] = React.useState(false)
   const anchorRef = React.useRef<HTMLButtonElement>(null)
   const classes = useStyles()
@@ -105,18 +173,11 @@ function AccountButton({ user }: { user: User }) {
 
   return (
     <div>
-      <Button
-        onClick={() => window.open('https://github.com/thx/gogocode')}
-        color="inherit"
-        style={{ textTransform: 'none' }}
-      >
-        代码转换试试GoGoCode
-        <GoLinkExternal className="ml5" />
-      </Button>
+      <I18nButton/>
       <Button
         color="inherit"
         aria-haspopup="true"
-        aria-label="账户"
+        aria-label={t('account')}
         onClick={handleToggle}
         ref={anchorRef}
       >
@@ -160,25 +221,25 @@ export default function MainMenu(props: Props) {
   const { user } = props
   const classes = useStyles()
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar className={classes.toolbar} variant="dense">
           <div className={classes.links}>
             <Link to="/" className={classes.logo}><Logo /> </Link>
-            <Button className={classes.link} onClick={() => dispatch(push('/'))}>首页</Button>
-            <Button className={classes.link} onClick={() => dispatch(push('/repository/joined'))}>仓库</Button>
-            <Button className={classes.link} onClick={() => dispatch(push('/organization/joined'))}>团队</Button>
-            <Button className={classes.link} onClick={() => dispatch(push('/api'))}>接口</Button>
-            <Button className={classes.link} onClick={() => dispatch(push('/status'))}>状态</Button>
-            <Button className={classes.link} onClick={() => dispatch(push('/about'))}>关于</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/'))}>{t('Home')}</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/repository/joined'))}>{t('Repository')}</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/organization/joined'))}>{t('Organization')}</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/api'))}>{t('API')}</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/status'))}>{t('Status')}</Button>
+            <Button className={classes.link} onClick={() => dispatch(push('/about'))}>{t('About')}</Button>
             <Button
               className={classes.link}
               onClick={() => window.open('https://github.com/thx/rap2-delos/issues/new/choose')}
               color="inherit"
             >
-              问题反馈
+              {t('Feedback')}
             </Button>
           </div>
           <AccountButton user={user} />

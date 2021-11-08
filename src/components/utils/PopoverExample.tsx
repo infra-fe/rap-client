@@ -3,7 +3,7 @@ import Popover from './Popover'
 
 export default () => (
   <div>
-    {['top', 'right', 'bottom', 'left'].map(placement =>
+    {['top', 'right', 'bottom', 'left'].map(placement => (
       <Popover
         key={placement}
         placement={placement}
@@ -13,6 +13,7 @@ export default () => (
       >
         Popover on {placement}
       </Popover>
+    )
     )}
   </div>
 )

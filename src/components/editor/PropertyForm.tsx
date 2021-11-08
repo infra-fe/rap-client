@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -51,114 +52,118 @@ class PropertyForm extends Component<any, any> {
   render() {
     const { rmodal } = this.context
     return (
-      <section>
-        <div className="rmodal-header">
-          <span className="rmodal-title">{this.props.title}</span>
-        </div>
-        <form className="form-horizontal w600" onSubmit={this.handleSubmit}>
-          <div className="rmodal-body">
-            <div className="form-group row" style={{}}>
-              <label className="col-sm-2 control-label">名称：</label>
-              <div className="col-sm-10">
-                <input
-                  name="name"
-                  tabIndex={1}
-                  value={this.state.name}
-                  onChange={e => this.setState({ name: e.target.value })}
-                  className="form-control"
-                  placeholder="Name"
-                  spellCheck={false}
-                  autoFocus={true}
-                  required={true}
-                />
-              </div>
+      <Translation>
+        {(t) => (
+          <section>
+            <div className="rmodal-header">
+              <span className="rmodal-title">{this.props.title}</span>
             </div>
-            <div className="form-group row">
-              <label className="col-sm-2 control-label">类型：</label>
-              <div className="col-sm-10">
-                <select
-                  name="type"
-                  tabIndex={2}
-                  value={this.state.type}
-                  onChange={e => {
-                    const type = e.target.value
-                    if (type === 'Null') {
-                      this.setState({ value: '' })
-                    }
-                    this.setState({ type })
-                  }}
-                  className="form-control"
-                >
-                  {TYPES.map(type => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+            <form className="form-horizontal w600" onSubmit={this.handleSubmit}>
+              <div className="rmodal-body">
+                <div className="form-group row" style={{}}>
+                  <label className="col-sm-2 control-label">{t('Name:')}</label>
+                  <div className="col-sm-10">
+                    <input
+                      name="name"
+                      tabIndex={1}
+                      value={this.state.name}
+                      onChange={e => this.setState({ name: e.target.value })}
+                      className="form-control"
+                      placeholder="Name"
+                      spellCheck={false}
+                      autoFocus={true}
+                      required={true}
+                    />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 control-label">{t('Type:')}</label>
+                  <div className="col-sm-10">
+                    <select
+                      name="type"
+                      tabIndex={2}
+                      value={this.state.type}
+                      onChange={e => {
+                        const type = e.target.value
+                        if (type === 'Null') {
+                          this.setState({ value: '' })
+                        }
+                        this.setState({ type })
+                      }}
+                      className="form-control"
+                    >
+                      {TYPES.map(type => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 control-label">{t('Generate rules:')}</label>
+                  <div className="col-sm-10">
+                    <input
+                      name="rule"
+                      tabIndex={3}
+                      value={this.state.rule}
+                      onChange={e => this.setState({ rule: e.target.value })}
+                      className="form-control"
+                      placeholder="Rule"
+                      spellCheck={false}
+                    />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 control-label">{t('The initial value:')}</label>
+                  <div className="col-sm-10">
+                    <input
+                      name="value"
+                      tabIndex={4}
+                      value={this.state.value}
+                      onChange={e => this.setState({ value: e.target.value })}
+                      className="form-control"
+                      placeholder="Value"
+                      spellCheck={false}
+                    />
+                  </div>
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-2 control-label">{t('Brief introduction:')}</label>
+                  <div className="col-sm-10">
+                    <SmartTextarea
+                      tabIndex={5}
+                      name="description"
+                      value={this.state.description}
+                      onChange={(e: any) => this.setState({ description: e.target.value })}
+                      className="form-control"
+                      placeholder="Description"
+                      spellCheck={false}
+                      rows="5"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="form-group row">
-              <label className="col-sm-2 control-label">生成规则：</label>
-              <div className="col-sm-10">
-                <input
-                  name="rule"
-                  tabIndex={3}
-                  value={this.state.rule}
-                  onChange={e => this.setState({ rule: e.target.value })}
-                  className="form-control"
-                  placeholder="Rule"
-                  spellCheck={false}
-                />
+              <div className="rmodal-footer">
+                <div className="form-group row mb0">
+                  <label className="col-sm-2 control-label" />
+                  <div className="col-sm-10">
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      style={{ marginRight: 8 }}
+                    >
+                      {t('submit')}
+                    </Button>
+                    <Button onClick={() => rmodal.close()}>{t('cancel')}</Button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="form-group row">
-              <label className="col-sm-2 control-label">初始值：</label>
-              <div className="col-sm-10">
-                <input
-                  name="value"
-                  tabIndex={4}
-                  value={this.state.value}
-                  onChange={e => this.setState({ value: e.target.value })}
-                  className="form-control"
-                  placeholder="Value"
-                  spellCheck={false}
-                />
-              </div>
-            </div>
-            <div className="form-group row">
-              <label className="col-sm-2 control-label">简介：</label>
-              <div className="col-sm-10">
-                <SmartTextarea
-                  tabIndex={5}
-                  name="description"
-                  value={this.state.description}
-                  onChange={(e: any) => this.setState({ description: e.target.value })}
-                  className="form-control"
-                  placeholder="Description"
-                  spellCheck={false}
-                  rows="5"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="rmodal-footer">
-            <div className="form-group row mb0">
-              <label className="col-sm-2 control-label" />
-              <div className="col-sm-10">
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  style={{ marginRight: 8 }}
-                >
-                  提交
-                </Button>
-                <Button onClick={() => rmodal.close()}>取消</Button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </section>
+            </form>
+          </section>
+        )}
+      </Translation>
     )
   }
   componentDidUpdate() {

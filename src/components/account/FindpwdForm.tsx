@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import config from '../../config'
@@ -51,6 +52,7 @@ const useStyles = makeStyles(() => createStyles({
 }))
 
 export default function FindpwdForm() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [captchaId, setCaptchaId] = useState(Date.now())
   const [captcha, setCaptcha] = useState('')
@@ -74,11 +76,11 @@ export default function FindpwdForm() {
       <Paper className={classes.container}>
         <List>
           <ListItem>
-            <h2>发送重设密码邮件</h2>
+            <h2>{t('Email to reset the password')}</h2>
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="email">邮箱</InputLabel>
+              <InputLabel htmlFor="email">{t('email')}</InputLabel>
               <Input
                 tabIndex={0}
                 value={email}
@@ -97,7 +99,7 @@ export default function FindpwdForm() {
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="captcha">验证码</InputLabel>
+              <InputLabel htmlFor="captcha">{t('Verification code')}</InputLabel>
               <Input
                 tabIndex={2}
                 name="captcha"
@@ -121,8 +123,10 @@ export default function FindpwdForm() {
               <Refresh />
             </div>
             <div className={classes.buttonWrapper}>
-            <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>取消</Button>
-              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>发送</Button>
+              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>
+                {t('cancel')}
+              </Button>
+              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>{t('send')}</Button>
             </div>
           </ListItem>
         </List>

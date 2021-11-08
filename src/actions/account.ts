@@ -75,6 +75,13 @@ export const resetpwdSucceeded = () => ({ type: 'USER_RESETPWD_SUCCEEDED' })
 export const resetpwdFailed = (message: any) => ({ type: 'USER_RESETPWD_FAILED', message })
 export type CHANGE_THEME = 'CHANGE_THEME'
 export const CHANGE_THEME: CHANGE_THEME = 'CHANGE_THEME'
+export type CHANGE_GUIDE = 'CHANGE_GUIDE'
+export const CHANGE_GUIDE: CHANGE_GUIDE = 'CHANGE_GUIDE'
+
+export const changeGuide = (guideOpen: boolean) => ({
+  type: CHANGE_GUIDE,
+  payload: guideOpen,
+})
 
 export const changeTheme = (themeId: THEME_TEMPLATE_KEY) => ({
   type: CHANGE_THEME,
@@ -137,7 +144,7 @@ export function fetchUserSettings(keys: CACHE_KEY[]) {
       endpoint: `${serve}/account/fetchUserSettings`,
       method: 'POST',
       body: JSON.stringify({ keys }),
-      types: [FETCH_USER_SETTINGS_REQUEST, FETCH_USER_SETTINGS_SUCCESS, FETCH_USER_SETTINGS_SUCCESS],
+      types: [FETCH_USER_SETTINGS_REQUEST, FETCH_USER_SETTINGS_SUCCESS, FETCH_USER_SETTINGS_FAILURE],
     }),
   }
 }
@@ -169,7 +176,7 @@ export const UPDATE_ACCOUNT_SUCCESS: UPDATE_ACCOUNT_SUCCESS = 'UPDATE_ACCOUNT_SU
 export type UPDATE_ACCOUNT_FAILURE = 'UPDATE_ACCOUNT_FAILURE'
 export const UPDATE_ACCOUNT_FAILURE: UPDATE_ACCOUNT_FAILURE = 'UPDATE_ACCOUNT_FAILURE'
 
-export const updateAccount = (payload: { fullname?: string, password?: string}) => ({
+export const updateAccount = (payload: { fullname?: string; password?: string}) => ({
   [RSAA]: mergeRSAABase({
     endpoint: `${serve}/account/updateAccount`,
     method: 'POST',
@@ -181,7 +188,7 @@ export const updateAccount = (payload: { fullname?: string, password?: string}) 
 export type DO_UPDATE_ACCOUNT = 'DO_UPDATE_ACCOUNT'
 export const DO_UPDATE_ACCOUNT = 'DO_UPDATE_ACCOUNT'
 
-export const doUpdateAccount = (params: {fullname?: string, password?: string}, cb: TCB) => ({
+export const doUpdateAccount = (params: {fullname?: string; password?: string}, cb: TCB) => ({
   type: DO_UPDATE_ACCOUNT,
   payload: {
     params,

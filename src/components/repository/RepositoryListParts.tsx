@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { Component, useState, useEffect } from 'react'
 import { PropTypes, push, replace, URI, StoreStateRouterLocationURI } from '../../family'
 import { Spin, RModal, Pagination } from '../utils'
@@ -39,7 +40,7 @@ export function CreateButton(props: CreateButtonProps) {
       dispatch(replace(uri.href()))
     }
   }
-
+  const { t } = useTranslation()
   return (
     <span className="float-right ml10">
       {organization && (
@@ -50,7 +51,7 @@ export function CreateButton(props: CreateButtonProps) {
           color="primary"
           onClick={() => setUpdateOrganization(true)}
         >
-          编辑团队
+          {t('The editorial team')}
         </Button>
       )}
 
@@ -66,11 +67,11 @@ export function CreateButton(props: CreateButtonProps) {
         color="primary"
         onClick={() => setCreating(true)}
       >
-        新建仓库
+        {t('Create Repository')}
       </Button>
 
       <RepositoryForm
-        title="新建仓库"
+        title={t('Create Repository')}
         open={creating}
         onClose={() => setCreating(false)}
         organizationId={organization ? organization.id : undefined}
@@ -84,7 +85,7 @@ export function CreateButton(props: CreateButtonProps) {
           color="primary"
           onClick={() => setImporting(true)}
         >
-          <GoArrowRight /> 导入仓库
+          <GoArrowRight /> {t('Import repository')}
         </Button>
       )}
 
@@ -94,7 +95,7 @@ export function CreateButton(props: CreateButtonProps) {
           onClose={() => setImporting(false)}
           onResolve={handleUpdate}
         >
-          <ImportRepositoryForm title="导入仓库" orgId={organization.id} />
+          <ImportRepositoryForm title={t('Import repository')} orgId={organization.id} />
         </RModal>
       )}
     </span>
@@ -103,6 +104,7 @@ export function CreateButton(props: CreateButtonProps) {
 
 // TODO 2.2 <select> => <Dropdown>
 export function RepositoriesTypeDropdown(props: { url: string }) {
+  const { t } = useTranslation()
   const { url } = props
   const dispatch = useDispatch()
   const handlePush = (url: string) => {
@@ -110,8 +112,8 @@ export function RepositoriesTypeDropdown(props: { url: string }) {
   }
   return (
     <Select className="mr8" value={url} onChange={e => handlePush(e.target.value as string)}>
-      <MenuItem value="/repository/joined">我的仓库</MenuItem>
-      <MenuItem value="/repository/all">所有仓库</MenuItem>
+      <MenuItem value="/repository/joined">{t('My repository')}</MenuItem>
+      <MenuItem value="/repository/all">{t('All repository')}</MenuItem>
     </Select>
   )
 }
@@ -127,13 +129,14 @@ export function SearchGroup(props: { name: string }) {
     query ? uri.setSearch('name', query) : uri.removeSearch('name')
     dispatch(push(uri.href()))
   }
+  const { t } = useTranslation()
   useEffect(() => {
     setQuery(name)
   }, [name])
   return (
     <TextField
       value={query || ''}
-      placeholder="搜索仓库：名称、ID"
+      placeholder={t('Search repository: name, ID')}
       autoComplete="off"
       onChange={e => setQuery(e.target.value.trim())}
       onKeyUp={e => e.which === 13 && handleSearch()}

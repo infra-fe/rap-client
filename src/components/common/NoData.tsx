@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 
 function NoData() {
+  const { t } = useTranslation()
   return (
     <div style={{ padding: 16, fontSize: 18 }}>
-      暂无数据
+      {t('No data')}
     </div>
   )
 }

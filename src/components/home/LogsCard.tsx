@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { Link, moment } from '../../family'
 import { Spin } from '../utils'
@@ -28,14 +29,15 @@ const LogUserView = ({ user }: any) => {
   )
 }
 const LogTypeView = ({ type }: any) => {
+  const { t } = useTranslation()
   const typeName: any = ({
-    create: '创建了',
-    update: '修改了',
-    delete: '删除了',
-    lock: '锁定了',
-    unlock: '释放了',
-    join: '加入了',
-    exit: '退出了',
+    create: t('created'),
+    update: t('modified'),
+    delete: t('deleted'),
+    lock: t('locked'),
+    unlock: t('released'),
+    join: t('joined'),
+    exit: t('exited'),
   } as any)[type]
   return <span className="Log-type">{typeName}</span>
 }
@@ -120,13 +122,14 @@ const LogView = ({ log }: any) => {
 // DONE 2.3 支持『上帝之手』`log.creator`
 // 墨智邀请麦少加入群聊
 const JoinLogView = ({ log }: any) => {
+  const { t } = useTranslation()
   return (
     <div className="Log clearfix">
       <div className="Log-body">
         <LogUserView user={log.creator} />
-        <span className="Log-type">邀请</span>
+        <span className="Log-type">{t('invited')}</span>
         <UserLink user={log.user} />
-        <span className="Log-type">加入了</span>
+        <span className="Log-type">{t('joined')}</span>
         <LogTargetView log={log} />
       </div>
       <div className="Log-footer">
@@ -137,13 +140,14 @@ const JoinLogView = ({ log }: any) => {
 }
 // 墨智将麦少移出群聊
 const ExitLogView = ({ log }: any) => {
+  const { t } = useTranslation()
   return (
     <div className="Log clearfix">
       <div className="Log-body">
         <LogUserView user={log.creator} />
-        <span className="Log-type">将</span>
+        <span className="Log-type">{t('will')}</span>
         <UserLink user={log.user} />
-        <span className="Log-type">移出了</span>
+        <span className="Log-type">{t('Move out of the')}</span>
         <LogTargetView log={log} />
       </div>
       <div className="Log-footer">
@@ -154,6 +158,7 @@ const ExitLogView = ({ log }: any) => {
 }
 
 export const Log = ({ log }: any) => {
+  const { t } = useTranslation()
   const userAvatar = <img alt={log.user.empId} src={`https://work.alibaba-inc.com/photo/${log.user.empId}.220x220.jpg`} className="avatar" />
   const userLink = <Link to={`https://work.alibaba-inc.com/work/u/${log.user.empId}`} target="_blank">{log.user.fullname}</Link>
   const fromNow = <i className="fromnow">{moment(log.updatedAt).fromNow()}</i>
@@ -185,36 +190,36 @@ export const Log = ({ log }: any) => {
     case 'create':
       return targetLink ? (
         <div className="Log clearfix">
-          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">创建了</span> {targetLink}</span> {fromNow}
+          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{t('created')}</span> {targetLink}</span> {fromNow}
         </div>
       ) : null
     case 'update':
       return targetLink ? (
         <div className="Log clearfix">
-          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">修改了</span> {targetLink}</span> {fromNow}
+          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{t('modified')}</span> {targetLink}</span> {fromNow}
         </div>
       ) : null
     case 'delete':
       return targetName ? (
         <div className="Log clearfix">
-          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">删除了</span> <s>{targetName}</s></span> {fromNow}
+          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{t('deleted')}</span> <s>{targetName}</s></span> {fromNow}
         </div>
       ) : null
     case 'lock':
     case 'unlock':
-      typeName = ({ lock: '锁定', unlock: '释放' } as any)[log.type]
+      typeName = ({ lock: t('lock'), unlock: t('release') } as any)[log.type]
       if (!log.repository || !log.module || !log.interface) { return null }
       return (
         <div className="Log clearfix">
-          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{typeName}了</span> {targetLink}</span> {fromNow}
+          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{typeName}{t('the')}</span> {targetLink}</span> {fromNow}
         </div>
       )
     case 'join':
     case 'exit':
-      typeName = ({ join: '加入', exit: '退出' } as any)[log.type]
+      typeName = ({ join: t('join'), exit: t('exit') } as any)[log.type]
       return targetName ? (
         <div className="Log clearfix">
-          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{typeName}了</span> {targetLink}</span> {fromNow}
+          {userAvatar} <span className="body">{userLink} <span className="ml6 mr6">{typeName}{t('the')}</span> {targetLink}</span> {fromNow}
         </div>
       ) : null
     default:
@@ -222,17 +227,20 @@ export const Log = ({ log }: any) => {
     // return <p>{JSON.stringify(log)}</p>
   }
 }
-const LogsCard = ({ logs }: any) => (
-  <Card className="Logs card">
-    <div className="card-header">最近活动</div>
-    {logs.fetching ? <Spin /> : (
-      <div className="card-block">
-        {logs.data.map((log: any) =>
-          <LogView key={log.id} log={log} />
-        )}
-      </div>
-    )}
-  </Card>
-)
+const LogsCard = ({ logs }: any) => {
+  const { t } = useTranslation()
+  return (
+    <Card className="Logs card">
+      <div className="card-header">{t('Recent activities')}</div>
+      {logs.fetching ? <Spin /> : (
+        <div className="card-block">
+          {logs.data.map((log: any) =>
+            <LogView key={log.id} log={log} />
+          )}
+        </div>
+      )}
+    </Card>
+  )
+}
 
 export default LogsCard

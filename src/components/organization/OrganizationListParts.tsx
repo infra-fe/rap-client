@@ -1,10 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
 import {
   PropTypes,
   push,
   replace,
   URI,
-  StoreStateRouterLocationURI
+  StoreStateRouterLocationURI,
 } from '../../family'
 import { Spin, Pagination } from '../utils'
 import OrganizationList from './OrganizationList'
@@ -12,7 +13,7 @@ import OrganizationForm from './OrganizationForm'
 import {
   addOrganization,
   deleteOrganization,
-  updateOrganization
+  updateOrganization,
 } from '../../actions/organization'
 import { useDispatch, useSelector } from 'react-redux'
 import { Select, MenuItem, TextField, Button } from '@material-ui/core'
@@ -60,6 +61,7 @@ export const mapDispatchToProps = {
 }
 
 export function CreateButton() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   return (
     <span className="float-right ml10">
@@ -70,7 +72,7 @@ export function CreateButton() {
         onClick={() => setOpen(true)}
       >
         {' '}
-        新建团队{' '}
+        {t('create team')}{' '}
       </Button>
       <OrganizationForm open={open} onClose={() => setOpen(false)} />
     </span>
@@ -83,15 +85,15 @@ export function OrganizationsTypeDropdown({ url }: { url: string }) {
   const handlePush = (url: string) => {
     dispatch(push(url))
   }
-
+  const { t } = useTranslation()
   return (
     <Select
       className="mr8"
       value={url}
       onChange={e => handlePush(e.target.value as string)}
     >
-      <MenuItem value="/organization/joined">我的团队</MenuItem>
-      <MenuItem value="/organization/all">全部团队</MenuItem>
+      <MenuItem value="/organization/joined">{t('My team')}</MenuItem>
+      <MenuItem value="/organization/all">{t('All the team')}</MenuItem>
     </Select>
   )
 }
@@ -101,6 +103,7 @@ export function SearchGroup(props: { name: string }) {
   const dispatch = useDispatch()
   const router = useSelector((state: RootState) => state.router)
   const [query, setQuery] = useState('')
+  const { t } = useTranslation()
   const handleSearch = () => {
     const { pathname, hash, search } = router.location
     const uri = URI(pathname + hash + search).removeSearch('cursor')
@@ -113,7 +116,7 @@ export function SearchGroup(props: { name: string }) {
   return (
     <TextField
       value={query || ''}
-      placeholder="搜索仓库：名称、ID"
+      placeholder={t('Search repository: name, ID')}
       autoComplete="off"
       onChange={e => setQuery(e.target.value.trim())}
       onKeyUp={e => e.which === 13 && handleSearch()}

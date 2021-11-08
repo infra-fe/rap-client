@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { HTMLAttributes } from 'react'
 import { Chip, Typography, MenuItem, TextField, NoSsr, Paper } from '@material-ui/core'
 import { emphasize } from '@material-ui/core/styles/colorManipulator'
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     chipFocused: {
       backgroundColor: emphasize(
         theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
-        0.08,
+        0.08
       ),
     },
     noOptionsMessage: {
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) =>
     divider: {
       height: theme.spacing(2),
     },
-  }),
+  })
 )
 
 function NoOptionsMessage(props: NoticeProps<OptionType, any>) {
@@ -192,6 +193,7 @@ interface Props {
 }
 
 function MaterialSelect(props: Props) {
+  const { t } = useTranslation()
   const classes = useStyles()
   const theme = useTheme()
   const { loadOptions, isMulti = false, onChange, options, value, minWidth, isClearable = false } = props
@@ -210,10 +212,10 @@ function MaterialSelect(props: Props) {
     isMulti: isMulti,
     isClearable,
     noOptionsMessage: ({ inputValue }: { inputValue: string }) => {
-      return inputValue && inputValue.trim() ? '搜不到数据' : '请输入检索关键字'
+      return inputValue && inputValue.trim() ? t('no data') : t('Please enter search keywords')
     },
     onChange,
-    placeholder: `请选择(${isMulti ? '多选' : '单选'})`,
+    placeholder: `${t('Select')}(${isMulti ? t('multiple') : t('single')})`,
   }
 
   if (value) {

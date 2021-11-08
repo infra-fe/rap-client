@@ -4,7 +4,7 @@ import { AnyAction } from 'redux'
 import { MSG_TYPE, showMessage } from 'actions/common'
 
 export function createCommonDoActionSaga(
-  fetchActionCreator: (params: object) => { [x: string]: IRSAA },
+  fetchActionCreator: (params: any) => { [x: string]: IRSAA },
   fetchSuccessActionType: string,
   _fetchErrorActionType?: string,
   hideSuccessMsg?: boolean,

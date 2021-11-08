@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 // eslint-disable-next-line
 import { connect, Link } from '../../family'
@@ -7,13 +8,13 @@ import Mock from 'mockjs'
 import './Checker.css'
 import { RootState } from 'actions/types'
 type CheckerProps = {
-  store: object;
-  repository: any;
+  store: any
+  repository: any
 }
 type CheckerState = {
-  result?: any;
-  itf?: any;
-  mod: any;
+  result?: any
+  itf?: any
+  mod: any
   target: any
 }
 class Checker extends Component<CheckerProps, CheckerState> {
@@ -32,31 +33,34 @@ class Checker extends Component<CheckerProps, CheckerState> {
     const mod = this.state.mod || repository.modules[0]
     const itf = this.state.itf || mod.interfaces[0]
     return (
-      <section className="Checker">
-        <div className="card-mods clearfix">
-          <span className="card-title">模块：</span>
-          {repository.modules.map((item: any) => (
-            <Link key={item.id} to="" onClick={e => this.switchMod(e, item)} className={item.id === mod.id ? 'active' : ''}>
-              {item.name}
-            </Link>
-          ))}
-        </div>
-        <div className="card-itfs clearfix">
-          <span className="card-title">接口：</span>
-          {mod.interfaces.map((item: any) => (
-            <Link key={item.id} to="" onClick={e => this.switchItf(e, item)} className={item.id === itf.id ? 'active' : ''}>
-              {item.name}
-            </Link>
-          ))}
-        </div>
-        <div>
-          <input value={this.state.target} onChange={e => this.setState({ target: e.target.value })} className="form-control" />
-        </div>
-        <div className="card-result">
-          <div className="card-title">{`${serve}/app/mock/data/${itf.id}`}</div>
-          <pre>{JSON.stringify(this.state.result, null, 2)}</pre>
-        </div>
-      </section>
+      <Translation>
+        {(t) => (
+          <section className="Checker">
+            <div className="card-mods clearfix">
+              <span className="card-title">{t('Module')}：</span>
+              {repository.modules.map((item: any) => (
+                <Link key={item.id} to="" onClick={e => this.switchMod(e, item)} className={item.id === mod.id ? 'active' : ''}>
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            <div className="card-itfs clearfix">
+              <span className="card-title">{t('API')}：</span>
+              {mod.interfaces.map((item: any) => (
+                <Link key={item.id} to="" onClick={e => this.switchItf(e, item)} className={item.id === itf.id ? 'active' : ''}>
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            <div>
+              <input value={this.state.target} onChange={e => this.setState({ target: e.target.value })} className="form-control" />
+            </div>
+            <div className="card-result">
+              <div className="card-title">{`${serve}/app/mock/data/${itf.id}`}</div>
+              <pre>{JSON.stringify(this.state.result, null, 2)}</pre>
+            </div>
+          </section>
+        )}</Translation>
     )
   }
   componentWillReceiveProps(nextProps: any) {
@@ -74,13 +78,13 @@ class Checker extends Component<CheckerProps, CheckerState> {
   switchMod = (e: any, mod: any) => {
     e.preventDefault()
     this.setState({ mod })
-  };
+  }
   switchItf = (e: any, itf: any) => {
     e.preventDefault()
     this.setState({ itf }, () => {
       this.handleRequest()
     })
-  };
+  }
   handleRequest = () => {
     const { repositoryId, method, url } = this.state.itf
     const target = `${this.state.target}/app/mock/${repositoryId}/${method}/${url}`
@@ -99,7 +103,7 @@ class Checker extends Component<CheckerProps, CheckerState> {
         console.warn(Assert.message(i))
       }
     })
-  };
+  }
 }
 // 容器组件
 const mapStateToProps = (state: RootState) => ({

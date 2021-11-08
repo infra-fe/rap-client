@@ -92,7 +92,7 @@ export function* fetchRepository(action: any) {
     const repository = yield call(
       RepositoryService.fetchRepository as any,
       action.repository || action.id,
-      params.token,
+      params.token
     )
     yield put(RepositoryAction.fetchRepositorySucceeded(repository))
   } catch (e) {
@@ -103,14 +103,14 @@ export function* fetchRepository(action: any) {
 export function* refreshRepository() {
   // 刷新仓库和当前的接口
   const repositoryId = yield select(
-    (state: RootState) => state.repository && state.repository.data && state.repository.data.id,
+    (state: RootState) => state.repository && state.repository.data && state.repository.data.id
   )
   yield put(RepositoryAction.fetchRepository({id: repositoryId}))
 }
 
 export function* handleRepositoryLocationChange(action: any) {
   const repositoryId = yield select(
-    (state: RootState) => state.repository && state.repository.data && state.repository.data.id,
+    (state: RootState) => state.repository && state.repository.data && state.repository.data.id
   )
   if (Number(action.id) !== repositoryId) {
     // 切换仓库

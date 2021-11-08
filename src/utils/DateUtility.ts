@@ -25,6 +25,4 @@ export const parseMinutesToTime = (minutes?: number) => {
   return `${Math.floor(minutes / 60)}小时${minutes % 60}分钟`
 }
 
-export default {
-  formatDate, formatTime, formatDateTime,
-}
+export default { formatDate, formatTime, formatDateTime }

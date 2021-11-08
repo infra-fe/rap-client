@@ -1,8 +1,4 @@
-import {
-  call,
-  put,
-  select
-} from 'redux-saga/effects'
+import { call, put, select } from 'redux-saga/effects'
 import * as InterfaceAction from '../../actions/interface'
 import EditorService from '../services/Editor'
 import * as RepositoryAction from '../../actions/repository'
@@ -21,7 +17,6 @@ export function* fetchInterface(action: any) {
       action.onResolved(payload)
     }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.fetchInterfaceFailed(e.message))
     if (action.onRejected) {
       action.onRejected()
@@ -35,7 +30,6 @@ export function* addInterface(action: any) {
     yield put(InterfaceAction.addInterfaceSucceeded(payload))
     if (action.onResolved) { action.onResolved(payload.itf) }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.addInterfaceFailed(e.message))
     if (action.onRejected) { action.onRejected() }
   }
@@ -46,7 +40,6 @@ export function* updateInterface(action: any) {
     yield put(InterfaceAction.updateInterfaceSucceeded(result))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.updateInterfaceFailed(e.message))
     if (action.onRejected) { action.onRejected() }
   }
@@ -60,7 +53,6 @@ export function* moveInterface(action: any) {
     yield put(RepositoryAction.refreshRepository())
     action.onResolved && action.onResolved()
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.moveInterfaceFailed(e.message))
     action.onRejected && action.onRejected()
   }
@@ -75,7 +67,6 @@ export function* deleteInterface(action: any) {
     yield put(replace(StoreStateRouterLocationURI(router).removeQuery('itf').toString()))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.deleteInterfaceFailed(e.message))
   }
 }
@@ -84,7 +75,6 @@ export function* fetchInterfaceCount() {
     const count = yield call(EditorService.fetchInterfaceCount)
     yield put(InterfaceAction.fetchInterfaceCountSucceeded(count))
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.fetchInterfaceCountFailed(e.message))
   }
 }
@@ -94,7 +84,6 @@ export function* lockInterface(action: any) {
     yield put(InterfaceAction.lockInterfaceSucceeded(action.id, payload))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.lockInterfaceFailed(e.message))
   }
 }
@@ -108,7 +97,6 @@ export function* unlockInterface(action: any) {
       window.alert(`发生错误：${res.errMsg}`)
     }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.unlockInterfaceFailed(e.message))
   }
 }
@@ -118,7 +106,6 @@ export function* sortInterfaceList(action: any) {
     yield put(InterfaceAction.sortInterfaceListSucceeded(count, action.ids, action.moduleId))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(InterfaceAction.sortInterfaceListFailed(e.message))
   }
 }

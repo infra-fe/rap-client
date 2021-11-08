@@ -17,24 +17,24 @@ class Dialog extends Component<DialogProps, DialogState> {
     this.setState({ visible: true }, () => {
       this.rePosition()
     })
-  };
+  }
   rePosition = () => {
     const left = (document.documentElement.clientWidth - this.related.clientWidth) / 2
     const top =
       (document.documentElement.clientHeight - this.related.clientHeight) / 2
     this.related.style.left = left + 'px'
     this.related.style.top = top + 'px'
-  };
+  }
   handleEsc = (e: any) => {
     if (e.keyCode === 27) {
       this.close()
     }
-  };
+  }
   close = () => {
     this.setState({ visible: false }, () => {
       this.props.onClse()
     })
-  };
+  }
   componentDidMount() {
     this.open()
     document.body.classList.add('modal-open')

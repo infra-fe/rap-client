@@ -29,4 +29,8 @@ export const StoreStateRouterLocationURI = (router: RouterState) => {
 export const Mock = require('mockjs')
 export const moment = _moment
 require('moment/locale/zh-cn')
-_moment.locale('zh-cn')
+require('moment/locale/en-sg')
+export const MOMENT_LOCALE = {
+  'zh' : 'zh-cn',
+  'en' : 'en-sg',
+}

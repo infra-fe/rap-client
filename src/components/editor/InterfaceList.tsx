@@ -1,3 +1,4 @@
+import { useTranslation, Translation } from 'react-i18next'
 import React, { useState, MouseEventHandler, CSSProperties } from 'react'
 import { connect, Link, StoreStateRouterLocationURI, replace } from '../../family'
 import { sortInterfaceList, deleteInterface, unlockInterface } from '../../actions/interface'
@@ -34,13 +35,14 @@ function InterfaceBase(props: InterfaceBaseProps) {
     .setSearch('itf', itf!.id.toString())
     .href()
   const [open, setOpen] = useState(false)
-
+  const { t } = useTranslation()
   const handleDeleteInterface: MouseEventHandler<HTMLAnchorElement> = e => {
     e.preventDefault()
-    const message = `接口被删除后不可恢复！\n确认继续删除『#${itf!.id} ${itf!.name}』吗？`
+    const message = `${t('Unrecoverable after the interface is deleted')}！\n${t('Confirm delete')}『#${itf!.id} ${itf!.name}』${t('?')}`
     if (window.confirm(message)) {
       const { deleteInterface } = props
       deleteInterface(props.itf!.id, () => {
+        // TODO:
       })
       const { pathname, hash, search } = router.location
       replace(pathname + hash + search)
@@ -57,7 +59,7 @@ function InterfaceBase(props: InterfaceBaseProps) {
               curItf &&
               curItf.locker
             ) {
-              if (!window.confirm('编辑模式下切换接口，会导致编辑中的资料丢失，是否确定切换接口？')) {
+              if (!window.confirm(t('switchConfirm'))) {
                 e.preventDefault()
               } else {
                 unlockInterface(curItf.id)
@@ -87,14 +89,18 @@ function InterfaceBase(props: InterfaceBaseProps) {
               <GoPencil />
             </span>
           ) : null}
-          <InterfaceForm
-            title="修改接口"
-            repository={repository}
-            mod={mod}
-            itf={itf}
-            open={open}
-            onClose={() => setOpen(false)}
-          />
+          <Translation>
+            {(t) => (
+              <InterfaceForm
+                title={t('Modify Interface')}
+                repository={repository}
+                mod={mod}
+                itf={itf}
+                open={open}
+                onClose={() => setOpen(false)}
+              />
+            )}
+          </Translation>
           {!itf!.locker ? (
             <Link to="" onClick={handleDeleteInterface}>
               <GoTrashcan />
@@ -143,31 +149,36 @@ function InterfaceList(props: InterfaceListProps) {
   const auth = useSelector((state: RootState) => state.auth)
   const { repository, itf, itfs = [], mod } = props
   const classes = useStyles()
-
+  const { t } = useTranslation()
   const dangerousStyles: CSSProperties = { color: '#CC0000', fontWeight: 'bold', fontSize: 16, display: 'inline', margin: '0 4px' } // 给眼神不太好的同学专门的设计
 
   const handleDeleteModule: MouseEventHandler<HTMLButtonElement> = e => {
     e.preventDefault()
     const message = (
       <div style={{ width: 800 }}>
-        <div><div style={dangerousStyles}>模块</div>被删除后<div style={dangerousStyles}>不可恢复</div>！并且会删除<div style={dangerousStyles}>相关的接口</div>！</div>
         <div>
-          确认继续删除『#${mod.id} ${mod.name}
-          』吗？
+          <div style={dangerousStyles}>{t('Module')}</div>
+          {t('Deleted after')}
+          <div style={dangerousStyles}>{t('unrecoverable')}</div>
+          {t('! And will be deleted')}
+          <div style={dangerousStyles}>{t('The relevant interface')}</div>！</div>
+        <div>
+          {t('Confirm delete')}『#{mod.id} ${mod.name}』{ t('?')}
         </div>
       </div>
     )
     confirm({
-      title: '确认删除模块',
+      title: t('Confirm delete module'),
       content: message,
     }).then(() => {
       dispatch(
         deleteModule(
           props.mod.id,
           () => {
+            // TODO:
           },
-          repository!.id,
-        ),
+          repository!.id
+        )
       )
     })
   }
@@ -176,12 +187,12 @@ function InterfaceList(props: InterfaceListProps) {
     dispatch(
       sortInterfaceList(sortable.toArray(), mod.id, () => {
         /** empty */
-      }),
+      })
     )
   }
 
   if (repository.modules.length === 0) {
-    return <div style={{ height: 600 }}>请先添加模块</div>
+    return <div style={{ height: 600 }}>{t('Please add the module')}</div>
   }
 
 
@@ -196,11 +207,11 @@ function InterfaceList(props: InterfaceListProps) {
             color="primary"
             onClick={() => setInterfaceFormOpen(true)}
           >
-            新建接口
+            {t('Create Interface')}
           </Button>
 
           <InterfaceForm
-            title="新建接口"
+            title={t('Create Interface')}
             repository={repository}
             mod={mod}
             open={interfaceFormOpen}
@@ -209,19 +220,19 @@ function InterfaceList(props: InterfaceListProps) {
 
           <ButtonGroup fullWidth={true} size="medium">
             <Button variant="outlined" color="primary" onClick={() => setModuleFormOpen(true)}>
-              修改模块
+              {t('modify module')}
             </Button>
             <Button variant="outlined" color="primary" onClick={() => setMoveModuleFormOpen(true)}>
-              移动/复制
+              {t('Move/copy module')}
             </Button>
             <Button variant="outlined" color="primary" onClick={handleDeleteModule}>
-              删除模块
+              {t('Delete module')}
             </Button>
           </ButtonGroup>
 
           {moduleFormOpen && (
             <ModuleForm
-              title="修改模块"
+              title={t('modify module')}
               module={mod}
               repository={repository}
               open={moduleFormOpen}
@@ -231,7 +242,7 @@ function InterfaceList(props: InterfaceListProps) {
 
           {moveModuleFormOpen && (
             <MoveModuleForm
-              title="移动/复制模块"
+              title={t('Move/copy module')}
               mod={mod}
               repository={repository}
               open={moveModuleFormOpen}
@@ -265,8 +276,8 @@ function InterfaceList(props: InterfaceListProps) {
           </CustomScroll>
         </div>
       ) : (
-          <div className="alert alert-info">暂无接口，请新建</div>
-        )}
+        <div className="alert alert-info">{t('No interface, new, please')}</div>
+      )}
     </article>
   )
 }

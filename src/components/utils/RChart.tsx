@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Chart from 'chart.js'
+import Chart from 'chart.js/auto'
 
 class RChart extends Component<any, any> {
   static propTypes = {
@@ -27,6 +27,10 @@ class RChart extends Component<any, any> {
     return (
       <canvas ref={$canvas => { this.$canvas = $canvas }} width={width} height={height} />
     )
+  }
+  componentDidUpdate() {
+    this.$chart.data = this.props.data
+    this.$chart.update()
   }
   componentDidMount() {
     const ctx = this.$canvas.getContext('2d')

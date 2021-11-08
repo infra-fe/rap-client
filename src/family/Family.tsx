@@ -41,8 +41,8 @@ const Family: {
     if (!map) {
       return this
     }
-    // tslint:disable-next-line: forin
     for (const id in map) {
+      if (!map.hasOwnProperty(id)) { continue }
       _reducers[id] = map[id]
     }
     return this
@@ -63,8 +63,8 @@ const Family: {
     if (!sagas) {
       return this
     }
-    // tslint:disable-next-line: forin
     for (const pattern in sagas) {
+      if (!sagas.hasOwnProperty(pattern)) { continue }
       if (Array.isArray(sagas[pattern])) {
         sagas[pattern].forEach((saga: any) => this.addSaga(pattern, saga))
         continue
@@ -81,8 +81,8 @@ const Family: {
     if (!map) {
       return this
     }
-    // tslint:disable-next-line: forin
     for (const pathname in map) {
+      if (!map.hasOwnProperty(pathname)) { continue }
       this.addListener(pathname, map[pathname])
     }
     return this
@@ -113,7 +113,7 @@ const Family: {
       : [routerMiddleware, apiMiddleware, sagaMiddleware]
     const store = createStore<any, any, any, any>(
       combineReducers({ ..._reducers, router: connectRouter(history) }),
-      composeEnhancers(applyMiddleware(...middlewares)),
+      composeEnhancers(applyMiddleware(...middlewares))
     )
     // 初始化当前页所需的数据
     // @ts-ignore
@@ -150,8 +150,8 @@ const Family: {
         listeners: _listeners,
         location: history.location,
       })
-      // tslint:disable-next-line: forin
       for (const pattern in _sagas) {
+        if (!_sagas.hasOwnProperty(pattern)) { continue }
         for (const saga of _sagas[pattern]) {
           yield takeLatest(pattern, saga)
         }

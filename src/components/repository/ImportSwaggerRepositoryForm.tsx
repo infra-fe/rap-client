@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { FormControlLabel, RadioGroup, Radio } from '@material-ui/core'
@@ -41,7 +42,7 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }))
 
-const schema = Yup.object().shape<Partial<ImportSwagger>>({
+const schema = Yup.object().shape({
   docUrl: Yup.string(),
   swagger: Yup.string(),
 })
@@ -76,7 +77,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
   const classes = useStyles()
   const dispatch = useDispatch()
   const [alertOpen, setAlertOpen] = useState({ op: false, msg: '' })
-
+  const { t } = useTranslation()
   return (
     <section className={classes.section}>
       <Dialog
@@ -84,7 +85,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
         onClose={(_event, reason) => reason !== 'backdropClick' && onClose()}
         TransitionComponent={SlideUp}
       >
-        <DialogTitle>导入仓库</DialogTitle>
+        <DialogTitle>{t('Import repository')}</DialogTitle>
         <DialogContent dividers={true}>
           <div className={classes.form}>
             <Formik
@@ -103,7 +104,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
                     setAlertOpen({
                       op: true,
                       msg:
-                        '无法获取 Swagger 数据,请检查您的 Swagger 服务是否允许 CORS，或者使用直接粘贴 JSON 导入',
+                        t('Unable to obtain Swagger data, please check whether your Swagger service allows CORS, or use directly paste JSON import'),
                     })
                     actions.setSubmitting(false)
                     return
@@ -114,7 +115,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
                   } catch (error) {
                     setAlertOpen({
                       op: true,
-                      msg: '解析失败，不是有效的JSON，请检查 JSON 格式',
+                      msg: t('Parsing, failure is not a valid JSON, please check the JSON format'),
                     })
                     actions.setSubmitting(false)
                     return
@@ -133,14 +134,14 @@ function ImportSwaggerRepositoryForm(props: Props) {
                   dispatch(
                     importSwaggerRepository(importSwagger, (res: any) => {
                       if (res.isOk === 'success') {
-                        setAlertOpen({ op: true, msg: '导入成功' })
+                        setAlertOpen({ op: true, msg: t('Import success') })
                         window.location.reload()
                       } else {
-                        setAlertOpen({ op: true, msg: `导入失败，请检查文件格式，详细错误：${res.message}.` })
-                     }
+                        setAlertOpen({ op: true, msg: `${t('importFailed')}：${res.message}.` })
+                      }
                       onClose(true)
                       resolve(null)
-                    }),
+                    })
                   )
                 })
 
@@ -161,7 +162,12 @@ function ImportSwaggerRepositoryForm(props: Props) {
                           row={true}
                         >
                           <FormControlLabel disabled={isSubmitting} value={IMPORT_TYPE.SWAGGER_2_0} control={<Radio />} label="Swagger 2.0" />
-                          <FormControlLabel disabled={isSubmitting} value={IMPORT_TYPE.RAP2_ITF_BACKUP} control={<Radio />} label="RAP2接口备份JSON" />
+                          <FormControlLabel
+                            disabled={isSubmitting}
+                            value={IMPORT_TYPE.RAP2_ITF_BACKUP}
+                            control={<Radio />}
+                            label={t('RAP2 interface backup JSON')}
+                          />
                         </RadioGroup>
                       </div>
                       {values.version === IMPORT_TYPE.SWAGGER_2_0 &&
@@ -169,7 +175,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
                           <Field
                             placeholder=""
                             name="docUrl"
-                            label="从 Swagger URL 获取"
+                            label={t('From a Swagger URL')}
                             component={TextField}
                             fullWidth={true}
                             variant="outlined"
@@ -181,7 +187,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
                         <Field
                           placeholder=""
                           name="swagger"
-                          label={values.version === IMPORT_TYPE.SWAGGER_2_0 ? '或者直接粘贴 Swagger JSON' : '粘贴RAP2接口备份JSON'}
+                          label={values.version === IMPORT_TYPE.SWAGGER_2_0 ? `${t('copySwaggerJson')}` : `${t('copyRap2Json')}`}
                           component={TextField}
                           fullWidth={true}
                           multiline={true}
@@ -199,11 +205,11 @@ function ImportSwaggerRepositoryForm(props: Props) {
                         className="mr1"
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? '导入中，由于批量导入数据量较大请耐心稍等...' : '提交'}
+                        {isSubmitting ? `${t('importingMsg')}...` : `${t('submit')}`}
                       </Button>
                       {!isSubmitting && (
                         <Button onClick={() => onClose()} disabled={isSubmitting}>
-                          取消
+                          {t('cancel')}
                         </Button>
                       )}
                     </div>
@@ -220,7 +226,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">提示</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{t('prompt')}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description" className={classes.alert}>
             {alertOpen.msg}
@@ -228,7 +234,7 @@ function ImportSwaggerRepositoryForm(props: Props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setAlertOpen({ op: false, msg: '' })} color="primary">
-            确认
+            {t('confirm')}
           </Button>
         </DialogActions>
       </Dialog>

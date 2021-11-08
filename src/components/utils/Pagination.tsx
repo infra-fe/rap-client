@@ -5,13 +5,13 @@ import _ from 'lodash'
 import './Pagination.css'
 
 export const Pagination = ({ location, url = '', calculated, total, cursor = 1, limit = 10 }: {
-  location: any;
-  url?: any;
-  calculated: any;
-  total?: number;
-  cursor?: number;
-  limit?: number;
-  className?: string;
+  location: any
+  url?: any
+  calculated: any
+  total?: number
+  cursor?: number
+  limit?: number
+  className?: string
 }) => {
   if (location && !url) { url = location.pathname + location.hash + location.search }
   if (calculated) { ({ total, cursor, limit } = calculated) }
@@ -62,10 +62,11 @@ export const Pagination = ({ location, url = '', calculated, total, cursor = 1, 
           </li>
         }
 
-        {_.range(barStart, barEnd + 1).map(page =>
+        {_.range(barStart, barEnd + 1).map(page => (
           <li key={page} className={page === +cursor ? 'page-item-active' : 'page-item'}>
             <Link className="page-link" to={URI(url).setSearch({ cursor: page }).href()}>{page}</Link>
           </li>
+        )
         )}
 
         {barEnd < paging.pages - 1 &&

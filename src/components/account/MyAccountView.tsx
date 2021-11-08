@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'actions/types'
@@ -31,6 +32,7 @@ const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
 }))
 
 function MyAccountView() {
+  const {t} = useTranslation()
   const me = useSelector((state: RootState) => state.auth)
   const classes = useStyles()
   const [editing, setEditing] = useState(false)
@@ -51,25 +53,25 @@ function MyAccountView() {
               {me.fullname}
             </Typography>
             <Typography component="p">
-              这个家伙很懒还没有写签名....我们也不支持 。。。
+              {t('signature')}
             </Typography>
             <Typography gutterBottom={true} variant="subtitle1" component="h6" className={classes.title} >
-              昵称
-          </Typography>
+              {t('nickname')}
+            </Typography>
             <Typography component="p">
               {me.fullname}
             </Typography>
             <Typography gutterBottom={true} variant="subtitle1" component="h6" className={classes.title} >
-              账号 / 邮箱
-          </Typography>
+              {t('Account number/email address')}
+            </Typography>
             <Typography component="p">
               {me.email}
             </Typography>
           </CardContent>
         </CardActionArea>
         <CardActions>
-          <Button size="small" color="primary" onClick={() => setEditing(true)}>修改资料</Button>
-          <Button size="small" color="primary" onClick={() => dispatch(logout())}>退出登陆</Button>
+          <Button size="small" color="primary" onClick={() => setEditing(true)}>{t('Modify profile')}</Button>
+          <Button size="small" color="primary" onClick={() => dispatch(logout())}>{t('Logout')}</Button>
         </CardActions>
       </Card>
       {editing && <EditMyAccountDialog handleClose={onEditSubmit} />}

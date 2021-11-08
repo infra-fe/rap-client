@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { Paper, Theme, List, ListSubheader, makeStyles, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core'
 import Settings from '@material-ui/icons/Settings'
@@ -22,7 +23,7 @@ function MySettings(props: Props) {
   const classes = useStyles()
   const { data, onChange, isFetching } = props
   const [editingThemeTemplate, setEditingThemeTemplate] = useState(false)
-
+  const {t} = useTranslation()
   const themeId = data[CACHE_KEY.THEME_ID] as THEME_TEMPLATE_KEY || THEME_TEMPLATE_KEY.RED
 
   const handleClose = (themeId?: THEME_TEMPLATE_KEY) => {
@@ -32,12 +33,12 @@ function MySettings(props: Props) {
 
   return (
     <Paper className={classes.root}>
-      <List subheader={<ListSubheader>偏好设置</ListSubheader>}>
+      <List subheader={<ListSubheader>{t('Preferences')}</ListSubheader>}>
         <ListItem>
           <ListItemIcon>
             <Palette />
           </ListItemIcon>
-          <ListItemText primary="个性皮肤设置" />
+          <ListItemText primary={t('Skin Settings')} />
           <ListItemSecondaryAction>
             <IconButton disabled={isFetching} onClick={() => setEditingThemeTemplate(true)}>
               <Settings />

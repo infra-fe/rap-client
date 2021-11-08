@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
@@ -38,10 +39,6 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }))
 
-const schema = Yup.object().shape<Partial<Module>>({
-  name: Yup.string().required(YUP_MSG.REQUIRED).max(20, YUP_MSG.MAX_LENGTH(20)),
-  description: Yup.string().max(1000, YUP_MSG.MAX_LENGTH(1000)),
-})
 
 const FORM_STATE_INIT: Module = {
   id: 0,
@@ -64,7 +61,12 @@ function ModuleForm(props: Props) {
   const { open, onClose, module, title, repository } = props
   const classes = useStyles()
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
+  const msg = YUP_MSG(t)
+  const schema = Yup.object().shape({
+    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
+  })
   return (
     <Dialog
       open={open}
@@ -98,7 +100,7 @@ function ModuleForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="name"
-                        label="模块名称"
+                        label={t('The name of the module')}
                         component={TextField}
                         fullWidth={true}
                       />
@@ -106,7 +108,7 @@ function ModuleForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="description"
-                        label="模块简介"
+                        label={t('Introduction of the module')}
                         component={TextField}
                         multiline={true}
                         fullWidth={true}
@@ -121,13 +123,13 @@ function ModuleForm(props: Props) {
                       className="mr1"
                       disabled={isSubmitting}
                     >
-                      提交
+                      {t('submit')}
                     </Button>
                     <Button
                       onClick={() => onClose()}
                       disabled={isSubmitting}
                     >
-                      取消
+                      {t('cancel')}
                     </Button>
                   </div>
                 </Form>

@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import _ from 'lodash'
 import AccountService from '../../relatives/services/Account'
@@ -26,25 +27,30 @@ class MembersInput extends Component<any, any> {
   render() {
     return (
       <div className="TagsInput clearfix" onClick={() => this.$seed && this.$seed.focus()}>
-        {this.state.value.map((item: any) =>
+        {this.state.value.map((item: any) => (
           <span key={item.id} className="tag">
             <span className="label">{item.fullname}</span>
             <span className="remove" onClick={() => this.handleRemove(item)}><GoX /></span>
           </span>
+        )
         )}
         {(!this.state.limit || this.state.value.length < this.state.limit) &&
           <div className="dropdown">
-            <input
-              className="dropdown-input"
-              value={this.state.seed}
-              placeholder="花名或工号"
-              autoComplete="off"
-              onChange={e => this.handleSeed(e.target.value)}
-              ref={$seed => { this.$seed = $seed }}
-            />
+            <Translation>
+              {(t) => (
+                <input
+                  className="dropdown-input"
+                  value={this.state.seed}
+                  placeholder={t('Flower or working')}
+                  autoComplete="off"
+                  onChange={e => this.handleSeed(e.target.value)}
+                  ref={$seed => { this.$seed = $seed }}
+                />
+              )}
+            </Translation>
             {this.state.options.length ? (
               <div className="dropdown-menu" ref={$options => { this.$options = $options }}>
-                {this.state.options.map((item: any) =>
+                {this.state.options.map((item: any) => (
                   <button
                     key={item.id}
                     className="dropdown-item"
@@ -52,6 +58,7 @@ class MembersInput extends Component<any, any> {
                   >
                     {item.fullname} {item.empId} {item.email}
                   </button>
+                )
                 )}
               </div>
             ) : null}

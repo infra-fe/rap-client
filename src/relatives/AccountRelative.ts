@@ -6,9 +6,10 @@ import { StoreStateRouterLocationURI, replace, push } from '../family'
 import { RootState } from '../actions/types'
 import { showMessage, MSG_TYPE } from 'actions/common'
 import { THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
-import { CHANGE_THEME, DoUpdateUserSettingAction, updateUserSetting, UPDATE_USER_SETTING_SUCCESS, DO_UPDATE_USER_SETTING, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE } from '../actions/account'
+import { CHANGE_THEME, CHANGE_GUIDE, DoUpdateUserSettingAction, updateUserSetting, UPDATE_USER_SETTING_SUCCESS, DO_UPDATE_USER_SETTING, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE } from '../actions/account'
 import { AnyAction } from 'redux'
 import { createCommonDoActionSaga } from './effects/commonSagas'
+import { CACHE_KEY } from 'utils/consts'
 
 const relatives = {
   reducers: {
@@ -42,6 +43,15 @@ const relatives = {
     themeId(state: THEME_TEMPLATE_KEY = THEME_TEMPLATE_KEY.INDIGO, action: any) {
       switch (action.type) {
         case CHANGE_THEME:
+          return action.payload
+
+        default:
+          return state
+      }
+    },
+    guideOpen(state: boolean = false, action: any) {
+      switch (action.type) {
+        case CHANGE_GUIDE:
           return action.payload
 
         default:
@@ -134,9 +144,19 @@ const relatives = {
       cb && cb(true, resultAction.payload)
     },
     *[AccountAction.FETCH_USER_SETTINGS_SUCCESS](action: any) {
-      const themeId = action.payload?.data?.THEME_ID
-      if (themeId) {
-        yield put(AccountAction.changeTheme(themeId))
+      const { data } = action.payload
+      if (data) {
+        if ('THEME_ID' in data) {
+          const themeId = data.THEME_ID
+          yield put(AccountAction.changeTheme(themeId))
+        }
+        if ('GUIDE_20200714' in data) {
+          const guide = data.GUIDE_20200714
+          if (guide !== '1') {
+            yield put(AccountAction.changeGuide(true))
+            yield put(updateUserSetting(CACHE_KEY.GUIDE_20200714, '1') as AnyAction)
+          }
+        }
       }
     },
     *[CommonAction.refresh().type]() {
@@ -271,7 +291,7 @@ const relatives = {
     *[AccountAction.DO_UPDATE_ACCOUNT](action: ReturnType<typeof AccountAction.doUpdateAccount>) {
       console.log(`saga run`)
       yield createCommonDoActionSaga(AccountAction.updateAccount, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE)(action)
-    }
+    },
   },
   listeners: {
     '/account': [AccountAction.fetchUserList],

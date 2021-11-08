@@ -1,7 +1,7 @@
 import {
   call,
   put,
-  select
+  select,
 } from 'redux-saga/effects'
 import * as ModuleAction from '../../actions/module'
 import * as RepositoryAction from '../../actions/repository'
@@ -16,7 +16,6 @@ export function* addModule(action: any) {
     yield put(RepositoryAction.refreshRepository())
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(ModuleAction.addModuleFailed(e.message))
     if (action.onRejected) { action.onRejected() }
   }
@@ -40,7 +39,6 @@ export function* updateModule(action: any) {
     }))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(ModuleAction.updateModuleFailed(e.message))
     if (action.onRejected) { action.onRejected() }
   }
@@ -55,7 +53,6 @@ export function* moveModule(action: any) {
     yield put(RepositoryAction.refreshRepository())
     action.onResolved && action.onResolved()
   } catch (e) {
-    console.error(e.message)
     action.onRejected && action.onRejected()
   }
 }
@@ -69,7 +66,6 @@ export function* deleteModule(action: any) {
     yield put(RepositoryAction.refreshRepository())
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(ModuleAction.deleteModuleFailed(e.message))
   }
 }
@@ -80,7 +76,6 @@ export function* sortModuleList(action: any) {
     yield put(ModuleAction.sortModuleListSucceeded(count, action.ids))
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
-    console.error(e.message)
     yield put(ModuleAction.sortModuleListFailed(e.message))
   }
 }

@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import TagsInput from './TagsInput'
 import { mock } from 'mockjs'
@@ -22,13 +23,16 @@ class Example extends Component<any, any> {
   render() {
     return (
       <div>
-        <TagsInput
-          value={this.state.members}
-          options={this.state.options}
-          placeholder={'名字检索'}
-          onSeed={this.handleSeed}
-          onChange={this.handleChange}
-        />
+        <Translation>{(t) => (
+          <TagsInput
+            value={this.state.members}
+            options={this.state.options}
+            placeholder={t('Name to retrieve')}
+            onSeed={this.handleSeed}
+            onChange={this.handleChange}
+          />
+        )}
+        </Translation>
       </div>
     )
   }

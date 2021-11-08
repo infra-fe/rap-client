@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { lazy, Suspense } from 'react'
 
 import { Switch, Route } from './family'
@@ -52,6 +53,7 @@ const API = lazy(() => import(/* webpackChunkName: "./components/api/API" */ './
 const Utils = lazy(() => import(/* webpackChunkName: "./components/utils/Utils" */ './components/utils/Utils'))
 
 const Routes = () => {
+  const {t} = useTranslation()
   const auth = useSelector((state: RootState) => state.auth)
   const message = useSelector((state: RootState) => state.message)
   if (!auth) { return <Spin /> } // 渲染整站开屏动画，已经在 src/index 中实现。这里的代码用于支持没有接入 SSO 的情况。
@@ -72,7 +74,7 @@ const Routes = () => {
     <article className="Routes">
       <Message messageInfo={message} />
       <div className="btn-top" onClick={() => window.scrollTo(0, 0)}>
-        回到顶部
+        {t('BackTop')}
       </div>
       <Route component={Header} />
       <div className="body">

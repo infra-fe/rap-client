@@ -17,10 +17,6 @@ import AccountService from './relatives/services/Account'
 import { CACHE_KEY } from 'utils/consts'
 import { AnyAction } from 'redux'
 
-if (process.env.NODE_ENV !== 'production') {
-  const whyDidYouRender = require('@welldone-software/why-did-you-render/dist/no-classes-transpile/umd/whyDidYouRender.min.js')
-  whyDidYouRender(React)
-}
 // 渲染整站开屏动画
 function* renderOpeningScreenAdvertising() {
   yield new Promise((resolve) => {

@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { Link, StoreStateRouterLocationURI } from '../../family'
 import { GoAlert } from 'react-icons/go'
@@ -13,8 +14,8 @@ type DuplicatedInterfacesWarningProps = {
   router: RouterState
 }
 class DuplicatedInterfacesWarning extends Component<
-  DuplicatedInterfacesWarningProps,
-  DuplicatedInterfacesWarningState
+DuplicatedInterfacesWarningProps,
+DuplicatedInterfacesWarningState
 > {
   static contextTypes = {
     store: PropTypes.object,
@@ -79,7 +80,9 @@ class DuplicatedInterfacesWarning extends Component<
                   {index === 0 && (
                     <>
                       <GoAlert className="icon" />
-                      <span className="msg">警告：检测到 {duplicated.length} 组重复接口</span>
+                      <Translation>
+                        {(t) => <span className="msg">{t('Warning detected')}</span>}
+                      </Translation>
                     </>
                   )}
                   <span className="itf">
@@ -107,11 +110,13 @@ class DuplicatedInterfacesWarning extends Component<
                       })
                     }}
                   >
-                    {showMore ? '收起' : '展开'}
+                    <Translation>
+                      {(t) => showMore ? t('fold') : t('unfold')}
+                    </Translation>
                   </span>
                 )}
               </div>
-            ),
+            )
         )}
       </div>
     )

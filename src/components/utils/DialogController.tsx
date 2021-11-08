@@ -4,8 +4,8 @@ import Dialog from '../utils/Dialog'
 type DialogControllerProps = any
 type DialogControllerState = any
 class DialogController extends Component<
-  DialogControllerProps,
-  DialogControllerState
+DialogControllerProps,
+DialogControllerState
 > {
   constructor(props: any) {
     super(props)

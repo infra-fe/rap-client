@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -42,11 +43,11 @@ const useStyles = makeStyles(({ spacing }: Theme) =>
 )
 
 function DefaultValueModal({ open, handleClose, repositoryId, enqueueSnackbar }:
-  { open: boolean, handleClose: () => void, repositoryId: number } & WithSnackbarProps) {
+{ open: boolean; handleClose: () => void; repositoryId: number } & WithSnackbarProps) {
   const classes = useStyles()
   const [editingData, setEditingData] = useState<IDefaultVal[]>([])
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   useEffect(() => {
     dispatch(fetchDefaultVals(repositoryId))
   }, [dispatch, repositoryId])
@@ -96,25 +97,25 @@ function DefaultValueModal({ open, handleClose, repositoryId, enqueueSnackbar }:
           <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
             <CloseIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>默认值配置</Typography>
+          <Typography variant="h6" className={classes.title}>{t('The default configuration')}</Typography>
           <Button color="inherit" onClick={onSubmit}>
-            保存
-        </Button>
+            {t('save')}
+          </Button>
         </Toolbar>
       </AppBar>
       <DialogContent>
         <div className={classes.topHint}>
-          <Typography variant="body1"> 系统将根据变量名进行搜索，如果生成规则和初始值均未填写，系统才会对同名参数的Mock规则进行覆盖。</Typography>
+          <Typography variant="body1"> {t('System will be based on the variable name to search, if has not been generating rules and the initial value to fill in, system will Mock rules of parameters with the same coverage.')}</Typography>
         </div>
         <div className={classes.btn}>
-          <Button onClick={addNewLine} color="primary" variant="contained" size="small">添加一行</Button>
+          <Button onClick={addNewLine} color="primary" variant="contained" size="small">{t('Add a line')}</Button>
         </div>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>变量名</TableCell>
-              <TableCell>生成规则</TableCell>
-              <TableCell>初始值</TableCell>
+              <TableCell>{t('The variable name')}</TableCell>
+              <TableCell>{t('Generate rules')}</TableCell>
+              <TableCell>{t('Initial value')}</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
@@ -125,21 +126,21 @@ function DefaultValueModal({ open, handleClose, repositoryId, enqueueSnackbar }:
                   <TextField
                     value={row.name}
                     onChange={e => onChange('name', i, e.target.value)}
-                    placeholder="请输入变量名"
+                    placeholder={t('Please enter the variable name')}
                   />
                 </TableCell>
                 <TableCell>
                   <TextField
                     value={row.rule}
                     onChange={e => onChange('rule', i, e.target.value)}
-                    placeholder="请输入生成规则"
+                    placeholder={t('Please enter the generated rules')}
                   />
                 </TableCell>
                 <TableCell>
                   <TextField
                     value={row.value}
                     onChange={e => onChange('value', i, e.target.value)}
-                    placeholder="请输入初始值"
+                    placeholder={t('Please input the initial value')}
                   />
                 </TableCell>
                 <TableCell>

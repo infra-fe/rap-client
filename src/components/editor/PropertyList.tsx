@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component, PureComponent } from 'react'
 import { PropTypes, Link } from '../../family'
 import { Tree, SmartTextarea, RModal, RSortable, CopyToClipboard } from '../utils'
@@ -66,40 +67,44 @@ class SortableTreeTableHeader extends Component<any, any> {
   render() {
     const { editable, handleClickCreatePropertyButton } = this.props
     return (
-      <div className="SortableTreeTableHeader">
-        <div className="flex-row">
-          {/* DONE 2.1 每列增加帮助 Tip */}
-          <div className="th operations">
-            <Link
-              to=""
-              onClick={e => {
-                e.preventDefault()
-                handleClickCreatePropertyButton()
-              }}
-            >
-              {editable && <GoPlus className="fontsize-14 color-6" />}
-            </Link>
+      <Translation>
+        {(t) => (
+          <div className="SortableTreeTableHeader">
+            <div className="flex-row">
+              {/* DONE 2.1 每列增加帮助 Tip */}
+              <div className="th operations">
+                <Link
+                  to=""
+                  onClick={e => {
+                    e.preventDefault()
+                    handleClickCreatePropertyButton()
+                  }}
+                >
+                  {editable && <GoPlus className="fontsize-14 color-6" />}
+                </Link>
+              </div>
+              <div className="th name">{t('Name')}</div>
+              <div className="th type">{t('Required')}</div>
+              <div className="th type">{t('Type')}</div>
+              {/* TODO 2.3 规则编辑器 */}
+              <div className="th rule">
+                {t('Generate rules')}
+                <a
+                  href="https://github.com/nuysoft/Mock/wiki/Syntax-Specification"
+                  rel="noopener noreferrer"
+                  className="helper"
+                  target="_blank"
+                >
+                  <GoQuestion />
+                </a>
+              </div>
+              <div className="th value">{t('Initial value')}</div>
+              {/* 对象和数组也允许设置初始值 */}
+              <div className="th desc">{t('Introduction')}</div>
+            </div>
           </div>
-          <div className="th name">名称</div>
-          <div className="th type">必选</div>
-          <div className="th type">类型</div>
-          {/* TODO 2.3 规则编辑器 */}
-          <div className="th rule">
-            生成规则
-            <a
-              href="https://github.com/nuysoft/Mock/wiki/Syntax-Specification"
-              rel="noopener noreferrer"
-              className="helper"
-              target="_blank"
-            >
-              <GoQuestion />
-            </a>
-          </div>
-          <div className="th value">初始值</div>
-          {/* 对象和数组也允许设置初始值 */}
-          <div className="th desc">简介</div>
-        </div>
-      </div>
+        )}
+      </Translation>
     )
   }
 }
@@ -109,10 +114,12 @@ const PropertyLabel = (props: any) => {
   if (pos === 1) {
     return <span className="badge badge-danger">HEAD</span>
   } else if (pos === 3) {
-    return <>
-      <span className="badge badge-primary">BODY</span>
-      {itf?.bodyOption && <span style={{ color: '#CC0000' }}>{getBodyOptionStr(itf.bodyOption)}</span>}
-    </>
+    return (
+      <>
+        <span className="badge badge-primary">BODY</span>
+        {itf?.bodyOption && <span style={{ color: '#CC0000' }}>{getBodyOptionStr(itf.bodyOption)}</span>}
+      </>
+    )
   } else {
     return <span className="badge badge-secondary">QUERY</span>
   }
@@ -137,8 +144,8 @@ const getFormattedValue = (itf: any) => {
 }
 interface SortableTreeTableRowState {
   property: {
-    children: any[];
-    [k: string]: any;
+    children: any[]
+    [k: string]: any
   }
   interfaceId: number
   childrenAdded: boolean
@@ -247,8 +254,8 @@ class SortableTreeTableRow extends Component<SortableTreeTableRowProps, Sortable
                               {childrenIsExpanding ? (
                                 <GoChevronDown className="fontsize-14 color-6" />
                               ) : (
-                                  <GoChevronRight className="fontsize-14 color-6" />
-                                )}
+                                <GoChevronRight className="fontsize-14 color-6" />
+                              )}
                             </Link>
                           ) : null}
                         {editable && (
@@ -296,41 +303,45 @@ class SortableTreeTableRow extends Component<SortableTreeTableRowProps, Sortable
                             ) : null}
                           </>
                         ) : (
-                            <input
-                              ref={(input: HTMLInputElement) => {
-                                if (item.id === highlightId) {
-                                  this.focusNameInput = input
-                                }
+                          <input
+                            ref={(input: HTMLInputElement) => {
+                              if (item.id === highlightId) {
+                                this.focusNameInput = input
+                              }
+                            }}
+                            value={item.name}
+                            onChange={e => {
+                              handleChangePropertyField(item.id, 'name', e.target.value)
+                            }}
+                            onKeyPress={e => {
+                              if (e.ctrlKey === true && e.charCode === 13) {
+                                // auto fill by name
+                                // TODO:
+                              }
+                            }}
+                            className="form-control editable"
+                            spellCheck={false}
+                            placeholder=""
+                          />
+                        )}
+                      </div>
+                      <Translation>
+                        {(t) => (
+                          <div className={`td payload required type depth-${item.depth} nowrap`}>
+                            <Checkbox
+                              checked={!!item.required}
+                              disabled={!editable}
+                              onChange={e =>
+                                handleChangePropertyField(item.id, 'required', e.target.checked)
+                              }
+                              color="primary"
+                              inputProps={{
+                                'aria-label': t('Required'),
                               }}
-                              value={item.name}
-                              onChange={e => {
-                                handleChangePropertyField(item.id, 'name', e.target.value)
-                              }}
-                              onKeyPress={e => {
-                                if (e.ctrlKey === true && e.charCode === 13) {
-                                  // auto fill by name
-                                  // TODO:
-                                }
-                              }}
-                              className="form-control editable"
-                              spellCheck={false}
-                              placeholder=""
                             />
-                          )}
-                      </div>
-                      <div className={`td payload required type depth-${item.depth} nowrap`}>
-                        <Checkbox
-                          checked={!!item.required}
-                          disabled={!editable}
-                          onChange={e =>
-                            handleChangePropertyField(item.id, 'required', e.target.checked)
-                          }
-                          color="primary"
-                          inputProps={{
-                            'aria-label': '必选',
-                          }}
-                        />
-                      </div>
+                          </div>
+                        )}
+                      </Translation>
 
                       <div className="td payload type">
                         {!editable ? (
@@ -338,43 +349,43 @@ class SortableTreeTableRow extends Component<SortableTreeTableRowProps, Sortable
                             <span className="nowrap">{item.type}</span>
                           </CopyToClipboard>
                         ) : (
-                            <select
-                              value={item.type}
-                              onChange={e => {
-                                const type = e.target.value
-                                if (isNoValueType(type)) {
-                                  handleChangeProperty(item.id, {
-                                    value: '',
-                                    type,
-                                  })
-                                } else {
-                                  handleChangeProperty(item.id, { type })
-                                }
-                              }}
-                              className="form-control editable"
-                            >
-                              {TYPES.map(type => (
-                                <option key={type} value={type}>
-                                  {type}
-                                </option>
-                              ))}
-                            </select>
-                          )}
+                          <select
+                            value={item.type}
+                            onChange={e => {
+                              const type = e.target.value
+                              if (isNoValueType(type)) {
+                                handleChangeProperty(item.id, {
+                                  value: '',
+                                  type,
+                                })
+                              } else {
+                                handleChangeProperty(item.id, { type })
+                              }
+                            }}
+                            className="form-control editable"
+                          >
+                            {TYPES.map(type => (
+                              <option key={type} value={type}>
+                                {type}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
                       <div className="td payload rule nowrap">
                         {!editable ? (
                           <span className="nowrap">{item.rule}</span>
                         ) : (
-                            <input
-                              value={item.rule || ''}
-                              onChange={e =>
-                                handleChangePropertyField(item.id, 'rule', e.target.value)
-                              }
-                              className="form-control editable"
-                              spellCheck={false}
-                              placeholder=""
-                            />
-                          )}
+                          <input
+                            value={item.rule || ''}
+                            onChange={e =>
+                              handleChangePropertyField(item.id, 'rule', e.target.value)
+                            }
+                            className="form-control editable"
+                            spellCheck={false}
+                            placeholder=""
+                          />
+                        )}
                       </div>
                       <div className="td payload value">
                         {!editable ? (
@@ -382,18 +393,18 @@ class SortableTreeTableRow extends Component<SortableTreeTableRowProps, Sortable
                             <span className="value-container">{getFormattedValue(item)}</span>
                           </CopyToClipboard>
                         ) : (
-                            <SmartTextarea
-                              value={item.value || ''}
-                              onChange={(e: any) =>
-                                handleChangePropertyField(item.id, 'value', e.target.value)
-                              }
-                              disabled={isNoValueType(item.type) && !item.value}
-                              rows="1"
-                              className="form-control editable"
-                              spellCheck={false}
-                              placeholder=""
-                            />
-                          )}
+                          <SmartTextarea
+                            value={item.value || ''}
+                            onChange={(e: any) =>
+                              handleChangePropertyField(item.id, 'value', e.target.value)
+                            }
+                            disabled={isNoValueType(item.type) && !item.value}
+                            rows="1"
+                            className="form-control editable"
+                            spellCheck={false}
+                            placeholder=""
+                          />
+                        )}
                       </div>
                       <div className="td payload desc">
                         {!editable ? (
@@ -401,17 +412,17 @@ class SortableTreeTableRow extends Component<SortableTreeTableRowProps, Sortable
                             <span>{item.description}</span>
                           </CopyToClipboard>
                         ) : (
-                            <SmartTextarea
-                              value={item.description || ''}
-                              onChange={(e: any) =>
-                                handleChangePropertyField(item.id, 'description', e.target.value)
-                              }
-                              rows="1"
-                              className="form-control editable"
-                              spellCheck={false}
-                              placeholder=""
-                            />
-                          )}
+                          <SmartTextarea
+                            value={item.description || ''}
+                            onChange={(e: any) =>
+                              handleChangePropertyField(item.id, 'description', e.target.value)
+                            }
+                            rows="1"
+                            className="form-control editable"
+                            spellCheck={false}
+                            placeholder=""
+                          />
+                        )}
                       </div>
                     </div>
                     {item.children && item.children.length ? (
@@ -536,22 +547,26 @@ class PropertyList extends PureComponent<any, any> {
         <div className="header clearfix">
           <span className="title">{title || `${label}属性`}</span>
           <div className="toolbar">
-            <ButtonGroup size="small" color="primary">
-              {editable && [
-                <Button key={1} onClick={this.handleClickCreatePropertyButton}>
-                  新建
-                </Button>,
-                <Button key={2} onClick={this.handleClickImporterButton}>
-                  导入
-                </Button>,
-              ]}
-              <Button
-                className={this.state.previewer ? 'checked-button' : ''}
-                onClick={this.handleClickPreviewerButton}
-              >
-                预览
-              </Button>
-            </ButtonGroup>
+            <Translation>
+              {(t) => (
+                <ButtonGroup size="small" color="primary">
+                  {editable && [
+                    <Button key={1} onClick={this.handleClickCreatePropertyButton}>
+                      {t('Create')}
+                    </Button>,
+                    <Button key={2} onClick={this.handleClickImporterButton}>
+                      {t('Import')}
+                    </Button>,
+                  ]}
+                  <Button
+                    className={this.state.previewer ? 'checked-button' : ''}
+                    onClick={this.handleClickPreviewerButton}
+                  >
+                    {t('Preview')}
+                  </Button>
+                </ButtonGroup>
+              )}
+            </Translation>
           </div>
         </div>
         <div className="body">
@@ -585,41 +600,54 @@ class PropertyList extends PureComponent<any, any> {
           onClose={() => this.setState({ createProperty: false })}
           onResolve={this.handleCreatePropertySucceeded}
         >
-          <PropertyForm
-            title={`新建${label}属性`}
-            scope={scope}
-            repository={repository}
-            mod={mod}
-            interfaceId={interfaceId}
-          />
+          <Translation>
+            {(t) => (
+              <PropertyForm
+                title={`${t('Create')}${label}${t('attribute')}`}
+                scope={scope}
+                repository={repository}
+                mod={mod}
+                interfaceId={interfaceId}
+              />
+            )}
+          </Translation>
         </RModal>
         <RModal
           when={!!this.state.createChildProperty}
           onClose={() => this.setState({ createChildProperty: false })}
           onResolve={this.handleCreatePropertySucceeded}
         >
-          <PropertyForm
-            title={`新建${label}属性`}
-            scope={scope}
-            repository={repository}
-            mod={mod}
-            interfaceId={interfaceId}
-            parent={this.state.createChildProperty}
-          />
+          <Translation>
+            {(t) => (
+              <PropertyForm
+                title={`${t('Create')}${label}${t('attribute')}`}
+                scope={scope}
+                repository={repository}
+                mod={mod}
+                interfaceId={interfaceId}
+                parent={this.state.createChildProperty}
+              />
+            )}
+          </Translation>
         </RModal>
         <RModal
           when={this.state.importer}
           onClose={() => this.setState({ importer: false })}
           onResolve={this.handleCreatePropertySucceeded}
         >
-          <Importer
-            title={`导入${label}属性`}
-            repository={repository}
-            mod={mod}
-            interfaceId={interfaceId}
-            scope={scope}
-            pos={posFilter}
-          />
+          <Translation>
+            {(t) => (
+              <Importer
+
+                title={`${t('Import')}${label}${t('attribute')}`}
+                repository={repository}
+                mod={mod}
+                interfaceId={interfaceId}
+                scope={scope}
+                pos={posFilter}
+              />
+            )}
+          </Translation>
         </RModal>
       </section>
     )

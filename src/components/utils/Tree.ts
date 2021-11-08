@@ -109,6 +109,7 @@ const treeToJson = (tree: any) => {
       const v = eval('({ "val" :' + val + '})')
       return v.val
     } catch (ex) {
+      // eslint-disable-next-line no-console
       console.error(ex)
       return val
     }
@@ -120,17 +121,14 @@ const treeToJson = (tree: any) => {
   return result
 }
 
-export default {
-  arrayToTree,
-  treeToArray,
-  treeToJson: (tree: any) => {
-    try {
-      return treeToJson(tree)
-    } catch (e) {
-      return e.message
-    }
-  },
-  sort: (list: any) => {
-    return treeToArray(arrayToTree(list))
-  },
+export default { arrayToTree, treeToArray, treeToJson: (tree: any) => {
+  try {
+    return treeToJson(tree)
+  } catch (e) {
+    return e.message
+  }
+},
+sort: (list: any) => {
+  return treeToArray(arrayToTree(list))
+},
 }

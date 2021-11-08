@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, Link, StoreStateRouterLocationURI, connect } from '../../family'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
@@ -87,34 +88,40 @@ class DropdownMenuBase extends Component<any, any> {
     if (counter === 0) { return null }
     return (
       <div className="dropdown-menu">
-        {nextRespository.modules.map((mod: any, index: any, modules: any) =>
+        {nextRespository.modules.map((mod: any, index: any, modules: any) => (
           <div key={`mod-${mod.id}`}>
             <Link to={uri.setSearch({ mod: mod.id }).href()} onClick={onSelect} className="dropdown-item dropdown-item-module">
-              <span className="label">模块</span>
+              <Translation>
+                {(t) => <span className="label">{t('Module')}</span>}</Translation>
               <Highlight className="dropdown-item-clip" clip={mod.name} seed={seed} />
             </Link>
-            {mod.interfaces.map((itf: any) =>
+            {mod.interfaces.map((itf: any) => (
               <div key={`itf-${itf.id}`} >
                 <Link
                   to={uri.setSearch({ mod: itf.moduleId }).setSearch({ itf: itf.id }).href()}
                   onClick={onSelect}
                   className="dropdown-item dropdown-item-interface"
                 >
-                  <span className="label">接口</span>
+                  <Translation>
+                    {(t) => <span className="label">{t('API')}</span>}</Translation>
                   <Highlight className="dropdown-item-clip" clip={itf.name} seed={seed} />
                   <Highlight className="dropdown-item-clip" clip={itf.method} seed={seed} />
                   <Highlight className="dropdown-item-clip" clip={itf.url} seed={seed} />
                 </Link>
-                {itf.properties.map((property: any) =>
+                {itf.properties.map((property: any) => (
                   <Link key={`property-${property.id}`} to={uri.setSearch({ mod: property.moduleId }).setSearch({ itf: property.interfaceId }).href()} onClick={onSelect} className="dropdown-item dropdown-item-property">
-                    <span className="label">属性</span>
+                    <Translation>
+                      {(t) => <span className="label">{t('attribute')}</span>}</Translation>
                     <Highlight className="dropdown-item-clip" clip={property.name} seed={seed} />
                   </Link>
+                )
                 )}
               </div>
+            )
             )}
             {index < modules.length - 1 && <div className="dropdown-divider" />}
           </div>
+        )
         )}
       </div>
     )
@@ -141,27 +148,30 @@ class RepositorySearcher extends Component<any, IState> {
     const { seed, result } = this.state
 
     return (
-      <div className="RepositorySearcher dropdown">
-        <TextField
-          value={seed}
-          onChange={e => {
-            const val = e.target.value
-            this.setState({ seed: val })
-            this.debouncedInput(val.trim())
-          }}
-          style={{ backgroundColor: '#fafbfc', marginRight: 12 }}
-          className="dropdown-input form-control"
-          placeholder="检索名称或ID"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Search />
-              </InputAdornment>
-            ),
-          }}
-        />
-        {result && <DropdownMenu repository={repository} seed={result} onSelect={this.clearSeed} />}
-      </div>
+      <Translation>
+        {(t) => (
+          <div className="RepositorySearcher dropdown">
+            <TextField
+              value={seed}
+              onChange={e => {
+                const val = e.target.value
+                this.setState({ seed: val })
+                this.debouncedInput(val.trim())
+              }}
+              style={{ backgroundColor: '#fafbfc', marginRight: 12 }}
+              className="dropdown-input form-control"
+              placeholder={t('Search name or ID')}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            {result && <DropdownMenu repository={repository} seed={result} onSelect={this.clearSeed} />}
+          </div>
+        )}</Translation>
     )
   }
   clearSeed = () => {

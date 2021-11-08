@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { connect, Link, Mock, _, PropTypes } from '../../family'
 import { RCodeMirror } from '../utils/'
@@ -74,11 +75,11 @@ function mixItemsProperties(items: any) {
   }
 }
 type ImporterProps = {
-  rmodal?: any,
-  title?: any,
-  handleAddMemoryProperties: (...args: any[]) => any,
+  rmodal?: any
+  title?: any
+  handleAddMemoryProperties: (...args: any[]) => any
   interfaceId: number
-  [k: string]: any;
+  [k: string]: any
   pos: POS_TYPE
 }
 type ImporterState = {
@@ -103,7 +104,9 @@ class Importer extends Component<ImporterProps, ImporterState> {
         <div className="rmodal-header">
           <span className="rmodal-title">{this.props.title}</span>
           <Link to="" onClick={e => this.handleBeautify(e)}>
-            格式化
+            <Translation>
+              {(t) => t('formatting')}
+            </Translation>
           </Link>
         </div>
         <form className="form-horizontal w600" onSubmit={this.handleSubmit}>
@@ -119,12 +122,16 @@ class Importer extends Component<ImporterProps, ImporterState> {
             </div>
           </div>
           <div className="rmodal-footer">
-            <div className="form-group mb0">
-              <Button type="submit" style={{ marginRight: 8 }} variant="contained" color="primary">
-                提交
-              </Button>
-              <Button onClick={() => rmodal.close()} > 取消 </Button>
-            </div>
+            <Translation>
+              {(t) => (
+                <div className="form-group mb0">
+                  <Button type="submit" style={{ marginRight: 8 }} variant="contained" color="primary">
+                    {t('submit')}
+                  </Button>
+                  <Button onClick={() => rmodal.close()} > {t('cancel')} </Button>
+                </div>
+              )}
+            </Translation>
           </div>
         </form>
       </section>
@@ -141,7 +148,7 @@ class Importer extends Component<ImporterProps, ImporterState> {
       const beautified = JSON.stringify(result, null, 2)
       this.$rcm.cm.setValue(beautified)
     }
-  };
+  }
   // TODO 2.1 待完整测试各种输入
   // DONE 2.1 BUG 类型 Number，初始值 ''，被解析为随机字符串
   handleJSONSchema = (schema: any, parent = { id: -1 } as { id: number | string }, memoryProperties: any, siblings?: any) => {
@@ -219,7 +226,7 @@ class Importer extends Component<ImporterProps, ImporterState> {
       const siblings = schema.items.map((o: any) => o.properties.find((p: any) => p.name === item.name) || null)
       this.handleJSONSchema(item, property, memoryProperties, siblings)
     })
-  };
+  }
   // DONE 2.1 因为 setState() 是异步的，导致重复调用 handleAddMemoryProperty() 时最后保留最后一个临时属性
   handleSubmit = (e: any) => {
     e.preventDefault()
@@ -241,7 +248,7 @@ class Importer extends Component<ImporterProps, ImporterState> {
       const { rmodal } = this.context
       if (rmodal) { rmodal.resolve() }
     })
-  };
+  }
 }
 const mapStateToProps = (state: RootState) => ({
   auth: state.auth,

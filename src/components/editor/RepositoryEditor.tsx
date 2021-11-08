@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, connect, Link, replace, _ } from '../../family'
 import { serve } from '../../relatives/services/constant'
@@ -17,13 +18,13 @@ import { FaHistory } from 'react-icons/fa'
 import './RepositoryEditor.css'
 import ExportPostmanForm from '../repository/ExportPostmanForm'
 import ImportSwaggerRepositoryForm from '../repository/ImportSwaggerRepositoryForm'
-import { RootState, Repository, Module, Interface } from 'actions/types'
+import { RootState, Repository } from 'actions/types'
 import DefaultValueModal from './DefaultValueModal'
 import RapperInstallerModal from './RapperInstallerModal'
 import HistoryLogDrawer from './HistoryLogDrawer'
 import Joyride from 'react-joyride'
 import { Typography } from '@material-ui/core'
-import { doFetchUserSettings, updateUserSetting } from 'actions/account'
+import { doFetchUserSettings } from 'actions/account'
 import Markdown from 'markdown-to-jsx'
 import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
 
@@ -33,6 +34,7 @@ import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
 // TODO 2.1 大数据测试，含有大量模块、接口、属性的仓库
 
 interface Props {
+  guideOpen: any
   auth: any
   repository: any
   location: any
@@ -40,7 +42,6 @@ interface Props {
   replace: any
   router: any
   doFetchUserSettings: typeof doFetchUserSettings
-  updateUserSetting: typeof updateUserSetting
 }
 
 interface States {
@@ -50,7 +51,6 @@ interface States {
   update: boolean
   exportPostman: boolean
   importSwagger: boolean
-  guideOpen: boolean
 }
 
 // 展示组件
@@ -89,7 +89,6 @@ class RepositoryEditor extends Component<Props, States> {
       defaultValuesModalOpen: false,
       importSwagger: false,
       historyLogDrawerOpen: false,
-      guideOpen: false,
     }
   }
 
@@ -110,13 +109,7 @@ class RepositoryEditor extends Component<Props, States> {
 
   componentDidMount() {
     this.changeDocumentTitle()
-    this.props.doFetchUserSettings([CACHE_KEY.GUIDE_20200714], (isOk, payload) => {
-      const open = !payload.data?.GUIDE_20200714
-      if (open) {
-        this.setState({ guideOpen: true })
-        this.props.updateUserSetting(CACHE_KEY.GUIDE_20200714, '1')
-      }
-    })
+    this.props.doFetchUserSettings([CACHE_KEY.GUIDE_20200714])
   }
 
   componentWillUnmount() {
@@ -129,7 +122,13 @@ class RepositoryEditor extends Component<Props, States> {
     } = this.props
     const { repository: repositoryAsync } = this.props
     if (!repositoryAsync.fetching && !repositoryAsync.data) {
-      return <div className="p100 fontsize-30 text-center">未找到对应仓库</div>
+      return (
+        <Translation>{(t) => (
+          <div className="p100 fontsize-30 text-center">
+            {t('Corresponding to the repository was not found')}</div>
+        )}
+        </Translation>
+      )
     }
     if (repositoryAsync.fetching || !repositoryAsync.data || !repositoryAsync.data.id) {
       return <Spin />
@@ -162,174 +161,182 @@ class RepositoryEditor extends Component<Props, States> {
       : `/repository/joined?user=${repository.owner.id}`
 
     return (
-      <article className="RepositoryEditor">
-        <div className="header">
-          <span className="title">
-            <GoRepo className="mr6 color-9" />
-            <Link to={`${ownerlink}`} className="g-link">
-              {repository.organization ? repository.organization.name : repository.owner.fullname}
-            </Link>
-            <span className="slash"> / </span>
-            <span>{repository.name}</span>
-          </span>
-          <div className="toolbar">
-            {/* 编辑权限：拥有者或者成员 */}
-
-            {repository.canUserEdit ? (
-              <span className="g-link edit mr1" onClick={() => this.setState({ update: true })}>
-                <GoPencil /> 编辑
+      <Translation>
+        {(t) => (
+          <article className="RepositoryEditor">
+            <div className="header">
+              <span className="title">
+                <GoRepo className="mr6 color-9" />
+                <Link to={`${ownerlink}`} className="g-link">
+                  {repository.organization ? repository.organization.name : repository.owner.fullname}
+                </Link>
+                <span className="slash"> / </span>
+                <span>{repository.name}</span>
               </span>
-            ) : null}
-            <RepositoryForm
-              open={this.state.update}
-              onClose={ok => {
-                ok && this.handleUpdate()
-                this.setState({ update: false })
+              <div className="toolbar">
+                {/* 编辑权限：拥有者或者成员 */}
+
+                {repository.canUserEdit ? (
+                  <span className="g-link edit mr1" onClick={() => this.setState({ update: true })}>
+                    <GoPencil /> {t('Edit')}
+                  </span>
+                ) : null}
+                <RepositoryForm
+                  open={this.state.update}
+                  onClose={ok => {
+                    ok && this.handleUpdate()
+                    this.setState({ update: false })
+                  }}
+                  title={t('Edit the repository')}
+                  repository={repository}
+                />
+                <a
+                  href={`${serve}/app/plugin/${repository.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="g-link"
+                >
+                  <GoPlug /> {t('Plugin')}
+                </a>
+                <a
+                  href={`${serve}/repository/get?id=${repository.id}&token=${repository.token}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="g-link"
+                >
+                  <GoDatabase /> {t(' Data')}
+                </a>
+                <span className="g-link edit mr1" onClick={() => this.setState({ importSwagger: true })}>
+                  <GoLinkExternal /> {t('Import')}
+                </span>
+                <ImportSwaggerRepositoryForm
+                  open={this.state.importSwagger}
+                  onClose={ok => {
+                    ok && this.handleUpdate()
+                    this.setState({ importSwagger: false })
+                  }}
+                  repositoryId={repository.id}
+                  orgId={(repository.organization || {}).id}
+                  modId={+mod?.id || 0}
+                  mode="manual"
+                />
+                <span className="g-link edit mr1" onClick={() => this.setState({ exportPostman: true })}>
+                  <GoLinkExternal /> {t('Export')}
+                </span>
+                <ExportPostmanForm
+                  title={t('Export')}
+                  open={this.state.exportPostman}
+                  repoId={repository.id}
+                  onClose={() => this.setState({ exportPostman: false })}
+                />
+                <span
+                  className="g-link edit mr1"
+                  onClick={() => this.setState({ defaultValuesModalOpen: true })}
+                >
+                  <GoEllipsis /> {t('Default')}
+                </span>
+                <span
+                  className="g-link edit mr1 guide-1"
+                  onClick={() => this.setState({ historyLogDrawerOpen: true })}
+                >
+                  <FaHistory /> {t('History')}
+                </span>
+                <DefaultValueModal
+                  open={this.state.defaultValuesModalOpen}
+                  handleClose={() => this.setState({ defaultValuesModalOpen: false })}
+                  repositoryId={repository.id}
+                />
+                <HistoryLogDrawer
+                  open={this.state.historyLogDrawerOpen}
+                  onClose={() => this.setState({ historyLogDrawerOpen: false })}
+                  entityId={repository?.id}
+                  entityType={ENTITY_TYPE.REPOSITORY}
+                />
+                <span
+                  className="g-link edit"
+                  onClick={() => this.setState({ rapperInstallerModalOpen: true })}
+                >
+                  <GoCode /> Rapper
+                </span>
+                <RapperInstallerModal
+                  open={this.state.rapperInstallerModalOpen}
+                  handleClose={() => this.setState({ rapperInstallerModalOpen: false })}
+                  repository={repository}
+                />
+              </div>
+              <RepositorySearcher repository={repository} />
+              <div className="desc"><Markdown>{repository.description || ''}</Markdown></div>
+              {this.renderRelatedProjects()}
+              <DuplicatedInterfacesWarning repository={repository} />
+            </div>
+            <div className="body">
+              <ModuleList mods={repository.modules} repository={repository} mod={mod} />
+              <div className="InterfaceWrapper">
+                <InterfaceList itfs={mod?.interfaces || []} repository={repository} mod={mod} itf={itf} />
+                <InterfaceEditor itf={itf} mod={mod} repository={repository} />
+              </div>
+            </div>
+            <Joyride
+              continuous={true}
+              scrollToFirstStep={true}
+              showProgress={true}
+              showSkipButton={true}
+              run={this.props.guideOpen}
+              locale={{
+                skip: t('skip'),
+                next: t('The next step'),
+                back: t('The previous step'),
+                last: t('complete'),
               }}
-              title="编辑仓库"
-              repository={repository}
+              steps={[
+                {
+                  title: t('Historical records online'),
+                  disableBeacon: true,
+                  content: <Typography variant="h6">{t('Now you can view the project change history!')}</Typography>,
+                  placement: 'top',
+                  target: '.guide-1',
+                },
+                {
+                  title: t('Historical records online'),
+                  disableBeacon: true,
+                  content: <Typography variant="h6">{t('You can also check the records of all changes to the specified interface.')}</Typography>,
+                  placement: 'top',
+                  target: '.guide-2',
+                }, {
+                  title: t('Skin custom online'),
+                  disableBeacon: true,
+                  content: <Typography variant="h6">{t('In system preferences, choose a favorite color! Such as green?')}</Typography>,
+                  placement: 'top',
+                  target: '.guide-3',
+                },
+              ]}
             />
-            <a
-              href={`${serve}/app/plugin/${repository.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="g-link"
-            >
-              <GoPlug /> 插件
-            </a>
-            <a
-              href={`${serve}/repository/get?id=${repository.id}&token=${repository.token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="g-link"
-            >
-              <GoDatabase /> 数据
-            </a>
-            <span className="g-link edit mr1" onClick={() => this.setState({ importSwagger: true })}>
-              <GoLinkExternal /> 导入
-            </span>
-            <ImportSwaggerRepositoryForm
-              open={this.state.importSwagger}
-              onClose={ok => {
-                ok && this.handleUpdate()
-                this.setState({ importSwagger: false })
-              }}
-              repositoryId={repository.id}
-              orgId={(repository.organization || {}).id}
-              modId={+mod?.id || 0}
-              mode="manual"
-            />
-            <span className="g-link edit mr1" onClick={() => this.setState({ exportPostman: true })}>
-              <GoLinkExternal /> 导出
-            </span>
-            <ExportPostmanForm
-              title="导出"
-              open={this.state.exportPostman}
-              repoId={repository.id}
-              onClose={() => this.setState({ exportPostman: false })}
-            />
-            <span
-              className="g-link edit mr1"
-              onClick={() => this.setState({ defaultValuesModalOpen: true })}
-            >
-              <GoEllipsis /> 默认值
-            </span>
-            <span
-              className="g-link edit mr1 guide-1"
-              onClick={() => this.setState({ historyLogDrawerOpen: true })}
-            >
-              <FaHistory /> 历史
-            </span>
-            <DefaultValueModal
-              open={this.state.defaultValuesModalOpen}
-              handleClose={() => this.setState({ defaultValuesModalOpen: false })}
-              repositoryId={repository.id}
-            />
-            <HistoryLogDrawer
-              open={this.state.historyLogDrawerOpen}
-              onClose={() => this.setState({ historyLogDrawerOpen: false })}
-              entityId={repository?.id}
-              entityType={ENTITY_TYPE.REPOSITORY}
-            />
-            <span
-              className="g-link edit"
-              onClick={() => this.setState({ rapperInstallerModalOpen: true })}
-            >
-              <GoCode /> Rapper
-            </span>
-            <RapperInstallerModal
-              open={this.state.rapperInstallerModalOpen}
-              handleClose={() => this.setState({ rapperInstallerModalOpen: false })}
-              repository={repository}
-            />
-          </div>
-          <RepositorySearcher repository={repository} />
-          <div className="desc"><Markdown>{repository.description || ''}</Markdown></div>
-          {this.renderRelatedProjects()}
-          <DuplicatedInterfacesWarning repository={repository} />
-        </div>
-        <div className="body">
-          <ModuleList mods={repository.modules} repository={repository} mod={mod} />
-          <div className="InterfaceWrapper">
-            <InterfaceList itfs={mod?.interfaces || []} repository={repository} mod={mod} itf={itf} />
-            <InterfaceEditor itf={itf} mod={mod} repository={repository} />
-          </div>
-        </div>
-        <Joyride
-          continuous={true}
-          scrollToFirstStep={true}
-          showProgress={true}
-          showSkipButton={true}
-          run={this.state.guideOpen}
-          locale={{
-            skip: '跳过',
-            next: '下一步',
-            back: '上一步',
-            last: '完成',
-          }}
-          steps={[
-            {
-              title: '历史记录上线',
-              disableBeacon: true,
-              content: <Typography variant="h6">现在您可以查看项目修改历史了!</Typography>,
-              placement: 'top',
-              target: '.guide-1',
-            },
-            {
-              title: '历史记录上线',
-              disableBeacon: true,
-              content: <Typography variant="h6">您也可以查看指定接口的所有改动记录。</Typography>,
-              placement: 'top',
-              target: '.guide-2',
-            }, {
-              title: '皮肤自定义上线',
-              disableBeacon: true,
-              content: <Typography variant="h6">在系统偏好设置里，选择一个喜爱的颜色吧！比如原谅绿？</Typography>,
-              placement: 'top',
-              target: '.guide-3',
-            }
-          ]}
-        />
-      </article>
+          </article>
+        )}
+      </Translation>
     )
   }
   renderRelatedProjects() {
     const { repository } = this.props
     const { collaborators } = repository.data
     return (
-      <div className="RelatedProjects">
-        {collaborators &&
-          Array.isArray(collaborators) &&
-          collaborators.map(collab => (
-            <div className="CollabProject Project" key={`collab-${collab.id}`}>
-              <span className="title">
-                <GoVersions className="mr5" />
-                协同
-              </span>
-              <Link to={`/repository/editor?id=${collab.id}`}>{collab.name}</Link>
-            </div>
-          ))}
-      </div>
+      <Translation>
+        {(t) => (
+          <div className="RelatedProjects">
+            {collaborators &&
+              Array.isArray(collaborators) &&
+              collaborators.map(collab => (
+                <div className="CollabProject Project" key={`collab-${collab.id}`}>
+                  <span className="title">
+                    <GoVersions className="mr5" />
+                    {t('synergy')}
+                  </span>
+                  <Link to={`/repository/editor?id=${collab.id}`}>{collab.name}</Link>
+                </div>
+              ))}
+          </div>
+        )}
+      </Translation>
     )
   }
   handleUpdate = () => {
@@ -340,6 +347,7 @@ class RepositoryEditor extends Component<Props, States> {
 
 // 容器组件
 const mapStateToProps = (state: RootState) => ({
+  guideOpen: state.guideOpen,
   auth: state.auth,
   repository: state.repository,
   router: state.router,
@@ -365,6 +373,5 @@ const mapDispatchToProps = {
   onSortPropertyList: sortPropertyList,
   replace,
   doFetchUserSettings,
-  updateUserSetting,
 }
 export default connect(mapStateToProps, mapDispatchToProps)(RepositoryEditor)

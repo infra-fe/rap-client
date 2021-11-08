@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, useCallback, Fragment } from 'react'
 import ConfirmationDialog from 'components/common/ConfirmDialog'
 
@@ -17,20 +18,21 @@ interface GlobalContext {
   confirm: (options: CallOptions) => Promise<void>
 }
 
-const defaultOptions: Options = {
-  title: '确认',
-  content: '',
-  type: 'alert',
-}
 
 export const GlobalContext = React.createContext<GlobalContext>({
   alert: () => Promise.resolve(),
-  confirm: () => Promise.resolve()
+  confirm: () => Promise.resolve(),
 })
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useTranslation()
+  const defaultOptions: Options = {
+    title: t('confirm'),
+    content: '',
+    type: 'alert',
+  }
   const [options, setOptions] = useState<Options>({ ...defaultOptions })
-  const [resolveReject, setResolveReject] = useState<(() => void)[]>([])
+  const [resolveReject, setResolveReject] = useState<Array<() => void>>([])
   const [resolve, reject] = resolveReject
 
   const confirm = useCallback((options: CallOptions) => {

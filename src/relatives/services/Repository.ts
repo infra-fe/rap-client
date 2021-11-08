@@ -30,7 +30,7 @@ export default {
       `${serve}/repository/get?id=${id}&excludeProperty=true${
         token !== undefined ? `&token=${token}` : ''
       }`,
-      { ...CREDENTIALS },
+      { ...CREDENTIALS }
     )
       .then(res => res.json())
       .then(json => json.data)
@@ -90,7 +90,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  updateDefaultVals({ id, data }: { id: number, data: IDefaultVal[] }) {
+  updateDefaultVals({ id, data }: { id: number; data: IDefaultVal[] }) {
     return fetch(`${serve}/repository/defaultVal/update/${id}`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -100,9 +100,9 @@ export default {
       .then(res => res.json())
   },
   fetchHistoryLogs({ entityId, entityType, limit, offset }:
-    { entityId: number, entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY, limit: number, offset: number }) {
+  { entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; limit: number; offset: number }) {
     return fetch(`${serve}/${entityType === ENTITY_TYPE.INTERFACE ? 'interface' : 'repository'}/history/${entityId}?limit=${limit}&offset=${offset}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
-  }
+  },
 }

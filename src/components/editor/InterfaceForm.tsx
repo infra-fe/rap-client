@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
@@ -42,11 +43,6 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }))
 
-const schema = Yup.object().shape<Partial<Interface>>({
-  name: Yup.string().required(YUP_MSG.REQUIRED).max(20, YUP_MSG.MAX_LENGTH(20)),
-  description: Yup.string().max(1000, YUP_MSG.MAX_LENGTH(1000)),
-})
-
 const FORM_STATE_INIT: Interface = {
   id: 0,
   name: '',
@@ -73,7 +69,12 @@ function InterfaceForm(props: Props) {
   const classes = useStyles()
   const dispatch = useDispatch()
   const router = useSelector((state: RootState) => state.router)
-
+  const { t } = useTranslation()
+  const msg = YUP_MSG(t)
+  const schema = Yup.object().shape({
+    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
+  })
   return (
     <Dialog
       open={open}
@@ -118,7 +119,7 @@ function InterfaceForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="name"
-                        label="名称"
+                        label={t('Name')}
                         component={TextField}
                         fullWidth={true}
                       />
@@ -126,7 +127,7 @@ function InterfaceForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="url"
-                        label="URL地址"
+                        label={t('URL address')}
                         component={TextField}
                         fullWidth={true}
                       />
@@ -137,7 +138,7 @@ function InterfaceForm(props: Props) {
                           shrink={true}
                           htmlFor="method-label-placeholder"
                         >
-                          类型
+                          {t('Type')}
                         </InputLabel>
                         <Select
                           value={values.method}
@@ -160,7 +161,7 @@ function InterfaceForm(props: Props) {
                         shrink={true}
                         htmlFor="method-label-placeholder"
                       >
-                        状态码
+                        {t('Status code')}
                       </InputLabel>
                       <Select
                         value={values.status}
@@ -180,7 +181,7 @@ function InterfaceForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="description"
-                        label="说明"
+                        label={t('Instructions')}
                         component={TextField}
                         multiline={true}
                         fullWidth={true}
@@ -195,10 +196,10 @@ function InterfaceForm(props: Props) {
                       className="mr1"
                       disabled={isSubmitting}
                     >
-                      提交
+                      {t('submit')}
                     </Button>
                     <Button onClick={() => onClose()} disabled={isSubmitting}>
-                      取消
+                      {t('cancel')}
                     </Button>
                   </div>
                 </Form>

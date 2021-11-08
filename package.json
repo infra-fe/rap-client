@@ -1,82 +1,85 @@
 {
-  "name": "rap2-dolores",
+  "name": "rap-client",
   "version": "1.0.0",
-  "description": "",
+  "description": "rap-client react app",
   "main": "app.js",
   "scripts": {
     "build-css": "node ./node_modules/sass/sass src/:src/ --quiet",
     "watch-css": "npm run build-css && node ./node_modules/sass/sass src/:src/ --watch",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js --max-old-space-size=4096",
-    "build": "npm run lint && npm run build-css && react-scripts build",
-    "test-backup": "npm run lint && react-scripts test --env=jsdom",
-    "test": "npm run lint",
+    "build": "npm run build-css && react-scripts build",
+    "test-backup": "react-scripts test --env=jsdom",
+    "test": "tsc && npm run lint",
+    "lint": "echo \"lint checking...\" && eslint . --ext .ts,.tsx && echo \"tsc checking...\"",
     "eject": "react-scripts eject",
-    "lint": "tslint --project ./ -c tslint.json --fix",
     "build-docker": "docker build --rm -f \"Dockerfile\" -t rapteam/rap2-dolores:latest ."
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.alibaba-inc.com:thx/rap2-dolores.git"
+    "url": "git@github.com:infra-fe/rap-server.git"
   },
-  "author": "mozhi.gyy@alibaba-inc.com",
+  "author": "Libby, Bosn",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^4.12.1",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/pickers": "^3.2.10",
-    "@material-ui/styles": "^4.10.0",
-    "@types/json5": "^0.0.30",
-    "@welldone-software/why-did-you-render": "^4.2.5",
-    "animate.css": "3.7.2",
+    "@emotion/styled": "^11.3.0",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/pickers": "^3.3.10",
+    "@material-ui/styles": "^4.11.4",
+    "@mui/material": "^5.0.6",
+    "animate.css": "4.1.1",
     "awesome-debounce-promise": "^2.1.0",
-    "chart.js": "^2.9.3",
-    "classnames": "^2.2.6",
-    "clipboard-copy": "^3.1.0",
-    "codemirror": "5.49.0",
-    "connected-react-router": "^6.5.2",
+    "chart.js": "^3.6.0",
+    "classnames": "^2.3.1",
+    "clipboard-copy": "^4.0.1",
+    "codemirror": "5.63.3",
+    "connected-react-router": "^6.9.1",
     "debounce-promise": "^3.1.2",
-    "formik": "^2.2.6",
-    "formik-material-ui": "^2.0.1",
+    "formik": "^2.2.9",
+    "formik-material-ui": "^3.0.1",
     "graceful": "1.0.2",
     "history": "^4.10.1",
-    "jquery": "^3.4.1",
-    "json5": "^2.1.3",
-    "koa": "2.8.1",
-    "koa-router": "7.4.0",
-    "koa-session": "5.12.3",
+    "i18next": "^21.3.3",
+    "i18next-browser-languagedetector": "^6.1.2",
+    "jquery": "^3.6.0",
+    "json5": "^2.2.0",
+    "koa": "2.13.4",
+    "koa-router": "10.1.1",
+    "koa-session": "6.2.0",
     "koa-static": "5.0.0",
-    "lodash": "^4.17.19",
-    "markdown-to-jsx": "^6.11.4",
+    "lodash": "^4.17.21",
+    "markdown-to-jsx": "^7.1.3",
     "mockjs": "1.1.0",
-    "moment": "2.24.0",
-    "node-fetch": "2.6.1",
-    "normalizr": "^3.4.1",
-    "notistack": "^0.9.2",
+    "moment": "^2.29.1",
+    "node-fetch": "3.0.0",
+    "normalizr": "^3.6.1",
+    "notistack": "^2.0.2",
     "nprogress": "0.2.0",
-    "parsleyjs": "^2.9.1",
+    "parsleyjs": "^2.9.2",
     "popper.js": "^1.15.0",
     "prop-types": "15.7.2",
-    "rc-tooltip": "^3.7.3",
-    "react": "^16.13.1",
-    "react-custom-scroll": "^4.2.1",
-    "react-dom": "^16.13.1",
+    "rc-tooltip": "^5.1.1",
+    "react": "^17.0.2",
+    "react-custom-scroll": "^4.3.0",
+    "react-dom": "^17.0.2",
     "react-hotkeys": "^2.0.0",
-    "react-icons": "3.7.0",
-    "react-joyride": "^2.2.0",
-    "react-modal": "3.10.1",
-    "react-redux": "^7.2.0",
-    "react-router": "5.2.0",
+    "react-i18next": "^11.12.0",
+    "react-icons": "4.3.1",
+    "react-joyride": "^2.3.2",
+    "react-modal": "3.14.3",
+    "react-redux": "^7.2.6",
+    "react-router": "5.2.1",
     "react-router-config": "5.1.1",
-    "react-router-dom": "5.2.0",
-    "react-select": "^3.1.0",
-    "redux": "4.0.5",
+    "react-router-dom": "5.3.0",
+    "react-select": "^4.3.1",
+    "redux": "4.1.2",
     "redux-api-middleware": "^3.2.1",
     "redux-saga": "1.1.3",
-    "reselect": "^4.0.0",
-    "sortablejs": "1.10.0",
-    "urijs": ">=1.19.4",
-    "yup": "^0.27.0"
+    "reselect": "^4.1.1",
+    "sortablejs": "1.14.0",
+    "urijs": ">=1.19.7",
+    "yup": "^0.32.11"
   },
   "standard": {
     "parser": "babel-eslint",
@@ -88,40 +91,300 @@
     ]
   },
   "devDependencies": {
-    "@types/chart.js": "^2.9.22",
-    "@types/classnames": "^2.2.9",
-    "@types/codemirror": "^0.0.77",
-    "@types/history": "^4.7.3",
-    "@types/jest": "^24.0.18",
-    "@types/jquery": "^3.3.31",
-    "@types/lodash": "^4.14.140",
-    "@types/mockjs": "^1.0.2",
-    "@types/node": "^12.7.8",
+    "@types/chart.js": "^2.9.34",
+    "@types/classnames": "^2.3.0",
+    "@types/codemirror": "^5.60.5",
+    "@types/history": "^4.7.9",
+    "@types/jest": "^27.0.2",
+    "@types/jquery": "^3.5.8",
+    "@types/json5": "^0.0.30",
+    "@types/lodash": "^4.14.176",
+    "@types/mockjs": "^1.0.4",
+    "@types/node": "^16.11.6",
     "@types/nprogress": "^0.2.0",
-    "@types/rc-tooltip": "^3.7.1",
-    "@types/react": "^16.9.3",
-    "@types/react-dom": "^16.9.1",
-    "@types/react-modal": "^3.8.3",
-    "@types/react-redux": "^7.1.4",
-    "@types/react-router-config": "^5.0.1",
-    "@types/react-router-dom": "^5.1.0",
-    "@types/react-select": "^3.0.4",
-    "@types/sortablejs": "^1.7.2",
-    "@types/urijs": "^1.19.4",
-    "@types/yup": "^0.26.24",
-    "sass": "^1.23.2",
+    "@types/rc-tooltip": "^3.7.5",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@types/react-modal": "^3.13.1",
+    "@types/react-redux": "^7.1.20",
+    "@types/react-router-config": "^5.0.3",
+    "@types/react-router-dom": "^5.3.2",
+    "@types/react-select": "^5.0.0",
+    "@types/sortablejs": "^1.10.7",
+    "@types/urijs": "^1.19.17",
+    "@types/yup": "^0.29.13",
     "npm-run-all": "4.1.5",
     "pre-commit": "^1.2.2",
-    "react-scripts": "^3.1.2",
-    "standard": "14.3.1",
-    "tslint": "^6.1.2",
-    "tslint-react": "^5.0.0",
-    "tslint-react-hooks": "^2.2.2",
-    "typescript": "^3.9.6"
+    "react-scripts": "^4.0.3",
+    "sass": "^1.43.4",
+    "standard": "16.0.4",
+    "typescript": "^4.4.4"
   },
-  "pre-commit": [
-    "lint"
-  ],
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.ts?(x)"
+        ],
+        "rules": {
+          "@typescript-eslint/adjacent-overload-signatures": "error",
+          "@typescript-eslint/array-type": [
+            "error",
+            {
+              "default": "array-simple"
+            }
+          ],
+          "@typescript-eslint/ban-types": "error",
+          "@typescript-eslint/consistent-type-assertions": "error",
+          "@typescript-eslint/consistent-type-definitions": "off",
+          "@typescript-eslint/explicit-member-accessibility": [
+            "off",
+            {
+              "accessibility": "explicit"
+            }
+          ],
+          "@typescript-eslint/indent": [
+            "error",
+            2,
+            {
+              "FunctionDeclaration": {
+                "parameters": "first"
+              },
+              "FunctionExpression": {
+                "parameters": "first"
+              },
+              "SwitchCase": 1,
+              "MemberExpression": 1
+            }
+          ],
+          "@typescript-eslint/interface-name-prefix": "off",
+          "@typescript-eslint/member-delimiter-style": [
+            "error",
+            {
+              "multiline": {
+                "delimiter": "none",
+                "requireLast": true
+              },
+              "singleline": {
+                "delimiter": "semi",
+                "requireLast": false
+              }
+            }
+          ],
+          "@typescript-eslint/member-ordering": "off",
+          "@typescript-eslint/no-empty-function": "error",
+          "@typescript-eslint/no-empty-interface": "off",
+          "@typescript-eslint/no-explicit-any": "off",
+          "@typescript-eslint/no-inferrable-types": [
+            "error",
+            {
+              "ignoreParameters": true,
+              "ignoreProperties": true
+            }
+          ],
+          "@typescript-eslint/no-misused-new": "error",
+          "@typescript-eslint/no-namespace": "error",
+          "@typescript-eslint/no-parameter-properties": "off",
+          "@typescript-eslint/no-redeclare": "off",
+          "@typescript-eslint/no-require-imports": "off",
+          "@typescript-eslint/no-this-alias": "off",
+          "@typescript-eslint/no-use-before-declare": "off",
+          "@typescript-eslint/no-var-requires": "off",
+          "@typescript-eslint/prefer-for-of": "off",
+          "@typescript-eslint/prefer-function-type": "off",
+          "@typescript-eslint/prefer-namespace-keyword": "error",
+          "@typescript-eslint/quotes": [
+            "error",
+            "single",
+            {
+              "allowTemplateLiterals": true
+            }
+          ],
+          "@typescript-eslint/semi": [
+            "error",
+            "never"
+          ],
+          "@typescript-eslint/triple-slash-reference": "error",
+          "@typescript-eslint/type-annotation-spacing": "error",
+          "@typescript-eslint/unified-signatures": "error",
+          "arrow-body-style": "off",
+          "arrow-parens": [
+            "off",
+            "as-needed"
+          ],
+          "camelcase": "off",
+          "capitalized-comments": "off",
+          "complexity": "off",
+          "constructor-super": "error",
+          "curly": "error",
+          "dot-notation": "off",
+          "eol-last": "error",
+          "eqeqeq": [
+            "error",
+            "smart"
+          ],
+          "guard-for-in": "error",
+          "id-blacklist": "off",
+          "id-match": [
+            "error",
+            "^(?!(any|Number|number|String|string|Boolean|boolean|Undefined|undefined)$).*$",
+            {
+              "onlyDeclarations": true
+            }
+          ],
+          "import/order": "off",
+          "import/no-mutable-exports": "off",
+          "import/no-unused-modules": "off",
+          "import/no-cycle": "off",
+          "import/no-amd": "error",
+          "max-classes-per-file": "off",
+          "max-len": [
+            "error",
+            {
+              "ignorePattern": "^import |^export \\{(.*?)\\}|^[ ]*export const |`.*`|\".*\"",
+              "code": 150
+            }
+          ],
+          "new-parens": "error",
+          "no-bitwise": "error",
+          "no-caller": "error",
+          "no-cond-assign": "error",
+          "no-console": "off",
+          "no-debugger": "error",
+          "no-empty": "error",
+          "no-eval": "error",
+          "no-fallthrough": "off",
+          "no-import-side-effect": "off",
+          "no-invalid-this": "off",
+          "no-multiple-empty-lines": "error",
+          "no-new-wrappers": "error",
+          "no-null/no-null": "off",
+          "no-shadow": [
+            "off",
+            {
+              "hoist": "all"
+            }
+          ],
+          "no-throw-literal": "error",
+          "no-trailing-spaces": "error",
+          "no-undef-init": "error",
+          "no-underscore-dangle": [
+            "off"
+          ],
+          "no-unsafe-finally": "error",
+          "no-unused-expressions": "off",
+          "no-unused-labels": "error",
+          "no-var": "error",
+          "object-shorthand": "off",
+          "one-var": [
+            "off",
+            "never"
+          ],
+          "padding-line-between-statements": [
+            "off",
+            "error",
+            {
+              "blankLine": "always",
+              "prev": "*",
+              "next": "return"
+            }
+          ],
+          "prefer-const": "error",
+          "prefer-template": "off",
+          "quote-props": "off",
+          "radix": "error",
+          "space-before-function-paren": [
+            "error",
+            {
+              "anonymous": "never",
+              "asyncArrow": "always",
+              "named": "never"
+            }
+          ],
+          "spaced-comment": [
+            "error",
+            "always",
+            {
+              "markers": [
+                "/"
+              ]
+            }
+          ],
+          "use-isnan": "error",
+          "valid-typeof": "off",
+          "comma-dangle": [
+            "error",
+            {
+              "arrays": "always-multiline",
+              "objects": "always-multiline",
+              "imports": "always-multiline",
+              "exports": "always-multiline",
+              "functions": "never"
+            }
+          ],
+          "@typescript-eslint/typedef": "off",
+          "react-hooks/rules-of-hooks": "error",
+          "react-hooks/exhaustive-deps": "off",
+          "react/jsx-indent": "off",
+          "react/jsx-boolean-value": [
+            "error",
+            "always"
+          ],
+          "react/jsx-curly-spacing": [
+            "error",
+            {
+              "when": "never"
+            }
+          ],
+          "react/jsx-equals-spacing": [
+            2,
+            "never"
+          ],
+          "react/jsx-key": [
+            2,
+            {
+              "checkFragmentShorthand": true
+            }
+          ],
+          "react/no-string-refs": [
+            2,
+            {
+              "noTemplateLiterals": true
+            }
+          ],
+          "react/self-closing-comp": [
+            "error",
+            {
+              "component": true,
+              "html": false
+            }
+          ],
+          "react/jsx-wrap-multilines": [
+            2,
+            {
+              "declaration": "parens-new-line",
+              "assignment": "parens-new-line",
+              "return": "parens-new-line",
+              "arrow": "parens-new-line",
+              "condition": "ignore",
+              "logical": "ignore",
+              "prop": "ignore"
+            }
+          ],
+          "react/no-this-in-sfc": "error",
+          "react/no-unsafe": "error",
+          "react/no-typos": "error",
+          "react/display-name": "off",
+          "react/prop-types": "off",
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
+  },
   "browserslist": {
     "production": [
       ">0.2%",

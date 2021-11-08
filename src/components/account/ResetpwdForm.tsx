@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import config from '../../config'
@@ -66,7 +67,7 @@ export default function ResetpwdForm() {
   const email = uri.search(true).email
   const code = uri.search(true).code
   const token = uri.search(true).token
-
+  const {t} = useTranslation()
   const handleSubmit = (e?: any) => {
     e && e.preventDefault()
     if (!password) {
@@ -87,15 +88,15 @@ export default function ResetpwdForm() {
     <div className={classes.root}>
       <Paper className={classes.container}>
         <List>
-        <ListItem>
-            <h2>为您的账号重置密码</h2>
+          <ListItem>
+            <h2>{t('To reset your account password')}</h2>
           </ListItem>
           <ListItem>
-          {email}
+            {email}
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="password">重置密码</InputLabel>
+              <InputLabel htmlFor="password">{t('To reset your password')}</InputLabel>
               <Input
                 tabIndex={1}
                 name="password"
@@ -117,7 +118,7 @@ export default function ResetpwdForm() {
           </ListItem>
           <ListItem>
             <FormControl fullWidth={true}>
-              <InputLabel htmlFor="captcha">验证码</InputLabel>
+              <InputLabel htmlFor="captcha">{t('Verification code')}</InputLabel>
               <Input
                 tabIndex={2}
                 name="captcha"
@@ -141,8 +142,10 @@ export default function ResetpwdForm() {
               <Refresh />
             </div>
             <div className={classes.buttonWrapper}>
-              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>取消</Button>
-              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>重置密码</Button>
+              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>
+                {t('cancel')}
+              </Button>
+              <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>{t('To reset your password')}</Button>
             </div>
           </ListItem>
         </List>

@@ -178,10 +178,10 @@ export default {
               modules: modules.map((mod: any) =>
                 mod.id === itf.moduleId
                   ? {
-                      ...mod,
-                      interfaces: [...mod.interfaces, itf],
-                    }
-                  : mod,
+                    ...mod,
+                    interfaces: [...mod.interfaces, itf],
+                  }
+                  : mod
               ),
             },
           }
@@ -195,11 +195,11 @@ export default {
               modules: modules.map((x: any) =>
                 x.id === mod.id
                   ? {
-                      ...x,
-                      name: mod.name,
-                      description: mod.description,
-                    }
-                  : x,
+                    ...x,
+                    name: mod.name,
+                    description: mod.description,
+                  }
+                  : x
               ),
             },
           }
@@ -218,12 +218,12 @@ export default {
               modules: modules.map((mod: any) =>
                 mod.id === moduleId
                   ? {
-                      ...mod,
-                      interfaces: [...mod.interfaces].sort(
-                        (a: any, b: any) => itfIdsMap[a.id] - itfIdsMap[b.id],
-                      ),
-                    }
-                  : mod,
+                    ...mod,
+                    interfaces: [...mod.interfaces].sort(
+                      (a: any, b: any) => itfIdsMap[a.id] - itfIdsMap[b.id]
+                    ),
+                  }
+                  : mod
               ),
             },
           }
@@ -240,7 +240,7 @@ export default {
             data: {
               ...state.data,
               modules: [...modules].sort(
-                (a: any, b: any) => moduleIdsMap[a.id] - moduleIdsMap[b.id],
+                (a: any, b: any) => moduleIdsMap[a.id] - moduleIdsMap[b.id]
               ),
             },
           }

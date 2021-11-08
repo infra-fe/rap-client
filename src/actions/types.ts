@@ -29,6 +29,7 @@ export interface RootState {
   userSettingsIsUpdating: boolean
 
   themeId: THEME_TEMPLATE_KEY
+  guideOpen: boolean
 }
 
 export interface Organization {

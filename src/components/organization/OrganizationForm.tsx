@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import RadioList from '../utils/RadioList'
@@ -44,10 +45,6 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }))
 
-const schema = Yup.object().shape<Partial<Organization>>({
-  name: Yup.string().required(YUP_MSG.REQUIRED).max(20, YUP_MSG.MAX_LENGTH(20)),
-  description: Yup.string().max(1000, YUP_MSG.MAX_LENGTH(1000)),
-})
 
 const FORM_STATE_INIT: Organization = {
   id: 0,
@@ -68,14 +65,19 @@ function OrganizationForm(props: Props) {
   const auth = useSelector((state: RootState) => state.auth)
   const classes = useStyles()
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
+  const msg = YUP_MSG(t)
+  const schema = Yup.object().shape({
+    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
+  })
   return (
     <Dialog
       open={open}
       onClose={(_event, reason) => (reason !== 'backdropClick' && onClose())}
       TransitionComponent={SlideUp}
     >
-      <DialogTitle>新建团队</DialogTitle>
+      <DialogTitle>{t('create team')}</DialogTitle>
       <DialogContent dividers={true}>
         <div className={classes.form}>
           <Formik
@@ -98,7 +100,7 @@ function OrganizationForm(props: Props) {
               }))
             }}
             render={({ isSubmitting, setFieldValue, values }) => {
-              function loadUserOptions(input: string): Promise<{ label: string, value: number }[]> {
+              function loadUserOptions(input: string): Promise<Array<{ label: string; value: number }>> {
                 return new Promise(async (resolve) => {
                   const users = await AccountService.fetchUserList({ name: input })
                   const options = _.differenceWith(users.data, values.members || [], _.isEqual)
@@ -108,22 +110,22 @@ function OrganizationForm(props: Props) {
               const newOwner = values.newOwner
                 ? [{ label: values.newOwner.fullname, value: values.newOwner.id }]
                 : values.owner
-                ? [{ label: values.owner.fullname, value: values.owner.id }]
-                : []
+                  ? [{ label: values.owner.fullname, value: values.owner.id }]
+                  : []
               return (
                 <Form>
                   <div className="rmodal-body">
                     {values.id > 0 &&
                       <div className={classes.formItem}>
-                        <div className={classes.formTitle}>项目Owner</div>
+                        <div className={classes.formTitle}>{t('The project Owner')}</div>
                         {values.owner && (values.owner.id === auth.id)
                           ? <UserList
                             isMulti={false}
                             value={newOwner}
                             loadOptions={loadUserOptions}
                             onChange={(users: any) => {
-                            setFieldValue('newOwner', users[0])
-                          }}
+                              setFieldValue('newOwner', users[0])
+                            }}
                           />
                           : <div className="pt7 pl9">{values.owner!.fullname}</div>
                         }
@@ -131,7 +133,7 @@ function OrganizationForm(props: Props) {
                     }
                     <div className={classes.formItem}>
                       <RadioList
-                        data={FORM.RADIO_LIST_DATA_VISIBILITY}
+                        data={FORM(t).RADIO_LIST_DATA_VISIBILITY}
                         curVal={values.visibility}
                         name="visibility"
                         onChange={(val: any) => setFieldValue('visibility', val)}
@@ -140,7 +142,7 @@ function OrganizationForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="name"
-                        label="团队名称"
+                        label={t('The name of the team')}
                         component={TextField}
                         fullWidth={true}
                       />
@@ -148,13 +150,13 @@ function OrganizationForm(props: Props) {
                     <div className={classes.formItem}>
                       <Field
                         name="description"
-                        label="描述"
+                        label={t('Describe')}
                         component={TextField}
                         fullWidth={true}
                       />
                     </div>
                     <div className={classes.formItem}>
-                      <div className={classes.formTitle}>团队成员</div>
+                      <div className={classes.formTitle}>{t('The team members')}</div>
                       <UserList
                         isMulti={true}
                         loadOptions={loadUserOptions}
@@ -164,8 +166,8 @@ function OrganizationForm(props: Props) {
                     </div>
                   </div>
                   <div className={classes.ctl}>
-                    <Button type="submit" variant="contained" color="primary" className="mr1" disabled={isSubmitting}>提交</Button>
-                    <Button onClick={() => onClose()} disabled={isSubmitting}>取消</Button>
+                    <Button type="submit" variant="contained" color="primary" className="mr1" disabled={isSubmitting}>{t('submit')}</Button>
+                    <Button onClick={() => onClose()} disabled={isSubmitting}>{t('cancel')}</Button>
                   </div>
                 </Form>
               )

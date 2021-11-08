@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { RChart } from '../utils/'
@@ -53,44 +54,49 @@ class Status extends Component<any, any> {
       ['接口', interfaces.pagination.total, '个'],
     ]
     return (
-      <article className="Status">
-        {/* <div className='header'><span className='title'>分析和报告</span></div> */}
-        <div className="body">
-          <div className="row mb20">
-            {dict.map(([name, value, unit]) =>
-              <div key={name}>
-                <Card className="card">
-                  <div className="card-block">
-                    <div className="card-title name">{name}</div>
-                    <div>
-                      <span className="value techfont">{value}</span>
-                      <span className="unit">{unit}</span>
-                    </div>
+      <Translation>
+        {(t) => (
+          <article className="Status">
+            {/* <div className='header'><span className='title'>分析和报告</span></div> */}
+            <div className="body">
+              <div className="row mb20">
+                {dict.map(([name, value, unit]) => (
+                  <div key={name}>
+                    <Card className="card">
+                      <div className="card-block">
+                        <div className="card-title name">{t(name)}</div>
+                        <div>
+                          <span className="value techfont">{value}</span>
+                          <span className="unit">{t(unit)}</span>
+                        </div>
+                      </div>
+                    </Card>
                   </div>
+                )
+                )}
+              </div>
+              <div className="row">
+                <Card className="chart">
+                  <div className="header"><span className="title">{t('New repositories recent 30 days')}</span></div>
+                  <RChart type="line" data={this.adapt(analyticsRepositoriesCreated, t('new repositories'))} options={{}} />
+                </Card>
+                <Card className="chart">
+                  <div className="header"><span className="title">{t('Active repositories recent 30 days')}</span></div>
+                  <RChart type="line" data={this.adapt(analyticsRepositoriesUpdated, t('active repositories'))} options={{}} />
+                </Card>
+                <Card className="chart">
+                  <div className="header"><span className="title">{t('Active users ranking recent 30 days')}</span></div>
+                  <RChart type="bar" data={this.adapt(analyticsUsersActivation, t('operation'))} options={{}} />
+                </Card>
+                <Card className="chart">
+                  <div className="header"><span className="title">{t('Active repositories ranking recent 30 days')}</span></div>
+                  <RChart type="bar" data={this.adapt(analyticsRepositoriesActivation, t('operation'))} options={{}} />
                 </Card>
               </div>
-            )}
-          </div>
-          <div className="row">
-            <Card className="chart">
-              <div className="header"><span className="title">最近 30 天新建仓库数</span></div>
-              <RChart type="line" data={this.adapt(analyticsRepositoriesCreated, '新建仓库数')} options={{}} />
-            </Card>
-            <Card className="chart">
-              <div className="header"><span className="title">最近 30 天活跃仓库数</span></div>
-              <RChart type="line" data={this.adapt(analyticsRepositoriesUpdated, '活跃仓库数')} options={{}} />
-            </Card>
-            <Card className="chart">
-              <div className="header"><span className="title">最近 30 天活跃用户排行</span></div>
-              <RChart type="horizontalBar" data={this.adapt(analyticsUsersActivation, '操作')} options={{}} />
-            </Card>
-            <Card className="chart">
-              <div className="header"><span className="title">最近 30 天活跃仓库排行</span></div>
-              <RChart type="horizontalBar" data={this.adapt(analyticsRepositoriesActivation, '操作')} options={{}} />
-            </Card>
-          </div>
-        </div>
-      </article>
+            </div>
+          </article>
+        )}
+      </Translation>
     )
   }
 }

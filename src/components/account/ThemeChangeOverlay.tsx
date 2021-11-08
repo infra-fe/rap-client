@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
 import { grey, red, pink, purple, orange, blue, green, cyan, indigo } from '@material-ui/core/colors'
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Theme } from '@material-ui/core'
@@ -66,6 +67,7 @@ function ThemeChangeOverlay(props: Props) {
   const [themeId, setThemeId] = useState(THEME_TEMPLATE_KEY.INDIGO)
   const dispatch = useDispatch()
   const classes = useStyles()
+  const { t } = useTranslation()
   const onChange = (themeId: THEME_TEMPLATE_KEY) => {
     setThemeId(themeId)
     dispatch(changeTheme(themeId))
@@ -76,27 +78,28 @@ function ThemeChangeOverlay(props: Props) {
   return (
     <div>
       <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">换肤</DialogTitle>
+        <DialogTitle id="form-dialog-title">{t('Change the skin')}</DialogTitle>
         <DialogContent>
-          <DialogContentText> 请选择喜爱的皮肤 </DialogContentText>
+          <DialogContentText> {t('Please select a favorite skin')} </DialogContentText>
           <div className={classes.themeOptionList}>
-            {THEME_TEMPLATE_KEY_LIST.map(key => ({ ...THEME_TEMPLATES[key], key })).map(template =>
+            {THEME_TEMPLATE_KEY_LIST.map(key => ({ ...THEME_TEMPLATES[key], key })).map(template => (
               <ThemeTemplateOption
                 key={template.key}
                 ke={template.key}
                 selected={template.key === themeId}
-                name={template.name}
+                name={t(template.name)}
                 color={(template.theme.palette!.primary as SimplePaletteColorOptions).main}
                 onChange={onChange}
-              />)}
+              />
+            ))}
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleClose()} color="primary">
-            取消
+            {t('cancel')}
           </Button>
           <Button onClick={() => handleClose(themeId)} color="primary">
-            确定
+            {t('confirm')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -105,19 +108,18 @@ function ThemeChangeOverlay(props: Props) {
 }
 
 
-
-export const THEME_TEMPLATES: { [key: string]: { theme: ThemeOptions, name: string } } = {
+export const THEME_TEMPLATES: { [key: string]: { theme: ThemeOptions; name: string } } = {
   [THEME_TEMPLATE_KEY.INDIGO]: {
     name: '沉靛蓝',
     theme: {
       palette: {
         primary: {
           main: indigo[500],
-          light: indigo[300]
+          light: indigo[300],
         },
         secondary: pink,
-      }
-    }
+      },
+    },
   },
   [THEME_TEMPLATE_KEY.RED]: {
     name: '火焰红',
@@ -234,7 +236,7 @@ export const THEME_TEMPLATES: { [key: string]: { theme: ThemeOptions, name: stri
 }
 
 const ThemeTemplateOption = ({ ke, name, color, selected, onChange }:
-  { ke: THEME_TEMPLATE_KEY, name: string, color: string, selected: boolean, onChange: (themeId: THEME_TEMPLATE_KEY) => void }) => {
+{ ke: THEME_TEMPLATE_KEY; name: string; color: string; selected: boolean; onChange: (themeId: THEME_TEMPLATE_KEY) => void }) => {
   const classes = useStyles()
   return (
     <div onClick={() => onChange(ke)} className={classnames(classes.themeOption, selected ? classes.themeOptionOn : null)}>

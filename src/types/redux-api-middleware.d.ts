@@ -10,7 +10,7 @@ declare module 'redux-api-middleware' {
    */
   export const RSAA: string
 
-  //// ERRORS
+  /// / ERRORS
 
   /**
    * Error class for an RSAA that does not conform to the RSAA definition
@@ -71,12 +71,12 @@ declare module 'redux-api-middleware' {
     constructor(status: number, statusText: string, response: any)
   }
 
-  //// VALIDATION
+  /// / VALIDATION
 
   /**
    * Is the given action a plain JavaScript object with a [RSAA] property?
    */
-  export function isRSAA(action: object): action is RSAAction<any, any, any>
+  export function isRSAA(action: any): action is RSAAction<any, any, any>
 
   export interface TypeDescriptor<TSymbol> {
     type: string | TSymbol
@@ -87,27 +87,27 @@ declare module 'redux-api-middleware' {
   /**
    * Is the given object a valid type descriptor?
    */
-  export function isValidTypeDescriptor(obj: object): obj is TypeDescriptor<any>
+  export function isValidTypeDescriptor(obj: any): obj is TypeDescriptor<any>
 
   /**
    * Checks an action against the RSAA definition, returning a (possibly empty)
    * array of validation errors.
    */
-  function validateRSAA(action: object): string[]
+  function validateRSAA(action: any): string[]
 
   /**
    * Is the given action a valid RSAA?
    */
-  function isValidRSAA(action: object): boolean
+  function isValidRSAA(action: any): boolean
 
-  //// MIDDLEWARE
+  /// / MIDDLEWARE
 
   /**
    * A Redux middleware that processes RSAA actions.
    */
   export const apiMiddleware: Middleware
 
-  //// UTIL
+  /// / UTIL
 
   /**
    * Extract JSON body from a server response
@@ -143,6 +143,6 @@ declare module 'redux-api-middleware' {
     headers?: { [propName: string]: string } // or function
     credentials?: 'omit' | 'same-origin' | 'include'
     bailout?: boolean // or function
-    types: Array<string | object>
+    types: Array<string | any>
   }
 }

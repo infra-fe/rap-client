@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import copy from 'clipboard-copy'
 import * as React from 'react'
 import Tooltip from 'rc-tooltip'
@@ -8,9 +9,9 @@ import { withSnackbar, WithSnackbarProps } from 'notistack'
 import './CopyToClipboard.css'
 
 type Props = {
-  children: React.ReactElement<any>;
-  text: string;
-  type?: 'hover' | 'right';
+  children: React.ReactElement<any>
+  text: string
+  type?: 'hover' | 'right'
 } & WithSnackbarProps
 
 interface OwnState {
@@ -22,35 +23,38 @@ class CopyToClipboard extends React.Component<Props, OwnState> {
 
   public render() {
     const { type = 'hover', text } = this.props
-    return type === 'hover' ? (
-      <Tooltip
-        placement="right"
-        overlay={
-          <div
-            style={{ cursor: 'pointer', color: '#fff', padding: '8px 10px' }}
-            onClick={() => this.onCopy(text)}
+    return (
+      <Translation>
+        {(t) => type === 'hover' ? (
+          <Tooltip
+            placement="right"
+            overlay={
+              <div
+                style={{ cursor: 'pointer', color: '#fff', padding: '8px 10px' }}
+                onClick={() => this.onCopy(text, t)}
+              >
+                {t('copy')}
+              </div>
+            }
+            mouseLeaveDelay={0.4}
+            mouseEnterDelay={0.4}
+            visible={this.state.showTooltip}
+            onVisibleChange={this.handleVisibleChange}
           >
-            复制
-          </div>
-        }
-        mouseLeaveDelay={0.4}
-        mouseEnterDelay={0.4}
-        visible={this.state.showTooltip}
-        onVisibleChange={this.handleVisibleChange}
-      >
-        {this.props.children}
-      </Tooltip>
-    ) : (
-      <>
-        {this.props.children}
-        <span className="copy-link edit" onClick={() => this.onCopy(text)} title="复制名称">
-          <FileCopy fontSize="small"/>
-        </span>
-      </>
+            {this.props.children}
+          </Tooltip>
+        ) : (
+          <>
+            {this.props.children}
+            <span className="copy-link edit" onClick={() => this.onCopy(text, t)} title={t('Copy the name')}>
+              <FileCopy fontSize="small" />
+            </span>
+          </>
+        )}</Translation>
     )
   }
 
-  private onCopy = (content: string) => {
+  private onCopy = (content: string, t: any) => {
     copy(content)
       .then(() => {
         const maxLength = 30
@@ -58,23 +62,23 @@ class CopyToClipboard extends React.Component<Props, OwnState> {
           content.length > maxLength
             ? content.substr(0, maxLength) + '...'
             : content
-        this.props.enqueueSnackbar(`成功复制 ${cutContent} 到剪贴板`, {
+        this.props.enqueueSnackbar(`${t('copySuccess')} ${cutContent} ${t('toClipBoard')}`, {
           variant: 'success',
           autoHideDuration: 1000,
         })
       })
       .catch(() => {
-        this.props.enqueueSnackbar(`复制失败`, {
+        this.props.enqueueSnackbar(`${t('copyFailed')}`, {
           variant: 'error',
           autoHideDuration: 1000,
         })
       })
     this.setState({ showTooltip: false })
-  };
+  }
 
   private handleVisibleChange = (visible: boolean) => {
     this.setState({ showTooltip: visible })
-  };
+  }
 }
 
 export default withSnackbar<Props>(CopyToClipboard)

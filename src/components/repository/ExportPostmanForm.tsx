@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import config from '../../config'
 import {
@@ -9,17 +10,17 @@ import {
 import { SlideUp } from 'components/common/Transition'
 
 export default function ExportPostmanForm(props: {
-  repoId: number;
-  open: boolean;
-  onClose: () => void;
-  title: string;
+  repoId: number
+  open: boolean
+  onClose: () => void
+  title: string
 }) {
   const { repoId, open, onClose, title } = props
   const postmanLink = `${config.serve}/export/postman?id=${repoId}`
   const markdownLink = `${config.serve}/export/markdown?id=${repoId}&origin=${window.location.origin}`
   const docxLink = `${config.serve}/export/docx?id=${repoId}&origin=${window.location.origin}`
   const rapLink =`${config.serve}/repository/get?id=${repoId}`
-
+  const { t } = useTranslation()
   // const pdfLink = `${config.serve}/export/pdf?id=${repoId}&origin=${window.location.origin}`
   return (
     <Dialog
@@ -42,7 +43,10 @@ export default function ExportPostmanForm(props: {
                 {postmanLink}
               </a>
             </div>
-            <div>点击以上链接下载，在 Postman 中点击导入（Import），选择从文件导入（Import File）下载的文件。</div>
+            <div>
+              {t('Click the above links to download, click the Import in the Postman (Import),' +
+              'and select Import from the File (the Import File) to download the File.')}
+            </div>
           </div>
 
           <div>
@@ -78,12 +82,12 @@ export default function ExportPostmanForm(props: {
             >
               <a href={rapLink} target="_blank" rel="noopener noreferrer">{rapLink}</a>
             </div>
-            <div>用于备份，或在其它RAP2平台导入，打开后另存为保存即可。也可通过编程访问。</div>
+            <div>{t('For backups, or in other RAP2 platform import, opens the save as to save. Can also be accessed through programming.')}</div>
           </div>
 
           <div className="mt10">
             <Button variant="outlined" onClick={onClose}>
-              关闭
+              {t('Shut down')}
             </Button>
           </div>
         </form>

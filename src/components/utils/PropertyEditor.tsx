@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 /*
   ### Mock 模板编辑器
   1. 属性名
@@ -67,55 +68,63 @@ class StringRuleEditor extends Component<any, any> {
       case '|min-max':
         return { [`name|${this.state.min}-${this.state.max}`]: `${this.state.value}` }
       default:
-        console.warn('错误的生成规则')
+        console.warn('wrong generate rules')
     }
-    return''
+    return ''
   }
   render() {
     return (
-      <section className="RuleEditor">
-        <table className="table">
-          <thead>
-            <tr>
-              <td>-</td>
-              <td>生成规则</td>
-              <td>-</td>
-              <td>初始值</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>字符串</td>
-              <td>
-                <select value={this.state.rule} onChange={e => this.setState({ rule: e.target.value })} className="rule">
-                  <option value="">固定值</option>
-                  <option value="|count">重复固定次数</option>
-                  <option value="|min-max">重复随机次数</option>
-                </select>
-              </td>
-              <td>
-                {this.state.rule === '|count' &&
-                  <span>
-                    <span>重复</span>
-                    <input value={this.state.count} onChange={e => this.setState({ count: e.target.value })} className="count" />
-                    <span>次</span>
-                  </span>
-                }
-                {this.state.rule === '|min-max' &&
-                  <span>
-                    <span>重复次数</span>
-                    <div>大于等于 <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" /></div>
-                    <div>小于等于 <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" /></div>
-                  </span>
-                }
-              </td>
-              <td>
-                <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <Translation>
+        {(t) => (
+          <section className="RuleEditor">
+            <table className="table">
+              <thead>
+                <tr>
+                  <td>-</td>
+                  <td>{t('Generate rules')}</td>
+                  <td>-</td>
+                  <td>{t('Initial value')}</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{t('string')}</td>
+                  <td>
+                    <select value={this.state.rule} onChange={e => this.setState({ rule: e.target.value })} className="rule">
+                      <option value="">{t('A fixed value')}</option>
+                      <option value="|count">{t('Fixed number of repeat')}</option>
+                      <option value="|min-max">{t('Repeat random number')}</option>
+                    </select>
+                  </td>
+                  <td>
+                    {this.state.rule === '|count' &&
+                      <span>
+                        <span>{t('repeat')}</span>
+                        <input value={this.state.count} onChange={e => this.setState({ count: e.target.value })} className="count" />
+                        <span>{t('time')}</span>
+                      </span>
+                    }
+                    {this.state.rule === '|min-max' &&
+                      <span>
+                        <span>{t('Repeat the number')}</span>
+                        <div>{t('Greater than or equal to')}
+                          <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" />
+                        </div>
+                        <div>{t('Less than or equal to')}
+                          <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" />
+                        </div>
+                      </span>
+                    }
+                  </td>
+                  <td>
+                    <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        )}
+      </Translation>
     )
   }
   onChange = () => {
@@ -147,28 +156,32 @@ class IntegerRuleEditor extends Component<any, any> {
   }
   render() {
     return (
-      <section className="RuleEditor">
-        <span>整数</span>
-        <select value={this.state.type} onChange={e => this.setState({ type: e.target.value })} className="type">
-          <option value="">固定值</option>
-          <option value="|min-max">随机值</option>
-        </select>
-        <div>
-          {this.state.type === ''
-            ? <span>
-              <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
-            </span>
-            : null}
-          {this.state.type === '|min-max'
-            ? <span>
-              <span>大于等于</span>
-              <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" />
-              <span>，小于等于</span>
-              <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" />
-            </span>
-            : null}
-        </div>
-      </section>
+      <Translation>
+        {(t) => (
+          <section className="RuleEditor">
+            <span>{t('The integer')}</span>
+            <select value={this.state.type} onChange={e => this.setState({ type: e.target.value })} className="type">
+              <option value="">{t('A fixed value')}</option>
+              <option value="|min-max">{t('Random value')}</option>
+            </select>
+            <div>
+              {this.state.type === ''
+                ? <span>
+                  <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
+                </span>
+                : null}
+              {this.state.type === '|min-max'
+                ? <span>
+                  <span>{t('Greater than or equal to')}</span>
+                  <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" />
+                  <span>{t('And less than or equal to')}</span>
+                  <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" />
+                </span>
+                : null}
+            </div>
+          </section>
+        )}
+      </Translation>
     )
   }
   componentDidUpdate() {
@@ -205,34 +218,38 @@ class FloatRuleEditor extends Component<any, any> {
   }
   render() {
     return (
-      <section className="RuleEditor">
-        <span>浮点数</span>
-        <select value={this.state.type} onChange={e => this.setState({ type: e.target.value })} className="type">
-          <option value="">固定值</option>
-          <option value="|min-max.dmin-dmax">随机值</option>
-        </select>
-        <div>
-          {this.state.type === ''
-            ? <span>
-              <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
-            </span>
-            : null}
-          {this.state.type === '|min-max.dmin-dmax'
-            ? <span>
-              <span>整数部分</span>
-              <span>大于等于</span>
-              <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" />
-              <span>，小于等于</span>
-              <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" />
-              <span>，小数部分保留</span>
-              <input value={this.state.dmin} onChange={e => this.setState({ dmin: e.target.value })} className="min" />
-              <span>到</span>
-              <input value={this.state.dmax} onChange={e => this.setState({ dmax: e.target.value })} className="max" />
-              <span>位</span>
-            </span>
-            : null}
-        </div>
-      </section>
+      <Translation>
+        {(t) => (
+          <section className="RuleEditor">
+            <span>{t('Floating point Numbers')}</span>
+            <select value={this.state.type} onChange={e => this.setState({ type: e.target.value })} className="type">
+              <option value="">{t('A fixed value')}</option>
+              <option value="|min-max.dmin-dmax">{t('Random value')}</option>
+            </select>
+            <div>
+              {this.state.type === ''
+                ? <span>
+                  <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="value" />
+                </span>
+                : null}
+              {this.state.type === '|min-max.dmin-dmax'
+                ? <span>
+                  <span>{t('The integer part')}</span>
+                  <span>{t('Greater than or equal to')}</span>
+                  <input value={this.state.min} onChange={e => this.setState({ min: e.target.value })} className="min" />
+                  <span>{t('And less than or equal to')}</span>
+                  <input value={this.state.max} onChange={e => this.setState({ max: e.target.value })} className="max" />
+                  <span>{t(', the decimal part')}</span>
+                  <input value={this.state.dmin} onChange={e => this.setState({ dmin: e.target.value })} className="min" />
+                  <span>{t('to')}</span>
+                  <input value={this.state.dmax} onChange={e => this.setState({ dmax: e.target.value })} className="max" />
+                  <span>{t('position')}</span>
+                </span>
+                : null}
+            </div>
+          </section>
+        )}
+      </Translation>
     )
   }
   componentDidUpdate() {
@@ -260,51 +277,55 @@ class PropertyEditor extends Component<any, any> {
     }
     const data = mock(template)
     return (
-      <div className="row">
-        <div className="col-12">
-          <StringRuleEditor />
-          <IntegerRuleEditor />
-          <FloatRuleEditor />
-          <hr />
-        </div>
-        <div className="col-6">
-          <div className="form-group">
-            <label className="control-label">属性名：</label>
-            <input type="text" value={this.state.name} onChange={e => this.setState({ name: e.target.value })} className="form-control" />
+      <Translation>
+        {(t) => (
+          <div className="row">
+            <div className="col-12">
+              <StringRuleEditor />
+              <IntegerRuleEditor />
+              <FloatRuleEditor />
+              <hr />
+            </div>
+            <div className="col-6">
+              <div className="form-group">
+                <label className="control-label">{t('The property name:')}</label>
+                <input type="text" value={this.state.name} onChange={e => this.setState({ name: e.target.value })} className="form-control" />
+              </div>
+              <div className="form-group">
+                <label className="control-label">{t('Type:')}</label>
+                <select
+                  name="type"
+                  value={this.state.type}
+                  onChange={e => {
+                    const type = e.target.value
+                    if (type === 'Null') {
+                      this.setState({ value: '' })
+                    }
+                    this.setState({ type })
+                  }}
+                  className="form-control"
+                >
+                  {TYPES.map(type =>
+                    <option key={type} value={type}>{type}</option>
+                  )}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="control-label">{t('Generate rules:')}</label>
+                <input type="text" value={this.state.rule} onChange={e => this.setState({ rule: e.target.value })} className="form-control" />
+              </div>
+              <div className="form-group">
+                <label className="control-label">{t('The initial value:')}</label>
+                <input type="text" value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="form-control" />
+              </div>
+            </div>
+            <div className="col-6">
+              <pre>{JSON.stringify(template, null, 2)}</pre>
+              <pre>{JSON.stringify(data, null, 2)}</pre>
+            </div>
           </div>
-          <div className="form-group">
-            <label className="control-label">类型：</label>
-            <select
-              name="type"
-              value={this.state.type}
-              onChange={e => {
-                const type = e.target.value
-                if (type === 'Null') {
-                  this.setState({ value: '' })
-                }
-                this.setState({ type })
-              }}
-              className="form-control"
-            >
-              {TYPES.map(type =>
-                <option key={type} value={type}>{type}</option>
-              )}
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="control-label">生成规则：</label>
-            <input type="text" value={this.state.rule} onChange={e => this.setState({ rule: e.target.value })} className="form-control" />
-          </div>
-          <div className="form-group">
-            <label className="control-label">初始值：</label>
-            <input type="text" value={this.state.value} onChange={e => this.setState({ value: e.target.value })} className="form-control" />
-          </div>
-        </div>
-        <div className="col-6">
-          <pre>{JSON.stringify(template, null, 2)}</pre>
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-        </div>
-      </div>
+        )}
+      </Translation>
     )
   }
 }

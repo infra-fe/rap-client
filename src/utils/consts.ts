@@ -25,12 +25,12 @@ export enum CACHE_KEY {
 }
 
 
-export const TablePaginationProps = {
-  labelRowsPerPage: '每页条目数',
+export const TablePaginationProps = (t) => ({
+  labelRowsPerPage: t('Entry for each page'),
   backIconButtonProps: {
-    'aria-label': '上一页',
+    'aria-label': t('The previous page'),
   },
   nextIconButtonProps: {
-    'aria-label': '下一页',
+    'aria-label': t('The next page'),
   },
-}
+})

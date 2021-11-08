@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
 import { moveModule } from '../../actions/module'
 import { fetchOwnedRepositoryList, fetchJoinedRepositoryList } from '../../actions/repository'
@@ -68,7 +69,7 @@ export default function MoveModuleForm(props: Props) {
   const [repositoryId, setRepositoryId] = useState(repository.id)
   const [op, setOp] = useState(OP_MOVE)
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   const repositories = useSelector((state: RootState) => {
     return _.uniqBy([...state.ownedRepositories.data, ...state.joinedRepositories.data], 'id')
   })
@@ -84,7 +85,7 @@ export default function MoveModuleForm(props: Props) {
     e: React.ChangeEvent<{
       name?: string | undefined
       value: unknown
-    }>,
+    }>
   ) {
     const repositoryId = e.target.value
     setRepositoryId(repositoryId)
@@ -100,7 +101,7 @@ export default function MoveModuleForm(props: Props) {
     dispatch(
       moveModule(params, () => {
         onClose()
-      }),
+      })
     )
   }
   return (
@@ -109,9 +110,9 @@ export default function MoveModuleForm(props: Props) {
       <DialogContent dividers={true}>
         <form className={classes.form} onSubmit={handleSubmit}>
           <div className="rmodal-body">
-            <div style={{ color: '#CC0000', fontSize: 16, marginBottom: 8 }}>请注意这里是移动模块，整个模块哦，不是移动接口。别搞错啦！！！</div>
+            <div style={{ color: '#CC0000', fontSize: 16, marginBottom: 8 }}>{t('note')}</div>
             <div className={classes.formItem}>
-              <div className={classes.formTitle}>选择目标仓库：</div>
+              <div className={classes.formTitle}>{t('Select the target repository:')}</div>
               <FormControl>
                 <Select
                   className={classes.select}
@@ -128,7 +129,7 @@ export default function MoveModuleForm(props: Props) {
               </FormControl>
             </div>
             <div className={classes.formItem}>
-              <div className={classes.formTitle}>操作类型：</div>
+              <div className={classes.formTitle}>{t('Operation type:')}</div>
               <RadioGroup
                 name="radioListOp"
                 value={String(op)}
@@ -137,15 +138,15 @@ export default function MoveModuleForm(props: Props) {
                 }}
                 row={true}
               >
-                <FormControlLabel value={String(OP_MOVE)} control={<Radio />} label="移动" />
-                <FormControlLabel value={String(OP_COPY)} control={<Radio />} label="复制" />
+                <FormControlLabel value={String(OP_MOVE)} control={<Radio />} label={t('move')} />
+                <FormControlLabel value={String(OP_COPY)} control={<Radio />} label={t('copy')} />
               </RadioGroup>
             </div>
             <div className={classes.ctl}>
               <Button type="submit" variant="contained" color="primary" style={{ marginRight: 8 }}>
-                提交
+                {t('submit')}
               </Button>
-              <Button onClick={() => onClose()}>取消</Button>
+              <Button onClick={() => onClose()}>{t('cancel')}</Button>
             </div>
           </div>
         </form>

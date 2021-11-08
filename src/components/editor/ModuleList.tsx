@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { connect, Link, replace, StoreStateRouterLocationURI } from '../../family'
 import { RSortable } from '../utils'
@@ -58,6 +59,7 @@ function ModuleList(props: ModuleListProps) {
   const dispatch = useDispatch()
   const auth = useSelector((state: RootState) => state.auth)
   const { repository, mods = [], mod } = props
+  const { t } = useTranslation()
   const classes = useStyles()
   const handleSort = (_: any, sortable: any) => {
     dispatch(sortModuleList(sortable.toArray(), () => {
@@ -86,10 +88,10 @@ function ModuleList(props: ModuleListProps) {
         {repository.canUserEdit ? (
           <li>
             <span onClick={() => setOpen(true)} className="g-link">
-              <GoPackage className="fontsize-14" /> 新建模块
+              <GoPackage className="fontsize-14" /> {t('Create')}
             </span>
             <ModuleForm
-              title="新建模块"
+              title={t('Create')}
               repository={repository}
               open={open}
               onClose={() => setOpen(false)}

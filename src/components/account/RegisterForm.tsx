@@ -1,3 +1,4 @@
+import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
@@ -23,15 +24,15 @@ type Props = {
 const mockUser = () =>
   process.env.NODE_ENV === 'development'
     ? Mock.mock({
-        fullname: '@CNAME',
-        email: '@email',
-        password: '@string(6)',
-      })
+      fullname: '@CNAME',
+      email: '@email',
+      password: '@string(6)',
+    })
     : {
-        fullname: '',
-        email: '',
-        password: '',
-      }
+      fullname: '',
+      email: '',
+      password: '',
+    }
 
 // 展示组件
 class RegisterForm extends Component<Props, State> {
@@ -44,49 +45,53 @@ class RegisterForm extends Component<Props, State> {
   }
   render() {
     return (
-      <div className="wrapper" style={{ background: this.state.bg }}>
-        <Card className="RegisterForm">
-          <div className="header">
-            <span className="title">注册</span>
+      <Translation>
+        {(t) => (
+          <div className="wrapper" style={{ background: this.state.bg }}>
+            <Card className="RegisterForm">
+              <div className="header">
+                <span className="title">{t('Register')}</span>
+              </div>
+              <form className="body" onSubmit={this.handleSubmit}>
+                <div className="form-group">
+                  <label>{t('Name:')}</label>
+                  <input
+                    value={this.state.fullname}
+                    onChange={e => this.setState({ fullname: e.target.value })}
+                    className="form-control"
+                    placeholder="Name"
+                    autoFocus={true}
+                    required={true}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>{t('Email address:')}</label>
+                  <input
+                    value={this.state.email}
+                    onChange={e => this.setState({ email: e.target.value })}
+                    className="form-control"
+                    placeholder="Email"
+                    required={true}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>{t('Password:')}</label>
+                  <input
+                    value={this.state.password}
+                    onChange={e => this.setState({ password: e.target.value })}
+                    type="password"
+                    className="form-control"
+                    placeholder="Password"
+                    required={true}
+                  />
+                </div>
+                <Button type="submit" variant="contained" color="primary" style={{ marginRight: 8 }}> {t('submit')} </Button>
+                <Link to="/account">{t('cancel')}</Link>
+              </form>
+            </Card>
           </div>
-          <form className="body" onSubmit={this.handleSubmit}>
-            <div className="form-group">
-              <label>姓名：</label>
-              <input
-                value={this.state.fullname}
-                onChange={e => this.setState({ fullname: e.target.value })}
-                className="form-control"
-                placeholder="Name"
-                autoFocus={true}
-                required={true}
-              />
-            </div>
-            <div className="form-group">
-              <label>邮箱：</label>
-              <input
-                value={this.state.email}
-                onChange={e => this.setState({ email: e.target.value })}
-                className="form-control"
-                placeholder="Email"
-                required={true}
-              />
-            </div>
-            <div className="form-group">
-              <label>密码：</label>
-              <input
-                value={this.state.password}
-                onChange={e => this.setState({ password: e.target.value })}
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                required={true}
-              />
-            </div>
-            <Button type="submit" variant="contained" color="primary" style={{ marginRight: 8 }}> 提交 </Button>
-            <Link to="/account">取消</Link>
-          </form>
-        </Card>
-      </div>
+        )}
+      </Translation>
     )
   }
   handleSubmit = (e: any) => {
@@ -97,7 +102,7 @@ class RegisterForm extends Component<Props, State> {
         window.location.href = '/'
       }
     })
-  };
+  }
 }
 
 // 容器组件

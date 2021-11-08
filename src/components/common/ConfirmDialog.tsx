@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
@@ -15,7 +16,8 @@ interface Props {
   onCancel: () => void
 }
 export default function ConfirmDialog(props: Props) {
-  const { type, title = '确认' } = props
+  const {t} = useTranslation()
+  const { type, title = t('Confirm') } = props
   return (
     <Dialog open={props.open} onClose={props.onCancel} TransitionComponent={SlideUp}>
       <DialogTitle>{title}</DialogTitle>
@@ -25,11 +27,11 @@ export default function ConfirmDialog(props: Props) {
       <DialogActions>
         {type === 'confirm' && (
           <Button onClick={props.onCancel} variant="outlined" color="default">
-            取消
+            {t('cancel')}
           </Button>
         )}
         <Button onClick={props.onConfirm} variant="outlined" color="primary" autoFocus={true}>
-          确定
+          {t('confirm')}
         </Button>
       </DialogActions>
     </Dialog>

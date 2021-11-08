@@ -4,7 +4,7 @@ export default {
   get({ project, module, page, property }: any) {
     return fetch(
       `${serve}/workspace/get?project=${project}&module=${module}&page=${page}&action={action}&property=${property}`,
-      { ...CREDENTIALS },
+      { ...CREDENTIALS }
     )
       .then(res => res.json())
       .then(json => json.data)
@@ -109,7 +109,7 @@ export default {
   fetchInterfaceList({ repositoryId = '', moduleId = '', name = '' }: any = {}) {
     return fetch(
       `${serve}/interface/list?repositoryId=${repositoryId}&moduleId=${moduleId}&name=${name}`,
-      { ...CREDENTIALS },
+      { ...CREDENTIALS }
     )
       .then(res => res.json())
       .then(json => json.data)
@@ -194,7 +194,7 @@ export default {
   fetchPropertyList({ repositoryId = '', moduleId = '', interfaceId = '', name = '' }: any = {}) {
     return fetch(
       `${serve}/property/list?repositoryId=${repositoryId}&moduleId=${moduleId}&interfaceId=${interfaceId}&name=${name}`,
-      { ...CREDENTIALS },
+      { ...CREDENTIALS }
     )
       .then(res => res.json())
       .then(json => json.data)
