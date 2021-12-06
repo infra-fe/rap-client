@@ -14,7 +14,7 @@ RAP是在RAP1 & RAP2基础上重做的新项目，它包含两个组件(对应�
 
 ### Support 客户支持
 
-<img src="https://user-images.githubusercontent.com/13103261/141053217-44ae06cb-c005-4310-ac08-6c0839fe5424.jpg" alt="wechat support" width=200 />
+<img src="https://user-images.githubusercontent.com/13103261/144805143-406c78f3-7864-4512-98c8-4b4b61d2bb84.png" alt="wechat support" width=200 />
 
 
 ## Deployment 部署
