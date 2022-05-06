@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "rap-client react app",
   "main": "app.js",
+  "homepage": "https://infra-fe.github.io/rap-client/",
   "scripts": {
     "build-css": "node ./node_modules/sass/sass src/:src/ --quiet",
     "watch-css": "npm run build-css && node ./node_modules/sass/sass src/:src/ --watch",
@@ -13,11 +14,12 @@
     "test": "tsc && npm run lint",
     "lint": "echo \"lint checking...\" && eslint . --ext .ts,.tsx && echo \"tsc checking...\"",
     "eject": "react-scripts eject",
-    "build-docker": "docker build --rm -f \"Dockerfile\" -t rapteam/rap2-dolores:latest ."
+    "build-docker": "docker build --rm -f \"Dockerfile\" -t rapteam/rap2-dolores:latest .",
+    "docs:deploy": "gh-pages -d docs-dist"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:infra-fe/rap-server.git"
+    "url": "git@github.com:infra-fe/rap-client.git"
   },
   "author": "Libby, Bosn",
   "license": "ISC",
@@ -118,7 +120,8 @@
     "react-scripts": "^4.0.3",
     "sass": "^1.43.4",
     "standard": "16.0.4",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "gh-pages": "^3.2.3"
   },
   "eslintConfig": {
     "extends": [
