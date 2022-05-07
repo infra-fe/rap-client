@@ -1,17 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
-import CloseIcon from '@material-ui/icons/Close'
-import TextField from '@material-ui/core/TextField'
-import { SlideUp } from 'components/common/Transition'
-import { Table, TableHead, TableRow, TableCell, TableBody, DialogContent } from '@material-ui/core'
-import Delete from '@material-ui/icons/Delete'
+import { useState, useEffect } from 'react'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import CloseIcon from '@mui/icons-material/Close'
+import TextField from '@mui/material/TextField'
+import Transition from 'components/common/Transition'
+import { Table, TableHead, TableRow, TableCell, TableBody, DialogContent, Box } from '@mui/material'
+import Delete from '@mui/icons-material/Delete'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchDefaultVals, updateDefaultVals } from 'actions/repository'
 import { withSnackbar, WithSnackbarProps } from 'notistack'
@@ -22,29 +21,8 @@ export interface IDefaultVal {
   value: string
 }
 
-const useStyles = makeStyles(({ spacing }: Theme) =>
-  createStyles({
-    appBar: {
-      position: 'relative',
-    },
-    title: {
-      marginLeft: spacing(2),
-      flex: 1,
-    },
-    btn: {
-      marginBottom: spacing(2),
-      marginTop: spacing(2),
-    },
-    topHint: {
-      marginBottom: spacing(2),
-      marginTop: spacing(2),
-    },
-  })
-)
-
 function DefaultValueModal({ open, handleClose, repositoryId, enqueueSnackbar }:
 { open: boolean; handleClose: () => void; repositoryId: number } & WithSnackbarProps) {
-  const classes = useStyles()
   const [editingData, setEditingData] = useState<IDefaultVal[]>([])
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -91,25 +69,30 @@ function DefaultValueModal({ open, handleClose, repositoryId, enqueueSnackbar }:
   }
 
   return (
-    <Dialog fullScreen={true} open={open} onClose={handleClose} TransitionComponent={SlideUp}>
-      <AppBar className={classes.appBar}>
+    <Dialog fullScreen={true} open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={handleClose}
+            aria-label="close"
+            size="large">
             <CloseIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>{t('The default configuration')}</Typography>
+          <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>{t('The default configuration')}</Typography>
           <Button color="inherit" onClick={onSubmit}>
             {t('save')}
           </Button>
         </Toolbar>
       </AppBar>
       <DialogContent>
-        <div className={classes.topHint}>
+        <Box sx={{ mb: 2, mt: 2 }}>
           <Typography variant="body1"> {t('System will be based on the variable name to search, if has not been generating rules and the initial value to fill in, system will Mock rules of parameters with the same coverage.')}</Typography>
-        </div>
-        <div className={classes.btn}>
+        </Box>
+        <Box sx={{ mb: 2, mt: 2 }}>
           <Button onClick={addNewLine} color="primary" variant="contained" size="small">{t('Add a line')}</Button>
-        </div>
+        </Box>
         <Table>
           <TableHead>
             <TableRow>

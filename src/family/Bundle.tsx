@@ -11,9 +11,9 @@ class Bundle extends Component<any, any> {
     this.load(this.props)
   }
 
-  componentWillReceiveProps(nextProps: any) {
-    if (nextProps.load !== this.props.load) {
-      this.load(nextProps)
+  componentDidUpdate(prevProps) {
+    if (prevProps.load !== this.props.load) {
+      this.load(this.props)
     }
   }
 

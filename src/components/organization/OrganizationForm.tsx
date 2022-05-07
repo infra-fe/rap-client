@@ -1,49 +1,17 @@
 import { useTranslation } from 'react-i18next'
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import RadioList from '../utils/RadioList'
 import { FORM, YUP_MSG } from '../../family/UIConst'
 import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-material-ui'
+import { TextField } from 'formik-mui'
 import * as Yup from 'yup'
-import { Button, Theme, Dialog, DialogContent, DialogTitle } from '@material-ui/core'
-import { makeStyles } from '@material-ui/styles'
-import { SlideUp } from 'components/common/Transition'
+import { Button, Dialog, DialogContent, DialogTitle, Box } from '@mui/material'
+import Transition from 'components/common/Transition'
 import { Organization, RootState } from '../../actions/types'
-import UserList from '../common/UserList'
 import AccountService from '../../relatives/services/Account'
-import * as _ from 'lodash'
 import { updateOrganization, addOrganization } from '../../actions/organization'
 import { refresh } from '../../actions/common'
-
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {
-  },
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: spacing(2),
-    flex: 1,
-  },
-  preview: {
-    marginTop: spacing(1),
-  },
-  form: {
-    minWidth: 500,
-    minHeight: 300,
-  },
-  formTitle: {
-    color: 'rgba(0, 0, 0, 0.54)',
-    fontSize: 9,
-  },
-  formItem: {
-    marginBottom: spacing(1),
-  },
-  ctl: {
-    marginTop: spacing(3),
-  },
-}))
+import AsyncSelect, { AddMembers } from 'components/common/AsyncSelect'
+import { useDispatch, useSelector } from 'react-redux'
 
 
 const FORM_STATE_INIT: Organization = {
@@ -63,23 +31,24 @@ interface Props {
 function OrganizationForm(props: Props) {
   const { open, onClose, organization } = props
   const auth = useSelector((state: RootState) => state.auth)
-  const classes = useStyles()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const msg = YUP_MSG(t)
   const schema = Yup.object().shape({
-    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    name: Yup.string().required(msg.REQUIRED).max(40, msg.MAX_LENGTH(40)),
     description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
   })
+
+
   return (
     <Dialog
       open={open}
       onClose={(_event, reason) => (reason !== 'backdropClick' && onClose())}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
       <DialogTitle>{t('create team')}</DialogTitle>
       <DialogContent dividers={true}>
-        <div className={classes.form}>
+        <Box sx={{ minWidth: '500px', minHeight: '300px' }}>
           <Formik
             initialValues={{
               ...FORM_STATE_INIT,
@@ -92,88 +61,94 @@ function OrganizationForm(props: Props) {
                 ...values,
                 memberIds: (values.members || []).map(user => user.id),
               }
-              const { owner, newOwner } = values
-              if (newOwner && newOwner.id !== owner!.id) { organization.ownerId = newOwner.id }
               dispatch(addOrUpdateOrganization(organization, () => {
                 dispatch(refresh())
                 onClose(true)
               }))
             }}
-            render={({ isSubmitting, setFieldValue, values }) => {
-              function loadUserOptions(input: string): Promise<Array<{ label: string; value: number }>> {
-                return new Promise(async (resolve) => {
-                  const users = await AccountService.fetchUserList({ name: input })
-                  const options = _.differenceWith(users.data, values.members || [], _.isEqual)
-                  resolve(options.map(x => ({ label: `${x.fullname} ${x.empId || x.email}`, value: x.id })))
-                })
+          >
+            {({ isSubmitting, setFieldValue, values }) => {
+              const membersFetcher = async (query: string) => {
+                const users = (await AccountService.fetchUserList({ name: query })).data
+                if (values.members) {
+                  AddMembers(users, values.members)
+                }
+                return users.map(x => ({ label: `${x.fullname} ${x.empId || x.email}`, value: x.id }))
               }
-              const newOwner = values.newOwner
-                ? [{ label: values.newOwner.fullname, value: values.newOwner.id }]
-                : values.owner
-                  ? [{ label: values.owner.fullname, value: values.owner.id }]
-                  : []
+              const ownersFetcher = async (query: string) => {
+                const users = (await AccountService.fetchUserList({ name: query })).data
+                if (values.owner) {
+                  AddMembers(users, [values.owner])
+                }
+                return users.map(x => ({ label: `${x.fullname} ${x.empId || x.email}`, value: x.id }))
+              }
               return (
                 <Form>
                   <div className="rmodal-body">
                     {values.id > 0 &&
-                      <div className={classes.formItem}>
-                        <div className={classes.formTitle}>{t('The project Owner')}</div>
-                        {values.owner && (values.owner.id === auth.id)
-                          ? <UserList
-                            isMulti={false}
-                            value={newOwner}
-                            loadOptions={loadUserOptions}
-                            onChange={(users: any) => {
-                              setFieldValue('newOwner', users[0])
-                            }}
-                          />
-                          : <div className="pt7 pl9">{values.owner!.fullname}</div>
+                      <Box sx={{ mb: 1 }}>
+                        <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('The project Owner')}</Box>
+                        {organization.owner && (organization.owner.id === auth.id)
+                          ? (
+                            <AsyncSelect
+                              fetcher={ownersFetcher}
+                              multiple={false}
+                              value={{ label: values?.owner?.fullname || '', value: values?.owner?.id || null }}
+                              onChange={selected => {
+                                if (selected[0]) {
+                                  setFieldValue('owner', selected.map(x => ({ fullname: x.label, id: x.value }))[0])
+                                  setFieldValue('ownerId', selected[0].value)
+                                }
+                              }}
+                            />
+                          )
+                          : <div className="pt7 pl9">{values.owner?.fullname}</div>
                         }
-                      </div>
+                      </Box>
                     }
-                    <div className={classes.formItem}>
+                    <Box sx={{ mb: 1 }}>
                       <RadioList
                         data={FORM(t).RADIO_LIST_DATA_VISIBILITY}
                         curVal={values.visibility}
                         name="visibility"
                         onChange={(val: any) => setFieldValue('visibility', val)}
                       />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="name"
                         label={t('The name of the team')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="description"
                         label={t('Describe')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
-                    <div className={classes.formItem}>
-                      <div className={classes.formTitle}>{t('The team members')}</div>
-                      <UserList
-                        isMulti={true}
-                        loadOptions={loadUserOptions}
-                        selected={values.members!.map(x => ({ label: x.fullname, value: x.id }))}
-                        onChange={selected => setFieldValue('members', selected)}
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
+                      <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('The team members')}</Box>
+                      <AsyncSelect
+                        fetcher={membersFetcher}
+                        multiple={true}
+                        value={values.members.map(x => ({ label: x.fullname, value: x.id }))}
+                        onChange={selected => { setFieldValue('members', selected.map(x => ({ fullname: x.label, id: x.value }))) }}
                       />
-                    </div>
+                    </Box>
                   </div>
-                  <div className={classes.ctl}>
+                  <Box sx={{ mt: 3 }}>
                     <Button type="submit" variant="contained" color="primary" className="mr1" disabled={isSubmitting}>{t('submit')}</Button>
                     <Button onClick={() => onClose()} disabled={isSubmitting}>{t('cancel')}</Button>
-                  </div>
+                  </Box>
                 </Form>
               )
             }}
-          />
-        </div>
+          </Formik>
+        </Box>
       </DialogContent>
     </Dialog>
   )

@@ -2,39 +2,13 @@ import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'actions/types'
-import { makeStyles, Theme, Card, CardActionArea, CardContent, Typography, CardActions, Button } from '@material-ui/core'
+import { Card, CardActionArea, CardContent, Typography, CardActions, Button, Box } from '@mui/material'
 import EditMyAccountDialog from './EditMyAccountDialog'
 import { logout, fetchLoginInfo } from 'actions/account'
 
-const useStyles = makeStyles(({ palette, spacing }: Theme) => ({
-  root: {
-    margin: spacing(2),
-  },
-  dialog: {
-  },
-  card: {
-    minWidth: 375,
-    maxWidth: 500,
-    maxHeight: `calc(100% - ${spacing(4)}px)`,
-    overflowY: 'auto',
-  },
-  media: {
-    objectFit: 'cover',
-    height: 250,
-  },
-  title: {
-    marginTop: spacing(1),
-    color: palette.primary.main,
-  },
-  dialogPapaer: {
-    margin: spacing(2),
-  },
-}))
-
 function MyAccountView() {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const me = useSelector((state: RootState) => state.auth)
-  const classes = useStyles()
   const [editing, setEditing] = useState(false)
   const dispatch = useDispatch()
   const onEditSubmit = (isOk: boolean) => {
@@ -45,23 +19,23 @@ function MyAccountView() {
   }
 
   return (
-    <div className={classes.root}>
-      <Card className={classes.card}>
+    <Box sx={{ m: 2 }}>
+      <Card sx={{ minWidth: '375px', maxWidth: '500px', maxHeight: `calc(100% - 32px)`, overflowY: 'auto' }}>
         <CardActionArea>
           <CardContent>
-            <Typography gutterBottom={true} variant="h6" component="h6" className={classes.title}>
+            <Typography gutterBottom={true} variant="h6" component="h6" sx={{ mt: 1, color: 'primary.main' }}>
               {me.fullname}
             </Typography>
             <Typography component="p">
               {t('signature')}
             </Typography>
-            <Typography gutterBottom={true} variant="subtitle1" component="h6" className={classes.title} >
+            <Typography gutterBottom={true} variant="subtitle1" component="h6" sx={{ mt: 1, color: 'primary.main' }} >
               {t('nickname')}
             </Typography>
             <Typography component="p">
               {me.fullname}
             </Typography>
-            <Typography gutterBottom={true} variant="subtitle1" component="h6" className={classes.title} >
+            <Typography gutterBottom={true} variant="subtitle1" component="h6" sx={{ mt: 1, color: 'primary.main' }} >
               {t('Account number/email address')}
             </Typography>
             <Typography component="p">
@@ -75,7 +49,7 @@ function MyAccountView() {
         </CardActions>
       </Card>
       {editing && <EditMyAccountDialog handleClose={onEditSubmit} />}
-    </div>
+    </Box>
   )
 }
 

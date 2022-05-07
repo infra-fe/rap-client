@@ -4,9 +4,8 @@ import * as CommonAction from '../actions/common'
 import AccountService from './services/Account'
 import { StoreStateRouterLocationURI, replace, push } from '../family'
 import { RootState } from '../actions/types'
-import { showMessage, MSG_TYPE } from 'actions/common'
 import { THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
-import { CHANGE_THEME, CHANGE_GUIDE, DoUpdateUserSettingAction, updateUserSetting, UPDATE_USER_SETTING_SUCCESS, DO_UPDATE_USER_SETTING, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE } from '../actions/account'
+import { CHANGE_THEME, CHANGE_GUIDE, DoUpdateUserSettingAction, updateUserSetting, UPDATE_USER_SETTING_SUCCESS, DO_UPDATE_USER_SETTING, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE, doFetchUserSettings } from '../actions/account'
 import { AnyAction } from 'redux'
 import { createCommonDoActionSaga } from './effects/commonSagas'
 import { CACHE_KEY } from 'utils/consts'
@@ -129,7 +128,7 @@ const relatives = {
             data: [...state.data],
             pagination: { ...state.pagination, total: action.count },
           }
-        case AccountAction.fetchUserListSucceeded([]).type:
+        case AccountAction.fetchUserListSucceeded().type:
           return action.users
         default:
           return state
@@ -137,7 +136,7 @@ const relatives = {
     },
   },
   sagas: {
-    *[AccountAction.DO_FETCH_USER_SETTINGS](action: AccountAction.DoFetchUserSettingsAction) {
+    *[AccountAction.DO_FETCH_USER_SETTINGS](action: ReturnType<typeof doFetchUserSettings>) {
       const { keys, cb } = action.payload
       yield put(AccountAction.fetchUserSettings(keys) as AnyAction)
       const resultAction = yield take(AccountAction.FETCH_USER_SETTINGS_SUCCESS)
@@ -191,7 +190,6 @@ const relatives = {
           }
           yield put(push('/'))
         } else {
-          yield put(showMessage(`注册失败：${user.errMsg}`, MSG_TYPE.ERROR))
           yield put(AccountAction.addUserFailed('注册失败'))
         }
         if (action.onResolved) {
@@ -201,26 +199,14 @@ const relatives = {
         yield put(AccountAction.addUserFailed(e.message))
       }
     },
-    *[AccountAction.login({}, () => {
-      /** empty */
-    }).type](action: any) {
-      try {
-        const user = yield call(AccountService.login, action.user)
-        if (user.errMsg) {
-          throw new Error(user.errMsg)
-        }
-        if (user) {
-          yield put(AccountAction.loginSucceeded(user))
-          // yield put(AccountAction.fetchLoginInfo()) // 注意：更好的方式是在 rootSaga 中控制跳转，而不是在这里重再次请求。
-          if (action.onResolved) {
-            action.onResolved()
-          }
-        } else {
-          yield put(AccountAction.loginFailed(undefined))
-        }
-      } catch (e) {
-        yield put(showMessage(e.message, MSG_TYPE.WARNING))
-        yield put(AccountAction.loginFailed(e.message))
+    *[AccountAction.login({}).type](action: any) {
+      const user = yield call(AccountService.login, action.user)
+      if (user && user?.errMsg === undefined) {
+        yield put(AccountAction.loginSucceeded(user))
+        action.onResolved && action.onResolved(true)
+      } else {
+        yield put(AccountAction.loginFailed(undefined))
+        action.onResolved && action.onResolved(false, user?.errMsg)
       }
     },
     *[AccountAction.logout().type]() {
@@ -232,7 +218,7 @@ const relatives = {
         yield put(AccountAction.logoutFailed())
       }
     },
-    *[AccountAction.deleteUser({}).type](action: any) {
+    *[AccountAction.deleteUser().type](action: any) {
       try {
         const count = yield call(AccountService.deleteUser, action.id)
         yield put(AccountAction.deleteUserSucceeded(count))
@@ -256,30 +242,30 @@ const relatives = {
         yield put(AccountAction.fetchUserListFailed(e.message))
       }
     },
-    *[AccountAction.findpwd({}, () => {/** empty */ }).type](action: any) {
+    *[AccountAction.findpwd({}).type](action: any) {
       try {
         const result = yield call(AccountService.findpwd, action.user)
         if (result.errMsg) {
           throw new Error(result.errMsg)
         }
         yield put(AccountAction.findpwdSucceeded())
-        if (action.onResolved) { action.onResolved() }
+        action.onResolved && action.onResolved(true)
       } catch (e) {
-        yield put(showMessage(e.message, MSG_TYPE.WARNING))
         yield put(AccountAction.findpwdFailed(e.message))
+        action.onResolved && action.onResolved(false, e.message)
       }
     },
-    *[AccountAction.resetpwd({}, () => {/** empty */ }).type](action: any) {
+    *[AccountAction.resetpwd({}).type](action: any) {
       try {
         const result = yield call(AccountService.resetpwd, action.user)
         if (result.errMsg) {
           throw new Error(result.errMsg)
         }
         yield put(AccountAction.resetpwdSucceeded())
-        if (action.onResolved) { action.onResolved() }
+        action.onResolved && action.onResolved(true)
       } catch (e) {
-        yield put(showMessage(e.message, MSG_TYPE.WARNING))
         yield put(AccountAction.resetpwdFailed(e.message))
+        action.onResolved && action.onResolved(false, e.message)
       }
     },
     *[DO_UPDATE_USER_SETTING](action: DoUpdateUserSettingAction) {
@@ -289,7 +275,6 @@ const relatives = {
       cb && cb(opAction.payload.isOk)
     },
     *[AccountAction.DO_UPDATE_ACCOUNT](action: ReturnType<typeof AccountAction.doUpdateAccount>) {
-      console.log(`saga run`)
       yield createCommonDoActionSaga(AccountAction.updateAccount, UPDATE_ACCOUNT_SUCCESS, UPDATE_ACCOUNT_FAILURE)(action)
     },
   },

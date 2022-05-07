@@ -1,17 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import React, { useState } from 'react'
-import { Paper, Theme, List, ListSubheader, makeStyles, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core'
-import Settings from '@material-ui/icons/Settings'
-import Palette from '@material-ui/icons/Palette'
+import { useState } from 'react'
+import { Paper, List, ListSubheader, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material'
+import Settings from '@mui/icons-material/Settings'
+import Palette from '@mui/icons-material/Palette'
 import ThemeChangeOverlay, { THEME_TEMPLATE_KEY } from './ThemeChangeOverlay'
 import { CACHE_KEY } from 'utils/consts'
-
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {
-    padding: spacing(1),
-    maxWidth: 400,
-  },
-}))
 
 interface Props {
   isFetching: boolean
@@ -20,10 +13,9 @@ interface Props {
 }
 
 function MySettings(props: Props) {
-  const classes = useStyles()
   const { data, onChange, isFetching } = props
   const [editingThemeTemplate, setEditingThemeTemplate] = useState(false)
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const themeId = data[CACHE_KEY.THEME_ID] as THEME_TEMPLATE_KEY || THEME_TEMPLATE_KEY.RED
 
   const handleClose = (themeId?: THEME_TEMPLATE_KEY) => {
@@ -32,7 +24,7 @@ function MySettings(props: Props) {
   }
 
   return (
-    <Paper className={classes.root}>
+    <Paper sx={{ p: 1, maxWidth: '400px' }}>
       <List subheader={<ListSubheader>{t('Preferences')}</ListSubheader>}>
         <ListItem>
           <ListItemIcon>
@@ -40,7 +32,10 @@ function MySettings(props: Props) {
           </ListItemIcon>
           <ListItemText primary={t('Skin Settings')} />
           <ListItemSecondaryAction>
-            <IconButton disabled={isFetching} onClick={() => setEditingThemeTemplate(true)}>
+            <IconButton
+              disabled={isFetching}
+              onClick={() => setEditingThemeTemplate(true)}
+              size="large">
               <Settings />
             </IconButton>
           </ListItemSecondaryAction>

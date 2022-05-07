@@ -5,10 +5,11 @@ import * as OrganizationAction from '../actions/organization'
 import * as RepositoryAction from '../actions/repository'
 import * as InterfaceAction from '../actions/interface'
 import StatusService from './services/Status'
+import { RootState } from 'actions/types'
 
 export default {
   reducers: {
-    counter(state: any = {} , action: any) {
+    counter(state: RootState['counter'] = { version: '', users: 0, mock: 0 }, action: ReturnType<typeof StatusAction.fetchCounterSucceeded>) {
       switch (action.type) {
         case 'ANALYTICS_COUNTER_FETCH_SUCCEEDED':
           return action.counter || {}
@@ -18,19 +19,19 @@ export default {
           return state
       }
     },
-    analyticsRepositoriesCreated(state: any = { data: [], fetching: false }, action: any) {
+    analyticsRepositoriesCreated(state: RootState['analyticsRepositoriesCreated'] = { data: [], fetching: false }, action: any) {
       switch (action.type) {
         case StatusAction.fetchAnalyticsRepositoriesCreated().type:
           return { data: [...state.data], fetching: true }
-        case StatusAction.fetchAnalyticsRepositoriesCreatedSucceeded(undefined).type:
+        case StatusAction.fetchAnalyticsRepositoriesCreatedSucceeded().type:
           return { data: [...action.analytics], fetching: false }
-        case StatusAction.fetchAnalyticsRepositoriesCreatedFailed(undefined).type:
+        case StatusAction.fetchAnalyticsRepositoriesCreatedFailed().type:
           return { data: [], fetching: false }
         default:
           return state
       }
     },
-    analyticsRepositoriesUpdated(state: any = { data: [], fetching: false }, action: any) {
+    analyticsRepositoriesUpdated(state: RootState['analyticsRepositoriesUpdated'] = { data: [], fetching: false }, action: any) {
       switch (action.type) {
         case StatusAction.fetchAnalyticsRepositoriesUpdated().type:
           return { data: [...state.data], fetching: true }
@@ -42,7 +43,7 @@ export default {
           return state
       }
     },
-    analyticsUsersActivation(state: any = { data: [], fetching: false }, action: any) {
+    analyticsUsersActivation(state: RootState['analyticsUsersActivation'] = { data: [], fetching: false }, action: any) {
       switch (action.type) {
         case StatusAction.fetchAnalyticsUsersActivation().type:
           return { data: [...state.data], fetching: true }
@@ -54,7 +55,7 @@ export default {
           return state
       }
     },
-    analyticsRepositoriesActivation(state: any = { data: [], fetching: false }, action: any) {
+    analyticsRepositoriesActivation(state: RootState['analyticsRepositoriesActivation'] = { data: [], fetching: false }, action: any) {
       switch (action.type) {
         case StatusAction.fetchAnalyticsRepositoriesActivation().type:
           return { data: [...state.data], fetching: true }
@@ -76,7 +77,7 @@ export default {
         yield put(StatusAction.fetchCounterFailed(e.message))
       }
     },
-    * [StatusAction.fetchAnalyticsRepositoriesCreated().type](action: any) {
+    *[StatusAction.fetchAnalyticsRepositoriesCreated().type](action: any) {
       try {
         const analytics = yield call(StatusService.fetchRepositoriesCreated as any, action)
         yield put(StatusAction.fetchAnalyticsRepositoriesCreatedSucceeded(analytics))
@@ -84,7 +85,7 @@ export default {
         yield put(StatusAction.fetchAnalyticsRepositoriesCreatedFailed(e.message))
       }
     },
-    * [StatusAction.fetchAnalyticsRepositoriesUpdated().type](action: any) {
+    *[StatusAction.fetchAnalyticsRepositoriesUpdated().type](action: any) {
       try {
         const analytics = yield call(StatusService.fetchRepositoriesUpdated as any, action)
         yield put(StatusAction.fetchAnalyticsRepositoriesUpdatedSucceeded(analytics))
@@ -92,7 +93,7 @@ export default {
         yield put(StatusAction.fetchAnalyticsRepositoriesUpdatedFailed(e.message))
       }
     },
-    * [StatusAction.fetchAnalyticsUsersActivation().type](action: any) {
+    *[StatusAction.fetchAnalyticsUsersActivation().type](action: any) {
       try {
         const analytics = yield call(StatusService.fetchUsersActivation as any, action)
         yield put(StatusAction.fetchAnalyticsUsersActivationSucceeded(analytics))
@@ -100,7 +101,7 @@ export default {
         yield put(StatusAction.fetchAnalyticsUsersActivationFailed(e.message))
       }
     },
-    * [StatusAction.fetchAnalyticsRepositoriesActivation().type](action: any) {
+    *[StatusAction.fetchAnalyticsRepositoriesActivation().type](action: any) {
       try {
         const analytics = yield call(StatusService.fetchRepositoriesActivation as any, action)
         yield put(StatusAction.fetchAnalyticsRepositoriesActivationSucceeded(analytics))

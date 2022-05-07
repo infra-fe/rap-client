@@ -62,10 +62,10 @@ export function* importRepository(action: any) {
     const res = yield call(RepositoryService.importRepository, action.data)
     if (res.isOk) {
       yield put(RepositoryAction.importRepositorySucceeded())
-      if (action.onResolved) { action.onResolved(res) }
     } else {
-      throw new Error(res.message)
+      yield put(RepositoryAction.importRepositoryFailed(res.message))
     }
+    if (action.onResolved) { action.onResolved(res) }
   } catch (e) {
     yield put(RepositoryAction.importRepositoryFailed(e.message))
   }
@@ -75,10 +75,10 @@ export function* importSwaggerRepository(action: any) {
     const res = yield call(RepositoryService.importSwaggerRepository, action.data)
     if (res.isOk) {
       yield put(RepositoryAction.importSwaggerRepositorySucceeded())
-      if (action.onResolved) { action.onResolved(res) }
     } else {
-      throw new Error(res.message)
+      yield put(RepositoryAction.importSwaggerRepositoryFailed(res.message))
     }
+    if (action.onResolved) { action.onResolved(res) }
   } catch (e) {
     yield put(RepositoryAction.importSwaggerRepositoryFailed(e.message))
   }

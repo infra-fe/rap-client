@@ -8,6 +8,7 @@ import RepositorySearcher from './RepositorySearcher'
 import ModuleList from './ModuleList'
 import InterfaceList from './InterfaceList'
 import InterfaceEditor from './InterfaceEditor'
+import Validator from '../validator/Validator'
 import DuplicatedInterfacesWarning from './DuplicatedInterfacesWarning'
 import { addRepository, updateRepository, clearRepository, fetchRepository } from '../../actions/repository'
 import { addModule, updateModule, deleteModule, sortModuleList } from '../../actions/module'
@@ -18,15 +19,16 @@ import { FaHistory } from 'react-icons/fa'
 import './RepositoryEditor.css'
 import ExportPostmanForm from '../repository/ExportPostmanForm'
 import ImportSwaggerRepositoryForm from '../repository/ImportSwaggerRepositoryForm'
-import { RootState, Repository } from 'actions/types'
+import { RootState, Repository, User } from 'actions/types'
 import DefaultValueModal from './DefaultValueModal'
 import RapperInstallerModal from './RapperInstallerModal'
 import HistoryLogDrawer from './HistoryLogDrawer'
 import Joyride from 'react-joyride'
-import { Typography } from '@material-ui/core'
+import { Typography } from '@mui/material'
 import { doFetchUserSettings } from 'actions/account'
 import Markdown from 'markdown-to-jsx'
 import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
+import { RouterState } from 'connected-react-router'
 
 // DONE 2.1 import Spin from '../utils/Spin'
 // TODO 2.2 缺少测试器
@@ -34,13 +36,13 @@ import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
 // TODO 2.1 大数据测试，含有大量模块、接口、属性的仓库
 
 interface Props {
-  guideOpen: any
-  auth: any
-  repository: any
+  guideOpen: boolean
+  auth: User
+  repository: Async<Repository>
   location: any
-  onClearRepository: any
+  onClearRepository: () => void
   replace: any
-  router: any
+  router: RouterState
   doFetchUserSettings: typeof doFetchUserSettings
 }
 
@@ -51,16 +53,11 @@ interface States {
   update: boolean
   exportPostman: boolean
   importSwagger: boolean
+  openValidator: boolean
 }
 
 // 展示组件
 class RepositoryEditor extends Component<Props, States> {
-  static propTypes = {
-    auth: PropTypes.object.isRequired,
-    repository: PropTypes.object.isRequired,
-    location: PropTypes.object.isRequired,
-    onClearRepository: PropTypes.func.isRequired,
-  }
   static childContextTypes = {
     onAddRepository: PropTypes.func.isRequired,
     onUpdateRepository: PropTypes.func.isRequired,
@@ -80,7 +77,7 @@ class RepositoryEditor extends Component<Props, States> {
     onSortPropertyList: PropTypes.func.isRequired,
   }
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props)
     this.state = {
       update: false,
@@ -89,6 +86,7 @@ class RepositoryEditor extends Component<Props, States> {
       defaultValuesModalOpen: false,
       importSwagger: false,
       historyLogDrawerOpen: false,
+      openValidator: false,
     }
   }
 
@@ -117,9 +115,7 @@ class RepositoryEditor extends Component<Props, States> {
   }
 
   render() {
-    const {
-      location: { params },
-    } = this.props
+    const { location: { params } } = this.props
     const { repository: repositoryAsync } = this.props
     if (!repositoryAsync.fetching && !repositoryAsync.data) {
       return (
@@ -227,6 +223,7 @@ class RepositoryEditor extends Component<Props, States> {
                   title={t('Export')}
                   open={this.state.exportPostman}
                   repoId={repository.id}
+                  repoToken={repository.token}
                   onClose={() => this.setState({ exportPostman: false })}
                 />
                 <span
@@ -273,7 +270,10 @@ class RepositoryEditor extends Component<Props, States> {
               <ModuleList mods={repository.modules} repository={repository} mod={mod} />
               <div className="InterfaceWrapper">
                 <InterfaceList itfs={mod?.interfaces || []} repository={repository} mod={mod} itf={itf} />
-                <InterfaceEditor itf={itf} mod={mod} repository={repository} />
+                <InterfaceEditor itf={itf} mod={mod} repository={repository}
+                  onValidate={() => this.setState({ openValidator: true })} />
+                <Validator open={this.state.openValidator} itf={itf} mod={mod} repository={repository}
+                  onClose={() => this.setState({ openValidator: false })} />
               </div>
             </div>
             <Joyride

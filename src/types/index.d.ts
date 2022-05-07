@@ -10,10 +10,11 @@ declare interface IMessage {
   message: string
   type: MSG_TYPE
   timestamp: number
+  duration?: number
 }
 
 /** normal callback */
-declare type TCB = (isOk: boolean, data?: any) => void
+declare type TCB = (isOk: boolean, data?: any, returnMsg?: string) => void
 
 
 declare interface IPager {
@@ -22,6 +23,8 @@ declare interface IPager {
   order?: TOrder
   orderBy?: string
   query?: string
+  total?: number
+  cursor?: number
 }
 
 declare interface IPagerList<T> {
@@ -44,4 +47,28 @@ declare type TCommonDoAction = {
     data?: any
     errMsg?: string
   } | TCommonError
+}
+
+declare type Async<T> = {
+  data: T
+  fetching: boolean
+}
+
+
+declare type AsyncWithPager<T> = {
+  data: T[]
+  fetching: boolean
+  pagination: IPager
+}
+
+declare interface INumItem {
+  value: number
+  label: string
+}
+
+declare interface ModelBase {
+  id?: number
+  createdAt?: string
+  deletedAt?: string
+  updatedAt?: string
 }

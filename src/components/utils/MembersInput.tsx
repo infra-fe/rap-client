@@ -19,10 +19,8 @@ class MembersInput extends Component<any, any> {
       limit: props.limit,
     }
   }
-  componentWillReceiveProps(nextProps: any) {
-    this.setState({
-      value: nextProps.value || [],
-    })
+  static getDerivedStateFromProps(nextProps) {
+    return { value: nextProps.value || [] }
   }
   render() {
     return (

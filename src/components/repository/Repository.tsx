@@ -3,45 +3,44 @@ import React, { useState, MouseEventHandler } from 'react'
 import { connect, Link, replace, moment } from '../../family'
 import { serve } from '../../relatives/services/constant'
 import RepositoryForm from './RepositoryForm'
-import {
-  GoRepo,
-  GoPencil,
-  GoPlug,
-  GoTrashcan,
-  GoPerson,
-  GoOrganization,
-} from 'react-icons/go'
+import { useConfirm } from 'hooks/useConfirm'
+import { GoRepo, GoPencil, GoPlug, GoTrashcan, GoPerson, GoOrganization } from 'react-icons/go'
 import { RouterState } from 'connected-react-router'
-import { RootState } from 'actions/types'
-import { Card } from '@material-ui/core'
+import { RootState, User, Repository } from 'actions/types'
+import { Card } from '@mui/material'
 import { deleteRepository } from 'actions/repository'
 // DONE 2.1 iconfont => octicons
 
 interface Props {
-  auth: any
-  repository: any
-  editor: any
+  auth: User
+  repository: Repository
+  editor: string
   router: RouterState
   deleteRepository: typeof deleteRepository
   replace: typeof replace
 }
 
-function Repository(props: Props) {
+function RepositoryCom(props: Props) {
   const { auth, repository, editor, router } = props
   const [open, setOpen] = useState(false)
+  const confirm = useConfirm()
   const { t } = useTranslation()
   const handleDeleteRepository: MouseEventHandler<HTMLAnchorElement> = e => {
     e.preventDefault()
     const { repository, router, replace } = props
-    const message = `仓库被删除后不可恢复，并且会删除相关的模块和接口！\n确认继续删除『#${
+    const message = `${t('confirm delete repo')}『#${
       repository.id
-    } ${repository.name}』吗？`
-    if (window.confirm(message)) {
+    } ${repository.name}』${t('?')}`
+    confirm({
+      title: t('Confirm delete'),
+      content: message,
+    }).then(() => {
       const { deleteRepository } = props
       deleteRepository(repository.id)
       const { pathname, hash, search } = router.location
       replace(pathname + hash + search)
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    }).catch(()=>{})
   }
   const { location } = router
   return (
@@ -66,12 +65,12 @@ function Repository(props: Props) {
               <GoPencil />
             </span>
           ) : null}
-          <RepositoryForm
+          {open && <RepositoryForm
             title={t('Edit the repository')}
             open={open}
             onClose={() => setOpen(false)}
             repository={repository}
-          />
+          />}
 
           {/* 删除权限：个人仓库 */}
           {repository.owner.id === auth.id ? (
@@ -114,4 +113,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Repository)
+)(RepositoryCom)

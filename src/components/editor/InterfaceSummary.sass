@@ -38,6 +38,8 @@
     border-radius: .25rem
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out
 .InterfaceSummary
+  .warning
+    color: orange
   .dropdown
     display: inline-block
   .form-control
@@ -56,6 +58,12 @@
       margin: 0
       padding: 0
       margin-bottom: 5px
+      .scene-icon
+        font-size: 12px
+        color: #999
+        cursor: pointer
+        &:hover
+          color: #4A7BF7
   .nav
     display: -ms-flexbox
     display: flex
@@ -102,3 +110,9 @@
       margin-top: -1px
       border-top-left-radius: 0
       border-top-right-radius: 0
+
+.validate-link
+  cursor: pointer
+  color: #999
+  &:hover
+    color: #4A7BF7

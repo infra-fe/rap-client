@@ -3,11 +3,12 @@ import { CACHE_KEY } from 'utils/consts'
 import { mergeRSAABase } from './rootAction'
 import { RSAA } from 'redux-api-middleware'
 import { serve } from 'relatives/services/constant'
+import { Log, User } from './types'
 
 // 登陆
-export const login = (user: any, onResolved: any) => ({ type: 'USER_LOGIN', user, onResolved })
-export const loginSucceeded = (user: any) => ({ type: 'USER_LOGIN_SUCCEEDED', user })
-export const loginFailed = (message: any) => ({ type: 'USER_LOGIN_FAILED', message })
+export const login = (user: User, onResolved?: (isOk: boolean, errMsg?: string) => void) => ({ type: 'USER_LOGIN', user, onResolved })
+export const loginSucceeded = (user: User) => ({ type: 'USER_LOGIN_SUCCEEDED', user })
+export const loginFailed = (message: string) => ({ type: 'USER_LOGIN_FAILED', message })
 
 // 登出
 export const logout = () => ({ type: 'USER_LOGOUT' })
@@ -16,36 +17,36 @@ export const logoutFailed = () => ({ type: 'USER_LOGOUT_FAILED' })
 
 // 获取登陆信息
 export const fetchLoginInfo = () => ({ type: 'USER_FETCH_LOGIN_INFO' })
-export const fetchLoginInfoSucceeded = (user: any) => ({ type: 'USER_FETCH_LOGIN_INFO_SUCCEEDED', user })
-export const fetchLoginInfoFailed = (message: any) => ({ type: 'USER_FETCH_LOGIN_INFO_FAILED', message })
+export const fetchLoginInfoSucceeded = (user: User) => ({ type: 'USER_FETCH_LOGIN_INFO_SUCCEEDED', user })
+export const fetchLoginInfoFailed = (message: string) => ({ type: 'USER_FETCH_LOGIN_INFO_FAILED', message })
 
 // 注册
-export const addUser = (user: any, onResolved: any) => ({ type: 'USER_ADD', user, onResolved })
-export const addUserSucceeded = (user: any) => ({ type: 'USER_ADD_SUCCEEDED', user })
-export const addUserFailed = (message: any) => ({ type: 'USER_ADD_FAILED', message })
+export const addUser = (user: User, onResolved: TCB) => ({ type: 'USER_ADD', user, onResolved })
+export const addUserSucceeded = (user: User) => ({ type: 'USER_ADD_SUCCEEDED', user })
+export const addUserFailed = (message: string) => ({ type: 'USER_ADD_FAILED', message })
 
 // 删除用户
-export const deleteUser = (id: any) => ({ type: 'USER_DELETE', id })
-export const deleteUserSucceeded = (id: any) => ({ type: 'USER_DELETE_SUCCEEDED', id })
-export const deleteUserFailed = (id: any) => ({ type: 'USER_DELETE_FAILED', id })
+export const deleteUser = (id?: number) => ({ type: 'USER_DELETE', id })
+export const deleteUserSucceeded = (id: number) => ({ type: 'USER_DELETE_SUCCEEDED', id })
+export const deleteUserFailed = (id: number) => ({ type: 'USER_DELETE_FAILED', id })
 
 // 获取用户列表
 export const fetchUserCount = () => ({ type: 'USER_COUNT_FETCH' })
-export const fetchUserCountSucceeded = (count: any) => ({ type: 'USER_COUNT_FETCH_SUCCEEDED', count })
-export const fetchUserCountFailed = (message: any) => ({ type: 'USER_COUNT_FETCH_FAILED', message })
+export const fetchUserCountSucceeded = (count: number) => ({ type: 'USER_COUNT_FETCH_SUCCEEDED', count })
+export const fetchUserCountFailed = (message: string) => ({ type: 'USER_COUNT_FETCH_FAILED', message })
 export const fetchUserList = ({ cursor, limit } = { cursor: '', limit: ''}) => ({ type: 'USER_LIST_FETCH', cursor, limit })
-export const fetchUserListSucceeded = (users: any) => ({ type: 'USER_LIST_FETCH_SUCCEEDED', users })
-export const fetchUserListFailed = (message: any) => ({ type: 'USER_LIST_FETCH_FAILED', message })
+export const fetchUserListSucceeded = (users?: User) => ({ type: 'USER_LIST_FETCH_SUCCEEDED', users })
+export const fetchUserListFailed = (message: string) => ({ type: 'USER_LIST_FETCH_FAILED', message })
 
 // 获取用户设置
-export const fetchSetting = () => ({ type: 'SETTING_FETCH' })
-export const fetchSettingSucceeded = (setting: any) => ({ type: 'SETTING_FETCH_SUCCEEDED', setting })
-export const fetchSettingFailed = (message: any) => ({ type: 'SETTING_FETCH_FAILED', message })
+// export const fetchSetting = () => ({ type: 'SETTING_FETCH' })
+// export const fetchSettingSucceeded = (setting) => ({ type: 'SETTING_FETCH_SUCCEEDED', setting })
+// export const fetchSettingFailed = (message: string) => ({ type: 'SETTING_FETCH_FAILED', message })
 
 // 修改用户设置
-export const updateSetting = (setting: any) => ({ type: 'SETTING_UPDATE', setting })
-export const updateSettingSucceeded = (setting: any) => ({ type: 'SETTING_UPDATE', setting })
-export const updateSettingFailed = (message: any) => ({ type: 'SETTING_UPDATE', message })
+export const updateSetting = (setting: CACHE_KEY[]) => ({ type: 'SETTING_UPDATE', setting })
+export const updateSettingSucceeded = (setting: CACHE_KEY[]) => ({ type: 'SETTING_UPDATE', setting })
+export const updateSettingFailed = (message: string) => ({ type: 'SETTING_UPDATE', message })
 
 // 获取用户通知
 export const fetchNotificationList = () => ({ type: 'NOTIFICATION_LIST_FETCH' })
@@ -53,26 +54,26 @@ export const fetchNotificationListSucceeded = () => ({ type: 'NOTIFICATION_LIST_
 export const fetchNotificationListFailed = () => ({ type: 'NOTIFICATION_LIST_FETCH_Failed' })
 
 // 阅读用户通知
-export const readNotification = (id: any) => ({ type: 'NOTIFICATION_READ', id })
-export const readNotificationSucceeded = (id: any) => ({ type: 'NOTIFICATION_READ_SUCCEEDED', id })
-export const readNotificationFailed = (message: any) => ({ type: 'NOTIFICATION_READ_FAILED', message })
+export const readNotification = (id: number) => ({ type: 'NOTIFICATION_READ', id })
+export const readNotificationSucceeded = (id: number) => ({ type: 'NOTIFICATION_READ_SUCCEEDED', id })
+export const readNotificationFailed = (message: string) => ({ type: 'NOTIFICATION_READ_FAILED', message })
 
 // 获取用户日志
 export const fetchLogList = (
   { cursor, limit } = { cursor: '', limit: '' }
 ) => ({ type: 'LOG_LIST_FETCH', cursor, limit })
-export const fetchLogListSucceeded = (logs: any) => ({ type: 'LOG_LIST_FETCH_SUCCEEDED', logs })
-export const fetchLogListFailed = (message: any) => ({ type: 'LOG_LIST_FETCH_FAILED', message })
+export const fetchLogListSucceeded = (logs?: Log) => ({ type: 'LOG_LIST_FETCH_SUCCEEDED', logs })
+export const fetchLogListFailed = (message: string) => ({ type: 'LOG_LIST_FETCH_FAILED', message })
 
 // 发送重设密码邮件
-export const findpwd = (user: any, onResolved: any) => ({ type: 'USER_FINDPWD', user, onResolved })
+export const findpwd = (user: User, onResolved?: (isOk: boolean, errMsg?: string) => void) => ({ type: 'USER_FINDPWD', user, onResolved })
 export const findpwdSucceeded = () => ({ type: 'USER_FINDPWD_SUCCEEDED' })
-export const findpwdFailed = (message: any) => ({ type: 'USER_FINDPWD_FAILED', message })
+export const findpwdFailed = (message: string) => ({ type: 'USER_FINDPWD_FAILED', message })
 
 // 用户通过邮件重设密码
-export const resetpwd = (user: any, onResolved: any) => ({ type: 'USER_RESETPWD', user, onResolved })
+export const resetpwd = (user: User, onResolved?: (isOk: boolean, errMsg: string) => void) => ({ type: 'USER_RESETPWD', user, onResolved })
 export const resetpwdSucceeded = () => ({ type: 'USER_RESETPWD_SUCCEEDED' })
-export const resetpwdFailed = (message: any) => ({ type: 'USER_RESETPWD_FAILED', message })
+export const resetpwdFailed = (message: string) => ({ type: 'USER_RESETPWD_FAILED', message })
 export type CHANGE_THEME = 'CHANGE_THEME'
 export const CHANGE_THEME: CHANGE_THEME = 'CHANGE_THEME'
 export type CHANGE_GUIDE = 'CHANGE_GUIDE'
@@ -152,18 +153,10 @@ export function fetchUserSettings(keys: CACHE_KEY[]) {
 export type DO_FETCH_USER_SETTINGS = 'DO_FETCH_USER_SETTINGS'
 export const DO_FETCH_USER_SETTINGS: DO_FETCH_USER_SETTINGS = 'DO_FETCH_USER_SETTINGS'
 
-export function doFetchUserSettings(keys: CACHE_KEY[], cb?: (isOk: boolean, payload?: any) => void): DoFetchUserSettingsAction {
+export function doFetchUserSettings(keys?: CACHE_KEY[], cb?: TCB) {
   return {
     type: DO_FETCH_USER_SETTINGS,
     payload: { keys, cb },
-  }
-}
-
-export interface DoFetchUserSettingsAction {
-  type: DO_FETCH_USER_SETTINGS
-  payload: {
-    keys: CACHE_KEY[]
-    cb?: (isOk: boolean, payload?: any) => void
   }
 }
 

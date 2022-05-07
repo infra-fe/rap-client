@@ -17,7 +17,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  fetchModule(id: any) {
+  fetchModule(id: number) {
     return fetch(`${serve}/module/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -52,7 +52,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  deleteModule(id: any) {
+  deleteModule(id: number) {
     return fetch(`${serve}/module/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -75,7 +75,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  fetchPage(id: any) {
+  fetchPage(id: number) {
     return fetch(`${serve}/page/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -100,7 +100,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  deletePage(id: any) {
+  deletePage(id: number) {
     return fetch(`${serve}/page/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -114,7 +114,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  fetchInterface(id: any) {
+  fetchInterface(id: number) {
     return fetch(`${serve}/interface/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -155,7 +155,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  lockInterface(id: any) {
+  lockInterface(id: number) {
     return fetch(`${serve}/interface/lock`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -165,7 +165,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  unlockInterface(id: any) {
+  unlockInterface(id: number) {
     return fetch(`${serve}/interface/unlock`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -175,7 +175,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  deleteInterface(id: any) {
+  deleteInterface(id: number) {
     return fetch(`${serve}/interface/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -199,7 +199,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  fetchProperty(id: any) {
+  fetchProperty(id: number) {
     return fetch(`${serve}/property/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -234,7 +234,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  deleteProperty(id: any) {
+  deleteProperty(id: number) {
     return fetch(`${serve}/property/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -246,6 +246,42 @@ export default {
       body: JSON.stringify({ ids }),
       headers: { 'Content-Type': 'application/json' },
     })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  // 场景
+  addScene(itf: any) {
+    return fetch(`${serve}/scene/create`, {
+      ...CREDENTIALS,
+      method: 'POST',
+      body: JSON.stringify(itf),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  updateScene(scene: any) {
+    return fetch(`${serve}/scene/update`, {
+      ...CREDENTIALS,
+      method: 'POST',
+      body: JSON.stringify(scene),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  deleteScene(id: number) {
+    return fetch(`${serve}/scene/remove?id=${id}`, { ...CREDENTIALS })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  fetchSceneList(interfaceId: number) {
+    return fetch(`${serve}/scene/list?interfaceId=${interfaceId}`, { ...CREDENTIALS })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  fetchScene(id: number) {
+    return fetch(`${serve}/scene/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
   },

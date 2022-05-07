@@ -5,12 +5,13 @@ import { GoAlert } from 'react-icons/go'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { RouterState } from 'connected-react-router'
+import { Repository } from 'actions/types'
 
 type DuplicatedInterfacesWarningState = {
   showMore: boolean
 }
 type DuplicatedInterfacesWarningProps = {
-  repository: any
+  repository: Repository
   router: RouterState
 }
 class DuplicatedInterfacesWarning extends Component<
@@ -27,7 +28,7 @@ DuplicatedInterfacesWarningState
     }
   }
 
-  static parseDuplicatedInterfaces(repository: any) {
+  static parseDuplicatedInterfaces(repository: Repository) {
     const counter: any = {}
     for (const mod of repository.modules) {
       for (const itf of mod.interfaces) {
@@ -49,10 +50,13 @@ DuplicatedInterfacesWarningState
   static printDuplicatedInterfacesWarning(duplicated: any) {
     duplicated.forEach((interfaces: any) => {
       const key = `${interfaces[0].method} ${interfaces[0].url}`
+      // eslint-disable-next-line no-console
       console.group('警告：检测到重复接口 ' + key)
       interfaces.forEach((itf: any) => {
+        // eslint-disable-next-line no-console
         console.warn(`#${itf.id} ${itf.method} ${itf.url}`)
       })
+      // eslint-disable-next-line no-console
       console.groupEnd()
     })
   }

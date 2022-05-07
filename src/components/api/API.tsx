@@ -2,7 +2,7 @@ import { useTranslation, Translation } from 'react-i18next'
 import React from 'react'
 import { serve } from '../../relatives/services/constant'
 import './API.css'
-import { Paper, Button } from '@material-ui/core'
+import { Paper, Button } from '@mui/material'
 
 const ExampleJQuery = () => {
   const { t } = useTranslation()
@@ -40,11 +40,9 @@ type State = {
   showExampleJQuery: boolean
 }
 
-type Props = any
+class API extends React.Component<null, State> {
 
-class API extends React.Component<Props, State> {
-
-  constructor(props: any) {
+  constructor(props: null) {
     super(props)
     this.state = {
       showExampleJQuery: false,
@@ -55,18 +53,6 @@ class API extends React.Component<Props, State> {
       <Translation>
         {(t) => (
           <Paper className="APIList">
-            <div className="header">
-              <span className="title">{t('Guidance')}</span>
-            </div>
-            <div className="body">
-              <div className="API">
-                <ul>
-                  <li>
-                    <a href="https://github.com/thx/rap2-delos/wiki">https://github.com/thx/rap2-delos/wiki</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
             <div className="header">
               <span className="title">{t('Platform API interface')}</span>
             </div>

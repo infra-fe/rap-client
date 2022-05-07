@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { Link } from '../../family'
 import { Spin } from '../utils'
-import { Card } from '@material-ui/core'
+import { Card } from '@mui/material'
+import { Repository } from 'actions/types'
 
 const JoinedRepositoriesCard = ({ repositories }: any) => {
   const { t } = useTranslation()
@@ -11,7 +12,7 @@ const JoinedRepositoriesCard = ({ repositories }: any) => {
       <div className="card-header">{t('My joined repository')}</div>
       {repositories.fetching ? <Spin /> : (
         <div className="card-block">
-          {repositories.data.slice(0, 10).map((repository: any) =>
+          {repositories.data.slice(0, 10).map((repository: Repository) =>
             <p key={repository.id}><JoinedRepositoryLink repository={repository} /></p>
           )}
           {repositories.data.length === 0 ? <span>-</span> : null}

@@ -1,49 +1,24 @@
 import { useTranslation } from 'react-i18next'
-import React from 'react'
+import { useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
 import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-material-ui'
+import { TextField } from 'formik-mui'
 import * as Yup from 'yup'
-import { Button, Theme, Dialog, DialogContent, DialogTitle, Select, MenuItem, InputLabel, FormControl } from '@material-ui/core'
-import { makeStyles } from '@material-ui/styles'
-import { SlideUp } from 'components/common/Transition'
+import { Button, Dialog, DialogContent, DialogTitle, Select, MenuItem, InputLabel, FormControl, Switch, Typography, Box } from '@mui/material'
+import Transition from 'components/common/Transition'
 import { Interface, Repository, RootState, Module } from '../../actions/types'
 import { updateInterface, addInterface } from '../../actions/interface'
 import { StoreStateRouterLocationURI, push } from 'family'
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD']
 export const STATUS_LIST = [200, 301, 403, 404, 500, 502, 503, 504]
 
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {
-  },
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: spacing(2),
-    flex: 1,
-  },
-  preview: {
-    marginTop: spacing(1),
-  },
-  form: {
-    minWidth: 500,
-    minHeight: 300,
-  },
-  formTitle: {
-    color: 'rgba(0, 0, 0, 0.54)',
-    fontSize: 9,
-  },
-  formItem: {
-    marginBottom: spacing(1),
-  },
-  ctl: {
-    marginTop: spacing(3),
-  },
-}))
 
-const FORM_STATE_INIT: Interface = {
+interface FormState extends Interface {
+  useTmpl?: boolean
+}
+
+const FORM_STATE_INIT: FormState = {
   id: 0,
   name: '',
   url: '',
@@ -52,6 +27,7 @@ const FORM_STATE_INIT: Interface = {
   repositoryId: 0,
   moduleId: 0,
   status: 200,
+  useTmpl: false,
 }
 
 interface Props {
@@ -61,29 +37,36 @@ interface Props {
   itf?: Interface
   repository?: Repository
   mod?: Module
+  type?: 'create' | 'edit'
 }
 
 function InterfaceForm(props: Props) {
+  const isEdit = props.type === 'edit'
   const auth = useSelector((state: RootState) => state.auth)
   const { open, onClose, itf, title, repository, mod } = props
-  const classes = useStyles()
   const dispatch = useDispatch()
   const router = useSelector((state: RootState) => state.router)
   const { t } = useTranslation()
   const msg = YUP_MSG(t)
+  const repo = useSelector((state: RootState) => state.repository.data)
+  const tmpls = useMemo(() => repo.modules.map(x => x.interfaces)
+    .reduceRight((a, b) => [...a, ...b], []).filter(x => x.isTmpl), [repo])
+
   const schema = Yup.object().shape({
-    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    name: Yup.string().required(msg.REQUIRED).max(40, msg.MAX_LENGTH(40)),
+    url: Yup.string().required(msg.REQUIRED).matches(/^(\/|https:|http:)/, t('msg3')),
     description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
   })
+
   return (
     <Dialog
       open={open}
       onClose={(_event, reason) => (reason !== 'backdropClick' && onClose())}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent dividers={true}>
-        <div className={classes.form}>
+        <Box sx={{ minWidth: '500px', minHeight: '300px' }}>
           <Formik
             initialValues={{
               ...FORM_STATE_INIT,
@@ -112,38 +95,40 @@ function InterfaceForm(props: Props) {
                 })
               )
             }}
-            render={({ isSubmitting, setFieldValue, values }) => {
+          >
+            {({ isSubmitting, setFieldValue, values }) => {
               return (
                 <Form>
                   <div className="rmodal-body">
-                    <div className={classes.formItem}>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="name"
                         label={t('Name')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="url"
                         label={t('URL address')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <FormControl>
                         <InputLabel
                           shrink={true}
                           htmlFor="method-label-placeholder"
                         >
-                          {t('Type')}
+                          {t('Method')}
                         </InputLabel>
                         <Select
                           value={values.method}
                           displayEmpty={true}
                           name="method"
+                          style={{ width: 200 }}
                           onChange={selected => {
                             setFieldValue('method', selected.target.value)
                           }}
@@ -155,8 +140,8 @@ function InterfaceForm(props: Props) {
                           ))}
                         </Select>
                       </FormControl>
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <InputLabel
                         shrink={true}
                         htmlFor="method-label-placeholder"
@@ -167,6 +152,7 @@ function InterfaceForm(props: Props) {
                         value={values.status}
                         displayEmpty={true}
                         name="status"
+                        style={{ width: 200 }}
                         onChange={selected => {
                           setFieldValue('status', selected.target.value)
                         }}
@@ -177,8 +163,49 @@ function InterfaceForm(props: Props) {
                           </MenuItem>
                         ))}
                       </Select>
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    {!isEdit && <Box sx={{ mb: 1 }}>
+                      <InputLabel
+                        shrink={true}
+                        htmlFor="method-label-placeholder"
+                      >
+                        {t('From tmpl')}
+                      </InputLabel>
+                      <Switch
+                        value={values.useTmpl}
+                        onChange={e => setFieldValue('useTmpl', e.target.checked)}
+                      />
+                    </Box>}
+                    {!isEdit && values.useTmpl &&
+                      <Box sx={{ mb: 1 }}>
+                        <InputLabel
+                          shrink={true}
+                          htmlFor="method-label-placeholder"
+                        >
+                          {t('Select tmpl')}
+                        </InputLabel>
+                        <Select
+                          value={values.tmplId ?? 0}
+                          displayEmpty={true}
+                          name="tmplId"
+                          style={{ width: '100%', maxWidth: '500px' }}
+                          disabled={tmpls.length === 0}
+                          onChange={selected => {
+                            setFieldValue('tmplId', selected.target.value)
+                          }}
+                        >
+                          {tmpls.map(tmpl => (
+                            <MenuItem key={tmpl.id} value={tmpl.id}>
+                              <Typography variant="inherit" noWrap={true} style={{ maxWidth: '480px' }}>
+                                {tmpl.name}: {tmpl.url}
+                              </Typography>
+                            </MenuItem>
+                          ))}
+                          {<MenuItem value={0}>{t(tmpls.length === 0 ? 'No tmpl' : 'Select')}</MenuItem>}
+                        </Select>
+                      </Box>
+                    }
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="description"
                         label={t('Instructions')}
@@ -186,9 +213,9 @@ function InterfaceForm(props: Props) {
                         multiline={true}
                         fullWidth={true}
                       />
-                    </div>
+                    </Box>
                   </div>
-                  <div className={classes.ctl}>
+                  <Box sx={{ mt: 3 }}>
                     <Button
                       type="submit"
                       variant="contained"
@@ -201,12 +228,12 @@ function InterfaceForm(props: Props) {
                     <Button onClick={() => onClose()} disabled={isSubmitting}>
                       {t('cancel')}
                     </Button>
-                  </div>
+                  </Box>
                 </Form>
               )
             }}
-          />
-        </div>
+          </Formik>
+        </Box>
       </DialogContent>
     </Dialog>
   )

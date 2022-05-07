@@ -2,64 +2,24 @@ import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import config from '../../config'
-import { Button, createStyles, makeStyles, List, ListItem, InputLabel, Input, FormControl, InputAdornment, IconButton, Paper } from '@material-ui/core'
-import { green } from '@material-ui/core/colors'
-import Visibility from '@material-ui/icons/Visibility'
-import Refresh from '@material-ui/icons/Refresh'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import { Button, List, ListItem, InputLabel, Input, FormControl, InputAdornment, IconButton, Paper, Box } from '@mui/material'
+import Visibility from '@mui/icons-material/Visibility'
+import Refresh from '@mui/icons-material/Refresh'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import { resetpwd } from 'actions/account'
-import { showMessage, MSG_TYPE } from 'actions/common'
-import CodeIcon from '@material-ui/icons/Code'
+import CodeIcon from '@mui/icons-material/Code'
 import { getRouter } from 'selectors/router'
 import { push } from 'connected-react-router'
 import URI from 'urijs'
+import { useSnackbar } from 'notistack'
 
 const { serve } = config
-
-const useStyles = makeStyles(() => createStyles({
-  root: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    overflow: 'hidden',
-    backgroundSize: 'cover',
-  },
-  container: {
-    width: 350,
-    margin: 'auto',
-    marginTop: 150,
-    opacity: 0.85,
-  },
-  ctl: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  captchaWrapper: {
-    cursor: 'pointer',
-  },
-  captcha: {
-    width: 108,
-    height: 36,
-  },
-  buttonProgress: {
-    color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  buttonWrapper: {
-    position: 'relative',
-  },
-}))
 
 export default function ResetpwdForm() {
   const [captchaId, setCaptchaId] = useState(Date.now())
   const [captcha, setCaptcha] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState('')
-  const classes = useStyles()
   const dispatch = useDispatch()
   const router = useSelector(getRouter)
   const { pathname, hash, search } = router.location
@@ -67,17 +27,19 @@ export default function ResetpwdForm() {
   const email = uri.search(true).email
   const code = uri.search(true).code
   const token = uri.search(true).token
-  const {t} = useTranslation()
-  const handleSubmit = (e?: any) => {
+  const { t } = useTranslation()
+  const { enqueueSnackbar } = useSnackbar()
+
+  const handleSubmit = (e?: React.MouseEvent<HTMLButtonElement>) => {
     e && e.preventDefault()
     if (!password) {
-      dispatch(showMessage(`请输入密码`, MSG_TYPE.WARNING))
+      enqueueSnackbar(`请输入密码`, { variant: 'warning' })
     } else if (password.length < 6) {
-      dispatch(showMessage(`密码长度过短，请输入六位以上密码`, MSG_TYPE.WARNING))
+      enqueueSnackbar(`密码长度过短，请输入六位以上密码`, { variant: 'warning' })
     } else {
       dispatch(
         resetpwd({ email, code, token, password, captcha }, () => {
-          dispatch(showMessage(`密码重置成功，请重新登录`, MSG_TYPE.SUCCESS))
+          enqueueSnackbar(`密码重置成功，请重新登录`, { variant: 'success' })
           dispatch(push('/'))
         })
       )
@@ -85,8 +47,8 @@ export default function ResetpwdForm() {
   }
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.container}>
+    <Box sx={{ width: '100%', height: '100%', position: 'absolute', overflow: 'hidden', backgroundSize: 'cover' }}>
+      <Paper sx={{ width: '350px', margin: 'auto', marginTop: '150px', opacity: 0.85 }}>
         <List>
           <ListItem>
             <h2>{t('To reset your account password')}</h2>
@@ -109,7 +71,7 @@ export default function ResetpwdForm() {
                     <IconButton
                       aria-label="Toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
-                    >
+                      size="large">
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>}
@@ -128,7 +90,7 @@ export default function ResetpwdForm() {
                 onChange={e => setCaptcha(e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
-                    <IconButton>
+                    <IconButton size="large">
                       <CodeIcon />
                     </IconButton>
                   </InputAdornment>
@@ -136,13 +98,16 @@ export default function ResetpwdForm() {
               />
             </FormControl>
           </ListItem>
-          <ListItem className={classes.ctl}>
-            <div className={classes.captchaWrapper} onClick={() => setCaptchaId(Date.now())}>
-              <img src={`${serve}/captcha?t=${captchaId}`} className={classes.captcha} alt="captcha" />
+          <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ pointer: 'cursor' }} onClick={() => setCaptchaId(Date.now())}>
+              <Box component="img" src={`${serve}/captcha?t=${captchaId}`} sx={{ width: '108px', height: '36px' }} alt="captcha" />
               <Refresh />
-            </div>
-            <div className={classes.buttonWrapper}>
-              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>
+            </Box>
+            <div>
+              <Button
+                variant="outlined"
+                sx={{ mr: 1 }}
+                onClick={() => dispatch(push('/account/login'))}>
                 {t('cancel')}
               </Button>
               <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>{t('To reset your password')}</Button>
@@ -150,6 +115,6 @@ export default function ResetpwdForm() {
           </ListItem>
         </List>
       </Paper>
-    </div>
+    </Box>
   )
 }

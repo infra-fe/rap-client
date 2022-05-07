@@ -1,14 +1,15 @@
 import { Translation } from 'react-i18next'
-import React, { Component } from 'react'
-import { PropTypes } from '../../family'
-import Repository from './Repository'
+import React from 'react'
+import { Repository } from 'actions/types'
+import RepositoryCom from './Repository'
 
-class RepositoryList extends Component<any, any> {
-  static propTypes = {
-    name: PropTypes.string, // 搜索仓库
-    repositories: PropTypes.array.isRequired, // 仓库列表
-    editor: PropTypes.string.isRequired, // 仓库编辑器地址
-  }
+interface Props {
+  name: string
+  repositories: Repository[]
+  editor: string
+}
+
+class RepositoryList extends React.Component<Props, null> {
   render() {
     const { name, repositories, editor } = this.props
     if (!repositories.length) {
@@ -21,9 +22,9 @@ class RepositoryList extends Component<any, any> {
     }
     return (
       <div className="RepositoryList row">
-        {repositories.map((repository: any) => (
+        {repositories.map(repository => (
           <div key={repository.id} >
-            <Repository repository={repository} editor={editor} />
+            <RepositoryCom repository={repository} editor={editor} />
           </div>
         )
         )}

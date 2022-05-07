@@ -1,24 +1,7 @@
 import React from 'react'
-import { Button, makeStyles, createStyles, CircularProgress } from '@material-ui/core'
-import { ButtonProps } from '@material-ui/core/Button'
-import { green } from '@material-ui/core/colors'
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      position: 'relative',
-      display: 'inline',
-    },
-    buttonProgress: {
-      color: green[500],
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      marginTop: -12,
-      marginLeft: -12,
-    },
-  })
-)
+import { Box, Button, CircularProgress } from '@mui/material'
+import { ButtonProps } from '@mui/material/Button'
+import { green } from '@mui/material/colors'
 
 interface Props extends ButtonProps {
   label: string
@@ -26,15 +9,14 @@ interface Props extends ButtonProps {
 
 export default React.forwardRef((props: Props, ref: any) => {
   const { children, label, ...rest } = props
-  const classes = useStyles()
   const loading = props.disabled
   return (
-    <div className={classes.root} ref={ref}>
+    <Box sx={{ position: 'relative', display: 'inline' }} ref={ref}>
       <Button {...rest}>
         {loading ? '处理中...' : label}
         {children}
       </Button>
-      {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-    </div>
+      {loading && <CircularProgress size={24} sx={{ color: green[500], position: 'absolute', top: '50%', left: '50%', mt: -1.5, ml: -1.5 }} />}
+    </Box>
   )
 })

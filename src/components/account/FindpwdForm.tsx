@@ -2,78 +2,39 @@ import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import config from '../../config'
-import { Button, createStyles, makeStyles, List, ListItem, InputLabel, Input, FormControl, InputAdornment, IconButton, Paper } from '@material-ui/core'
-import { green } from '@material-ui/core/colors'
-import EmailIcon from '@material-ui/icons/Email'
-import CodeIcon from '@material-ui/icons/Code'
-import Refresh from '@material-ui/icons/Refresh'
+import { Button, List, ListItem, InputLabel, Input, FormControl, InputAdornment, IconButton, Paper, Box } from '@mui/material'
+import EmailIcon from '@mui/icons-material/Email'
+import CodeIcon from '@mui/icons-material/Code'
+import Refresh from '@mui/icons-material/Refresh'
 import { findpwd } from 'actions/account'
-import { showMessage, MSG_TYPE } from 'actions/common'
 import { push } from 'connected-react-router'
+import { useSnackbar } from 'notistack'
 
 const { serve } = config
-
-const useStyles = makeStyles(() => createStyles({
-  root: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    overflow: 'hidden',
-    backgroundSize: 'cover',
-  },
-  container: {
-    width: 350,
-    margin: 'auto',
-    marginTop: 150,
-    opacity: 0.85,
-  },
-  ctl: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  captchaWrapper: {
-    cursor: 'pointer',
-  },
-  captcha: {
-    width: 108,
-    height: 36,
-  },
-  buttonProgress: {
-    color: green[500],
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-  buttonWrapper: {
-    position: 'relative',
-  },
-}))
 
 export default function FindpwdForm() {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [captchaId, setCaptchaId] = useState(Date.now())
   const [captcha, setCaptcha] = useState('')
-  const classes = useStyles()
   const dispatch = useDispatch()
-  const handleSubmit = (e?: any) => {
+  const { enqueueSnackbar } = useSnackbar()
+  const handleSubmit = (e?: React.MouseEvent<HTMLButtonElement>) => {
     e && e.preventDefault()
     if (!email || !captcha) {
-      dispatch(showMessage(`请输入Email、验证码`, MSG_TYPE.WARNING))
+      enqueueSnackbar(`请输入Email、验证码`, { variant: 'warning' })
     } else {
       dispatch(
         findpwd({ email, captcha }, () => {
-          dispatch(showMessage(`发送成功，请登录您的邮箱按提示重置密码`, MSG_TYPE.SUCCESS))
+          enqueueSnackbar(`发送成功，请登录您的邮箱按提示重置密码`, { variant: 'success' })
         })
       )
     }
   }
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.container}>
+    <Box sx={{ width: '100%', height: '100%', position: 'absolute', overflow: 'hidden', backgroundSize: 'cover' }}>
+      <Paper sx={{ width: 350, margin: 'auto', marginTop: 150, opacity: 0.85 }}>
         <List>
           <ListItem>
             <h2>{t('Email to reset the password')}</h2>
@@ -90,7 +51,7 @@ export default function FindpwdForm() {
                 required={true}
                 endAdornment={
                   <InputAdornment position="end" tabIndex={100}>
-                    <IconButton>
+                    <IconButton size="large">
                       <EmailIcon />
                     </IconButton>
                   </InputAdornment>}
@@ -109,7 +70,7 @@ export default function FindpwdForm() {
                 onChange={e => setCaptcha(e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
-                    <IconButton>
+                    <IconButton size="large">
                       <CodeIcon />
                     </IconButton>
                   </InputAdornment>
@@ -117,20 +78,23 @@ export default function FindpwdForm() {
               />
             </FormControl>
           </ListItem>
-          <ListItem className={classes.ctl}>
-            <div className={classes.captchaWrapper} onClick={() => setCaptchaId(Date.now())}>
-              <img src={`${serve}/captcha?t=${captchaId}`} className={classes.captcha} alt="captcha" />
+          <ListItem sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ cursor: 'pointer' }} onClick={() => setCaptchaId(Date.now())}>
+              <Box component="img" src={`${serve}/captcha?t=${captchaId}`} sx={{ width: 108, height: 36 }} alt="captcha" />
               <Refresh />
-            </div>
-            <div className={classes.buttonWrapper}>
-              <Button variant="outlined" color="default" style={{ marginRight: 8 }} onClick={() => dispatch(push('/account/login'))}>
+            </Box>
+            <Box sx={{ position: 'relative' }}>
+              <Button
+                variant="outlined"
+                sx={{ mr: 1 }}
+                onClick={() => dispatch(push('/account/login'))}>
                 {t('cancel')}
               </Button>
               <Button variant="contained" color="primary" tabIndex={3} onClick={handleSubmit}>{t('send')}</Button>
-            </div>
+            </Box>
           </ListItem>
         </List>
       </Paper>
-    </div>
+    </Box>
   )
 }

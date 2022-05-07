@@ -6,40 +6,45 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-} from '@material-ui/core'
-import { SlideUp } from 'components/common/Transition'
+} from '@mui/material'
+import Transition from 'components/common/Transition'
 
 export default function ExportPostmanForm(props: {
   repoId: number
+  repoToken: string
   open: boolean
   onClose: () => void
   title: string
 }) {
-  const { repoId, open, onClose, title } = props
-  const postmanLink = `${config.serve}/export/postman?id=${repoId}`
+  const { repoId, open, onClose, title, repoToken } = props
+  const postmanLink = `${config.serve}/export/openapi?id=${repoId}`
   const markdownLink = `${config.serve}/export/markdown?id=${repoId}&origin=${window.location.origin}`
   const docxLink = `${config.serve}/export/docx?id=${repoId}&origin=${window.location.origin}`
-  const rapLink =`${config.serve}/repository/get?id=${repoId}`
+  const rapLink =`${config.serve}/repository/get?id=${repoId}${repoToken? `&token=${repoToken}` : ''}`
   const { t } = useTranslation()
   // const pdfLink = `${config.serve}/export/pdf?id=${repoId}&origin=${window.location.origin}`
   return (
     <Dialog
       open={open}
       onClose={() => onClose()}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent dividers={true}>
         <form className="form-horizontal" onSubmit={() => false}>
           <div className="mb5">
             <div>
-              Postman:</div>
+              OpenApi3(Postman):</div>
             <div
               className="alert alert-info"
               role="alert"
               style={{ margin: '8px 0' }}
             >
-              <a href={postmanLink} target="_blank" rel="noopener noreferrer">
+              DownLoad: <a href={`${postmanLink}&format=file`} target="_blank" rel="noopener noreferrer">
+                {`${postmanLink}&format=file`}
+              </a>
+              <div></div>
+              JSONData: <a href={postmanLink} target="_blank" rel="noopener noreferrer">
                 {postmanLink}
               </a>
             </div>
@@ -85,9 +90,9 @@ export default function ExportPostmanForm(props: {
             <div>{t('For backups, or in other RAP2 platform import, opens the save as to save. Can also be accessed through programming.')}</div>
           </div>
 
-          <div className="mt10">
+          <div className="mt1">
             <Button variant="outlined" onClick={onClose}>
-              {t('Shut down')}
+              {t('Close')}
             </Button>
           </div>
         </form>

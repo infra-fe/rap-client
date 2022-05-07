@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import React, { useState, useCallback, Fragment } from 'react'
-import ConfirmationDialog from 'components/common/ConfirmDialog'
+import ConfirmDialog from 'components/common/ConfirmDialog'
 
 interface Options {
   title?: string
@@ -66,7 +66,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <Fragment>
       <GlobalContext.Provider value={{ confirm, alert }}>{children}</GlobalContext.Provider>
-      <ConfirmationDialog
+      <ConfirmDialog
         open={resolveReject.length === 2}
         {...options}
         onCancel={handleCancel}

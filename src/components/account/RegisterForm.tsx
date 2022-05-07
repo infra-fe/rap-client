@@ -1,23 +1,23 @@
 import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import Mock from 'mockjs'
 import { addUser } from '../../actions/account'
-import './RegisterForm.css'
-import { Button, Card } from '@material-ui/core'
+import { Button, Card } from '@mui/material'
 import { getBGImageUrl } from 'utils/ImageUtils'
+import { ProviderContext, withSnackbar } from 'notistack'
+import './RegisterForm.css'
 
-type State = {
+interface State {
   fullname: string
   email: string
   password: string
   bg: string
 }
 
-type Props = {
-  history: any
-  onAddUser: any
+interface Props extends RouteComponentProps<null>, ProviderContext {
+  addUser: typeof addUser
 }
 
 // 模拟数据
@@ -36,7 +36,7 @@ const mockUser = () =>
 
 // 展示组件
 class RegisterForm extends Component<Props, State> {
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props)
     this.state = {
       ...mockUser(),
@@ -94,12 +94,13 @@ class RegisterForm extends Component<Props, State> {
       </Translation>
     )
   }
-  handleSubmit = (e: any) => {
-    const { onAddUser } = this.props
+  handleSubmit = (e?: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault()
-    onAddUser(this.state, (isOk: boolean) => {
+    this.props.addUser(this.state, (isOk: boolean) => {
       if (isOk) {
         window.location.href = '/'
+      } else {
+        this.props.enqueueSnackbar(`注册失败`, { variant: 'error' })
       }
     })
   }
@@ -107,9 +108,7 @@ class RegisterForm extends Component<Props, State> {
 
 // 容器组件
 const mapDispatchToProps = {
-  onAddUser: addUser,
+  addUser,
 }
-export default connect(
-  null,
-  mapDispatchToProps
-)(RegisterForm)
+
+export default connect(null, mapDispatchToProps)(withSnackbar(RegisterForm))

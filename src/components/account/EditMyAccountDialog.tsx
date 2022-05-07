@@ -1,19 +1,24 @@
 import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core'
+import { TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
 import { doUpdateAccount } from 'actions/account'
+import { useSnackbar } from 'notistack'
 
 
 function EditMyAccountDialog({ handleClose }: { handleClose: (isOk: boolean) => void }) {
   const [pwd, setPwd] = useState('')
   const [name, setName] = useState('')
   const dispatch = useDispatch()
-  const {t} = useTranslation()
+  const { t } = useTranslation()
+  const { enqueueSnackbar } = useSnackbar()
   const onSubmit = () => {
-    dispatch(doUpdateAccount({ fullname: name, password: pwd }, isOk => {
+    dispatch(doUpdateAccount({ fullname: name, password: pwd }, (isOk, _, msg) => {
       if (isOk) {
         handleClose(true)
+        msg && enqueueSnackbar(msg, { variant: 'success' })
+      } else {
+        msg && enqueueSnackbar(msg, { variant: 'error' })
       }
     }))
   }

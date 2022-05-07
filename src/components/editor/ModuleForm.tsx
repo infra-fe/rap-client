@@ -1,43 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
 import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-material-ui'
+import { TextField } from 'formik-mui'
 import * as Yup from 'yup'
-import { Button, Theme, Dialog, DialogContent, DialogTitle } from '@material-ui/core'
-import { makeStyles } from '@material-ui/styles'
-import { SlideUp } from 'components/common/Transition'
+import { Button, Dialog, DialogContent, DialogTitle, Box } from '@mui/material'
+import Transition from 'components/common/Transition'
 import { Module, Repository, RootState } from '../../actions/types'
 import { updateModule, addModule } from '../../actions/module'
-
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {
-  },
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: spacing(2),
-    flex: 1,
-  },
-  preview: {
-    marginTop: spacing(1),
-  },
-  form: {
-    minWidth: 500,
-  },
-  formTitle: {
-    color: 'rgba(0, 0, 0, 0.54)',
-    fontSize: 9,
-  },
-  formItem: {
-    marginBottom: spacing(1),
-  },
-  ctl: {
-    marginTop: spacing(3),
-  },
-}))
 
 
 const FORM_STATE_INIT: Module = {
@@ -59,23 +29,22 @@ interface Props {
 function ModuleForm(props: Props) {
   const auth = useSelector((state: RootState) => state.auth)
   const { open, onClose, module, title, repository } = props
-  const classes = useStyles()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const msg = YUP_MSG(t)
   const schema = Yup.object().shape({
-    name: Yup.string().required(msg.REQUIRED).max(20, msg.MAX_LENGTH(20)),
+    name: Yup.string().required(msg.REQUIRED).max(40, msg.MAX_LENGTH(40)),
     description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
   })
   return (
     <Dialog
       open={open}
       onClose={(_event, reason) => (reason !== 'backdropClick' && onClose())}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent dividers={true}>
-        <div className={classes.form}>
+        <Box sx={{ minWidth: '500px' }}>
           <Formik
             initialValues={{
               ...FORM_STATE_INIT,
@@ -93,19 +62,21 @@ function ModuleForm(props: Props) {
                 onClose(true)
               }))
             }}
-            render={({ isSubmitting }) => {
+
+          >
+            {({ isSubmitting }) => {
               return (
                 <Form>
                   <div className="rmodal-body">
-                    <div className={classes.formItem}>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="name"
                         label={t('The name of the module')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="description"
                         label={t('Introduction of the module')}
@@ -113,9 +84,9 @@ function ModuleForm(props: Props) {
                         multiline={true}
                         fullWidth={true}
                       />
-                    </div>
+                    </Box>
                   </div>
-                  <div className={classes.ctl}>
+                  <Box sx={{ mt: 3 }}>
                     <Button
                       type="submit"
                       variant="contained"
@@ -131,12 +102,12 @@ function ModuleForm(props: Props) {
                     >
                       {t('cancel')}
                     </Button>
-                  </div>
+                  </Box>
                 </Form>
               )
             }}
-          />
-        </div>
+          </Formik>
+        </Box>
       </DialogContent>
     </Dialog>
   )

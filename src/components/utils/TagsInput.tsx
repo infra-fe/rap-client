@@ -13,11 +13,11 @@ class TagsInput extends Component<any, any> {
       options: props.options || [], // [{ id, label }]
     }
   }
-  componentWillReceiveProps(nextProps: any) {
-    this.setState({
+  static getDerivedStateFromProps(nextProps) {
+    return {
       value: nextProps.value || [],
       options: nextProps.options || [],
-    })
+    }
   }
   render() {
     const { placeholder } = this.props

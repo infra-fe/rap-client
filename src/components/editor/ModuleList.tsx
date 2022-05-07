@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { connect, Link, replace, StoreStateRouterLocationURI } from '../../family'
 import { RSortable } from '../utils'
 import ModuleForm from './ModuleForm'
@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { GoPackage } from 'react-icons/go'
 import { deleteModule, sortModuleList } from '../../actions/module'
 import { Module, Repository, RootState, User } from '../../actions/types'
-import { makeStyles, Theme } from '@material-ui/core'
+import { Box } from '@mui/material'
 
 interface ModuleBaseProps {
   repository: Repository
@@ -48,19 +48,12 @@ interface ModuleListProps {
   repository: Repository
 }
 
-const useStyles = makeStyles(({ palette }: Theme) => ({
-  li: {
-    borderColor: `${palette.primary.main} #e1e4e8 transparent #e1e4e8 !important`,
-  },
-}))
-
 function ModuleList(props: ModuleListProps) {
   const [open, setOpen] = useState(false)
   const dispatch = useDispatch()
   const auth = useSelector((state: RootState) => state.auth)
   const { repository, mods = [], mod } = props
   const { t } = useTranslation()
-  const classes = useStyles()
   const handleSort = (_: any, sortable: any) => {
     dispatch(sortModuleList(sortable.toArray(), () => {
       /** empty */
@@ -70,9 +63,11 @@ function ModuleList(props: ModuleListProps) {
     <RSortable onChange={handleSort} disabled={!repository.canUserEdit}>
       <ul className="ModuleList clearfix">
         {mods.map((item: any) => (
-          <li
+          <Box
+            component="li"
             key={item.id}
-            className={`${item.id === mod!.id ? 'active ' + classes.li : ''} sortable `}
+            sx={item.id === mod!.id ? (theme) => ({ borderColor: `${theme.palette.primary.main} #e1e4e8 transparent #e1e4e8 !important` }) : null}
+            className={`${item.id === mod!.id ? 'active ' : ''} sortable `}
             data-id={item.id}
           >
             <ModuleWrap
@@ -82,16 +77,16 @@ function ModuleList(props: ModuleListProps) {
               repository={repository}
               auth={auth}
             />
-          </li>
+          </Box>
         ))}
         {/* 编辑权限：拥有者或者成员 */}
         {repository.canUserEdit ? (
           <li>
             <span onClick={() => setOpen(true)} className="g-link">
-              <GoPackage className="fontsize-14" /> {t('Create')}
+              <GoPackage className="fontsize-14" /> {t('Create Module')}
             </span>
             <ModuleForm
-              title={t('Create')}
+              title={t('Create Module')}
               repository={repository}
               open={open}
               onClose={() => setOpen(false)}

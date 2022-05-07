@@ -6,32 +6,34 @@ import InterfaceSummary from './InterfaceSummary'
 import PropertyList from './PropertyList'
 import MoveInterfaceForm from './MoveInterfaceForm'
 import { fetchRepository } from '../../actions/repository'
-import { RootState, Property } from 'actions/types'
-import { lockInterface, unlockInterface, fetchInterface } from 'actions/interface'
+import { RootState, Property, Repository } from 'actions/types'
+import { lockInterface, unlockInterface, fetchInterface, updateCopyId } from 'actions/interface'
 import { updateProperties } from 'actions/property'
 import { updateInterface } from 'actions/interface'
 import Spin from '../../components/utils/Spin'
-import { showMessage, MSG_TYPE } from 'actions/common'
-
+import i18n from '../../i18n'
+import { ProviderContext, withSnackbar } from 'notistack'
 export const RequestPropertyList = (props: any) => {
   const { t } = useTranslation()
-  return <PropertyList scope="request" title={t('Request Parameters')} label={t('request')} {...props} />
+  return <PropertyList scope="request" title={t('Request Parameters')} label={t('Request')} {...props} />
 }
 export const ResponsePropertyList = (props: any) => {
   const { t } = useTranslation()
   return <PropertyList scope="response" title={t('Response Content')} label={t('Response')} {...props} />
 }
-type InterfaceEditorProps = {
+interface InterfaceEditorProps extends ProviderContext {
+  copyId: string | number | null
   auth: any
   itf: any
   mod: any
-  repository: any
+  repository: Repository
   lockInterface: typeof lockInterface
   fetchInterface: typeof fetchInterface
   unlockInterface: typeof unlockInterface
   updateInterface: typeof updateInterface
   updateProperties: typeof updateProperties
-  showMessage: typeof showMessage
+  onValidate?: () => void
+  updateCopyId: typeof updateCopyId
 }
 
 type InterfaceEditorState = {
@@ -52,6 +54,8 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     handleAddMemoryProperties: PropTypes.func.isRequired,
     handleDeleteMemoryProperty: PropTypes.func.isRequired,
     handleChangeProperty: PropTypes.func.isRequired,
+    handleChangeAllProperty: PropTypes.func.isRequired,
+    handleCopyProperty: PropTypes.func.isRequired,
   }
   constructor(props: any) {
     super(props)
@@ -86,17 +90,16 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     this.setState({ summaryState })
   }
 
-  componentWillReceiveProps(nextProps: any) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     if (
-      nextProps.itf.id === this.state.itf.id &&
-      nextProps.itf.updatedAt === this.state.itf.updatedAt &&
-      nextProps.itf.locker === this.state.itf.locker &&
-      this.state.properties !== undefined
+      nextProps.itf.id === prevState.itf.id &&
+      nextProps.itf.updatedAt === prevState.itf.updatedAt &&
+      nextProps.itf.locker === prevState.itf.locker &&
+      prevState.properties !== undefined
     ) {
-      return
+      return null
     }
-    const prevStates = this.state
-    this.setState(InterfaceEditor.mapPropsToState(nextProps, prevStates))
+    return InterfaceEditor.mapPropsToState(nextProps, prevState)
   }
 
   fetchInterfaceProperties() {
@@ -109,15 +112,38 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
   }
 
   componentDidMount() {
+    document.addEventListener('keypress', this.handleShortKey)
     this.fetchInterfaceProperties()
   }
 
   componentDidUpdate() {
     this.fetchInterfaceProperties()
   }
-
+  componentWillUnmount() {
+    document.removeEventListener('keypress', this.handleShortKey)
+  }
+  handleShortKey = _.throttle((e) => {
+    e.stopPropagation()
+    const { ctrlKey, key } = e
+    if (ctrlKey) {
+      switch (key) {
+        case 'e':
+          if (!this.state.editable) {
+            this.handleEditInterface()
+          } else {
+            this.handleUnlockInterface()
+          }
+          break
+        case 's':
+          if (this.state.editable) {
+            this.handleSaveInterfaceAndProperties(e, i18n['t'])
+          }
+          break
+      }
+    }
+  }, 500)
   render() {
-    const { auth, repository, mod } = this.props
+    const { auth, repository, mod, onValidate } = this.props
     const { editable, itf } = this.state
     const { id, locker, bodyOption } = this.state.itf
     if (!id) {
@@ -126,7 +152,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     return (
       <article className="InterfaceEditor">
         <Translation>
-          {(t) =>(
+          {(t) => (
             <InterfaceEditorToolbar
               locker={locker}
               auth={auth}
@@ -148,6 +174,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
           editable={editable}
           stateChangeHandler={this.summaryStateChange}
           handleChangeInterface={this.handleChangeInterface}
+          onValidate={onValidate}
         />
 
         {this.state.properties ? (
@@ -163,7 +190,10 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
               bodyOption={bodyOption}
               posFilter={this.state.summaryState.posFilter}
               handleChangeProperty={this.handleChangeProperty}
+              handleChangeAllProperty={this.handleChangeAllProperty}
               handleDeleteMemoryProperty={this.handleDeleteMemoryProperty}
+              handleCopyProperty={this.handleCopyProperty}
+              handleUnlockInterface={this.handleUnlockInterface}
             />
             <ResponsePropertyList
               properties={this.state.properties}
@@ -174,7 +204,10 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
               mod={mod}
               interfaceId={itf.id}
               handleChangeProperty={this.handleChangeProperty}
+              handleChangeAllProperty={this.handleChangeAllProperty}
               handleDeleteMemoryProperty={this.handleDeleteMemoryProperty}
+              handleCopyProperty={this.handleCopyProperty}
+              handleUnlockInterface={this.handleUnlockInterface}
             />
           </>
         ) : (
@@ -233,7 +266,9 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
           index = 0 // 强制从头开始查找，避免漏掉后代属性
         }
       }
-
+      if (this.props.copyId === property.id) {
+        this.props.updateCopyId(null)
+      }
       this.setState({ properties }, () => {
         cb && cb()
       })
@@ -246,6 +281,9 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
       properties.splice(index, 1, property)
       this.setState({ properties })
     }
+  }
+  handleChangeAllProperty = (properties) => {
+    this.setState({ properties })
   }
   handleChangeInterface = (newItf: any) => {
     this.setState({
@@ -260,17 +298,17 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     const { itf } = this.state
     const { updateProperties, updateInterface } = this.props
     if (!itf.name.trim()) {
-      this.props.showMessage(t('msg1'), MSG_TYPE.WARNING)
+      this.props.enqueueSnackbar(t('msg1'), { variant: 'warning' })
       return
     }
 
     if (!itf.url.trim()) {
-      this.props.showMessage(t('msg2'), MSG_TYPE.WARNING)
+      this.props.enqueueSnackbar(t('msg2'), { variant: 'warning' })
       return
     }
 
     if (itf.url.substring(0, 4) !== 'http' && itf.url[0] !== '/') {
-      this.props.showMessage(t('msg3'), MSG_TYPE.WARNING)
+      this.props.enqueueSnackbar(t('msg3'), { variant: 'warning' })
       return
     }
 
@@ -279,7 +317,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     const getPKey = (p: Property) => `${p.name}|${p.parentId}|${p.scope}`
     for (const p of this.state.properties) {
       if (!p.name.trim()) {
-        this.props.showMessage(`${t('msg4')}...${p.description ? `${t('describe as')}：${p.description}` : ''}`, MSG_TYPE.WARNING)
+        this.props.enqueueSnackbar(`${t('msg4')}...${p.description ? `${t('describe as')}：${p.description}` : ''}`, { variant: 'warning' })
         return
       }
       p.name = p.name.trim()
@@ -290,7 +328,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         pMap[key] = 1
       }
       if (pMap[key] > 1) {
-        this.props.showMessage(`${t('parameter')}${p.name}${t('name conflict')}，${t('msg5')}`, MSG_TYPE.WARNING)
+        this.props.enqueueSnackbar(`${t('parameter')}${p.name}${t('name conflict')}，${t('msg5')}`, { variant: 'warning' })
         return
       }
     }
@@ -303,6 +341,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         method: itf.method,
         status: itf.status,
         description: itf.description,
+        isTmpl: itf.isTmpl,
       },
       () => {
         /** empty */
@@ -332,9 +371,13 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
     const { itf, unlockInterface } = this.props
     unlockInterface(itf.id)
   }
+  handleCopyProperty = (id: number) => {
+    this.props.updateCopyId(id)
+  }
 }
 
 const mapStateToProps = (state: RootState) => ({
+  copyId: state.copyId,
   auth: state.auth,
   fetchRepository,
 })
@@ -345,6 +388,7 @@ const mapDispatchToProps = {
   unlockInterface,
   updateProperties,
   updateInterface,
-  showMessage,
+  updateCopyId,
 }
-export default connect(mapStateToProps, mapDispatchToProps)(InterfaceEditor)
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(InterfaceEditor))

@@ -64,7 +64,7 @@ class RModal extends Component<any, any> {
   }
   componentDidUpdate() {
     this.repositionTimer = null
-    this.reposition()
+    // this.reposition()
   }
   componentWillUnmount() {
     // document.body.classList.remove('modal-open')

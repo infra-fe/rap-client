@@ -1,14 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import './Footer.css'
-import { RootState } from 'actions/types'
+import { Counter, RootState } from 'actions/types'
 
-const Footer = ({ counter = {} }: { counter: any }) => {
+const Footer = ({ counter }: { counter?: Counter }) => {
   return (
     <div className="Footer">
-      {counter && counter.version}
+      {counter?.version ?? '-'}
       <ul className="friend_links">
-        <li><a href="https://github.com/thx/rap2-delos" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://github.com/infra-fe/rap-client" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         <li><a href="http://mockjs.com/" target="_blank" rel="noopener noreferrer">Mock.js</a></li>
       </ul>
     </div>

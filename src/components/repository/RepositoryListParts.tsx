@@ -11,7 +11,7 @@ import { addRepository, updateRepository, deleteRepository } from '../../actions
 import { GoArrowRight } from 'react-icons/go'
 import { Organization, RootState } from 'actions/types'
 import { useDispatch, useSelector } from 'react-redux'
-import { Select, MenuItem, TextField, Button } from '@material-ui/core'
+import { Select, MenuItem, TextField, Button } from '@mui/material'
 import OrganizationForm from 'components/organization/OrganizationForm'
 
 export const mapDispatchToProps = {
@@ -70,12 +70,12 @@ export function CreateButton(props: CreateButtonProps) {
         {t('Create Repository')}
       </Button>
 
-      <RepositoryForm
+      {creating && <RepositoryForm
         title={t('Create Repository')}
         open={creating}
         onClose={() => setCreating(false)}
         organizationId={organization ? organization.id : undefined}
-      />
+      />}
 
       {organization && (
         <Button
@@ -169,7 +169,7 @@ export class PaginationWithLocation extends Component<any, any> {
   }
   render() {
     const { calculated } = this.props
-    const { location } = this.context
+    const { location } = this.context as any
     return <Pagination location={location} calculated={calculated} />
   }
 }

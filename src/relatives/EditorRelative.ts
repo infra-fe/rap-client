@@ -3,9 +3,18 @@
 import * as ModuleEffects from './effects/module'
 import * as InterfaceEffects from './effects/interface'
 import * as PropertyEffects from './effects/property'
+import * as SceneEffects from './effects/scene'
 
 export default {
-  reducers: {},
+  reducers: {
+    copyId(state = null, action: any) {
+      switch (action.type) {
+        case 'UPDATE_COPY_ID':
+          return action.payload
+      }
+      return state
+    },
+  },
   sagas: {
     MODULE_ADD: ModuleEffects.addModule,
     MODULE_UPDATE: ModuleEffects.updateModule,
@@ -20,11 +29,17 @@ export default {
     INTERFACE_COUNT: InterfaceEffects.fetchInterfaceCount,
     INTERFACE_LOCK: InterfaceEffects.lockInterface,
     INTERFACE_UNLOCK: InterfaceEffects.unlockInterface,
+    SCENE_ADD: SceneEffects.addScene,
+    SCENE_UPDATE: SceneEffects.updateScene,
+    SCENE_DELETE: SceneEffects.deleteScene,
+    SCENE_LIST_FETCH: SceneEffects.fetchSceneList,
+    SCENE_FETCH: SceneEffects.fetchScene,
 
     PROPERTY_ADD: PropertyEffects.addProperty,
     // PROPERTY_UPDATE: PropertyEffects.updateProperty,
     PROPERTIES_UPDATE: PropertyEffects.updateProperties,
     PROPERTY_DELETE: PropertyEffects.deleteProperty,
+
   },
   listeners: {},
 }

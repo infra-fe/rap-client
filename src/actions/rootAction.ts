@@ -11,9 +11,4 @@ const RSAA_BASE: Partial<IRSAA> = {
   headers: { 'Content-Type': 'application/json' },
 }
 
-export const mergeRSAABase = (options: Partial<IRSAA>) => {
-  return {
-    ...RSAA_BASE,
-    ...options,
-  } as IRSAA
-}
+export const mergeRSAABase = (options: Partial<IRSAA>) => { return { ...RSAA_BASE, ...options } as IRSAA }
