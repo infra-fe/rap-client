@@ -1,45 +1,15 @@
-import grey from '@material-ui/core/colors/grey'
-import { StyleRules, Theme } from '@material-ui/core/styles'
+import { SxProps } from '@mui/material'
 
-const GlobalStyles = (theme: Theme) => ({
-  '@global': {
-    'body': {
-      margin: 0,
-      padding: 0,
-      backgroundColor: grey[200],
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif;',
-      fontSize: '1rem',
-    },
-    '.ml1': {
-      marginLeft: theme.spacing(1),
-    },
-    '.mr1': {
-      marginRight: theme.spacing(1),
-    },
-    '.mb1': {
-      marginBottom: theme.spacing(1),
-    },
-    '.mt1': {
-      marginTop: theme.spacing(1),
-    },
-    'ol': {
-      padding: `0 ${theme.spacing(2)}px`,
-    },
-    'ul': {
-      padding: `0 ${theme.spacing(2)}px`,
-    },
-    'li': {
-      padding: `${theme.spacing(1)}px 0`,
-    },
-    '.g-link': {
-      color: theme.palette.primary.main,
-      cursor: 'pointer',
-    },
-    'a, a:hover, a:focus, a:active, a:visited': {
-      color: theme.palette.primary.main,
-      cursor: 'pointer',
-    },
-  },
-}) as StyleRules
+const GlobalStyles: SxProps = ({
+  '.ml1': { ml: 1 },
+  '.mr1': { mr: 1 },
+  '.mb1': { mb: 1 },
+  '.mt1': { mt: 1 },
+  'ol': { p: `0 16px` },
+  'ul': { p: `0 16px` },
+  'li': { p: `8px 0` },
+  '.g-link': { color: 'primary.main', cursor: 'pointer' },
+  'a, a:hover, a:focus, a:active, a:visited': { color: 'primary.main', cursor: 'pointer' },
+})
 
 export default GlobalStyles

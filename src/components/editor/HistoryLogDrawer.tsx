@@ -1,28 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
-import { List, ListItem, ListItemText, Drawer, makeStyles, ListItemSecondaryAction, IconButton, TablePagination, Button } from '@material-ui/core'
+import { List, ListItem, ListItemText, Drawer, ListItemSecondaryAction, IconButton, TablePagination, Button } from '@mui/material'
 import { ENTITY_TYPE, TablePaginationProps } from 'utils/consts'
 import RepositoryService from '../../relatives/services/Repository'
 import DateUtility from 'utils/DateUtility'
 import Markdown from 'markdown-to-jsx'
 import NoData from 'components/common/NoData'
-import DownloadIcon from '@material-ui/icons/GetApp'
+import DownloadIcon from '@mui/icons-material/GetApp'
 import { serve } from 'relatives/services/constant'
-
-const useStyles = makeStyles({
-  list: {
-    width: 650,
-    overflow: 'auto',
-    height: 'calc(100% - 50px)',
-  },
-  fullList: {
-    width: 'auto',
-  },
-  pager: {
-    height: 50,
-    marginBottom: 12,
-  },
-})
 
 export interface HistoryLog {
   id: number
@@ -42,15 +27,38 @@ export interface HistoryLog {
 
 export const LOG_SEPERATOR = '.|.'
 export const LOG_SUB_SEPERATOR = '@|@'
-
+const HistoryDirection = {
+  'Interface': '接口',
+  'empty url': '空URL',
+  'modified': '变更了',
+  'deleted': '删除了',
+  'covered': '覆盖了',
+  'request': '请求',
+  'response': '响应',
+  'parameter': '参数',
+  'name': '名称',
+  'require': '参数必选',
+  'type': '参数类型',
+  'updated': '更新了',
+  'added': '新增了',
+  'data is backup': '数据已备份',
+}
 const FormattedRow = ({ row }: { row: HistoryLog }) => {
   const [expanded, setExpanded] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
+  const isChinese = localStorage.getItem('i18nextLng').startsWith('zh')
+  const { t } = useTranslation()
   const formatter = () => row.changeLog
     .split(LOG_SEPERATOR)
     .map(x => x.split(LOG_SUB_SEPERATOR))
     .reduceRight((a, b) => [...a, ...b], [])
     .map(x => `* ${x}`)
+    .map(x => x.replace(/\[(.+?)\]/ig, ( _, match ) => {
+      if (isChinese && HistoryDirection[match]) {
+        return HistoryDirection[match]
+      }
+      return match
+    }))
 
   const list = formatter()
 
@@ -72,7 +80,7 @@ const FormattedRow = ({ row }: { row: HistoryLog }) => {
           size="small"
           className="mb1"
         >
-          {expanded ? '折叠' : '展开更多'}
+          {expanded ? t('Fold') : t('Unfold')}
         </Button>
       )}
     </div>
@@ -83,7 +91,6 @@ const EMPTY = { rows: [], count: 0 }
 
 function HistoryLogDrawer({ entityId, entityType, open, onClose }:
 { entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; open: boolean; onClose: () => void }) {
-  const classes = useStyles()
   const [result, setResult] = useState<IPagerList<HistoryLog>>(EMPTY)
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(0)
@@ -101,13 +108,17 @@ function HistoryLogDrawer({ entityId, entityType, open, onClose }:
   return (
     <Drawer open={open} onClose={onClose}>
       {result.rows.length === 0 && <NoData />}
-      <List className={classes.list}>
+      <List sx={{ width: '650px', overflow: 'auto', height: 'calc(100% - 50px)' }}>
         {result.rows.map(row => (
           <ListItem key={row.id}>
             <ListItemText primary={<FormattedRow row={row} />} secondary={`${DateUtility.formatDate(row.createdAt)} by ${row.user.fullname}`} />
             {!row.jsonDataIsNull &&
               <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="download" onClick={() => window.open(`${serve}/interface/history/JSONData/${row.id}`)}>
+                <IconButton
+                  edge="end"
+                  aria-label="download"
+                  onClick={() => window.open(`${serve}/interface/history/JSONData/${row.id}`)}
+                  size="large">
                   <DownloadIcon />
                 </IconButton>
               </ListItemSecondaryAction>
@@ -117,14 +128,14 @@ function HistoryLogDrawer({ entityId, entityType, open, onClose }:
         }
       </List>
       <TablePagination
-        className={classes.pager}
+        sx={{ height: '50px', mb: 1.5 }}
         rowsPerPageOptions={[10, 25, 50]}
         component="div"
         count={result.count}
         rowsPerPage={limit}
         page={page}
         onPageChange={(_, val) => setPage(val)}
-        onChangeRowsPerPage={e => { setLimit(parseInt(e.target.value, 10)); setPage(0) }}
+        onRowsPerPageChange={e => { setLimit(parseInt(e.target.value, 10)); setPage(0) }}
         {...TablePaginationProps(t)}
       />
     </Drawer>

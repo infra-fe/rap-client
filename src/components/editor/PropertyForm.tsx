@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import Mock from 'mockjs'
 import SmartTextarea from '../utils/SmartTextarea'
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 import { TYPES } from '../../utils/consts'
 
 // 模拟数据
@@ -50,7 +50,7 @@ class PropertyForm extends Component<any, any> {
     this.state = mockProperty()
   }
   render() {
-    const { rmodal } = this.context
+    const { rmodal } = this.context as any
     return (
       <Translation>
         {(t) => (
@@ -77,7 +77,7 @@ class PropertyForm extends Component<any, any> {
                   </div>
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 control-label">{t('Type:')}</label>
+                  <label className="col-sm-2 control-label">{t('Type')}:</label>
                   <div className="col-sm-10">
                     <select
                       name="type"
@@ -167,12 +167,12 @@ class PropertyForm extends Component<any, any> {
     )
   }
   componentDidUpdate() {
-    this.context.rmodal.reposition()
+    (this.context as any).rmodal.reposition()
   }
-  handleSubmit = (e: any) => {
+  handleSubmit = (e?: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault()
     const { auth, repository, mod, interfaceId, scope, parent = { id: -1 } } = this.props
-    const { handleAddMemoryProperty } = this.context
+    const { handleAddMemoryProperty } = this.context as any
     const property = Object.assign({}, this.state, {
       creatorId: auth.id,
       repositoryId: repository.id,
@@ -182,7 +182,7 @@ class PropertyForm extends Component<any, any> {
       parentId: parent.id,
     })
     handleAddMemoryProperty(property, () => {
-      const { rmodal } = this.context
+      const { rmodal } = this.context as any
       if (rmodal) {
         rmodal.resolve()
       }

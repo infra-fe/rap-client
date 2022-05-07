@@ -1,7 +1,6 @@
 import { IRSAA } from 'redux-api-middleware'
 import { put, take } from 'redux-saga/effects'
 import { AnyAction } from 'redux'
-import { MSG_TYPE, showMessage } from 'actions/common'
 
 export function createCommonDoActionSaga(
   fetchActionCreator: (params: any) => { [x: string]: IRSAA },
@@ -14,13 +13,11 @@ export function createCommonDoActionSaga(
     const { cb, params } = action.payload
     yield put(fetchActionCreator(params) as AnyAction)
     const retAction: TCommonDoAction = yield take(fetchSuccessActionType)
-    if (retAction.payload.isOk) {
-      if (!hideSuccessMsg || retAction.payload.errMsg) {
-        yield put(showMessage(`${msg || '操作成功！'}${retAction.payload.errMsg || ''}`, MSG_TYPE.SUCCESS))
-      }
-    } else {
-      yield put(showMessage(`操作失败: ${retAction.payload.errMsg}`, MSG_TYPE.ERROR))
+    const isOk = retAction.payload.isOk
+    let returnMsg = isOk? `${msg || '操作成功！'}${retAction.payload.errMsg || ''}` : `操作失败: ${retAction.payload.errMsg}`
+    if (hideSuccessMsg) {
+      returnMsg = ''
     }
-    cb && cb(retAction.payload.isOk, retAction.payload.isOk ? retAction.payload.data : null)
+    cb && cb(isOk, isOk ? retAction.payload.data : null, returnMsg)
   }
 }

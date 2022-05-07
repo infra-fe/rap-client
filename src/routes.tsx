@@ -1,5 +1,4 @@
-import { useTranslation } from 'react-i18next'
-import React, { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 
 import { Switch, Route } from './family'
 
@@ -11,14 +10,14 @@ import LoginForm from './components/account/LoginForm'
 import RegisterForm from './components/account/RegisterForm'
 import FindpwdForm from './components/account/FindpwdForm'
 import ResetpwdForm from './components/account/ResetpwdForm'
-import Message from 'components/common/Message'
 import { useSelector } from 'react-redux'
 import { RootState } from 'actions/types'
 import MySettingsView from './components/account/MySettingsView'
 import AboutView from './components/home/AboutView'
 import MyAccountView from 'components/account/MyAccountView'
-
-const UserList = lazy(() => import(/* webpackChunkName: "./components/account/UserList" */ './components/account/UserList'))
+import ScrollTop from 'components/utils/ScrollTop'
+import Fab from '@mui/material/Fab'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 const JoinedRepositoryList =
   lazy(() => import(/* webpackChunkName: "./components/repository/JoinedRepositoryList" */ './components/repository/JoinedRepositoryList'))
@@ -31,10 +30,6 @@ const AllRepositoryList =
 
 const RepositoryEditor =
   lazy(() => import(/* webpackChunkName: "./components/repository/RepositoryEditor" */ './components/editor/RepositoryEditor'))
-
-const RepositoryTester = lazy(() => import(/* webpackChunkName: "./components/tester/Tester" */ './components/tester/Tester'))
-
-const RepositoryChecker = lazy(() => import(/* webpackChunkName: "./components/checker/Checker" */ './components/checker/Checker'))
 
 const JoinedOrganizationList =
   lazy(() => import(/* webpackChunkName: "./components/organization/JoinedOrganizationList" */ './components/organization/JoinedOrganizationList'))
@@ -53,14 +48,11 @@ const API = lazy(() => import(/* webpackChunkName: "./components/api/API" */ './
 const Utils = lazy(() => import(/* webpackChunkName: "./components/utils/Utils" */ './components/utils/Utils'))
 
 const Routes = () => {
-  const {t} = useTranslation()
   const auth = useSelector((state: RootState) => state.auth)
-  const message = useSelector((state: RootState) => state.message)
   if (!auth) { return <Spin /> } // 渲染整站开屏动画，已经在 src/index 中实现。这里的代码用于支持没有接入 SSO 的情况。
   if (!auth.id) { // 引导用户登陆，已经在 src/index 中实现。这里的代码用于支持没有接入 SSO 的情况。
     return (
       <article>
-        <Message messageInfo={message} />
         <Switch>
           <Route path="/account/register" component={RegisterForm} />
           <Route path="/account/findpwd" component={FindpwdForm} />
@@ -72,10 +64,11 @@ const Routes = () => {
   }
   return (
     <article className="Routes">
-      <Message messageInfo={message} />
-      <div className="btn-top" onClick={() => window.scrollTo(0, 0)}>
-        {t('BackTop')}
-      </div>
+      <ScrollTop element="#appBar">
+        <Fab color="secondary" size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
       <Route component={Header} />
       <div className="body">
         <Suspense fallback={<Spin />}>
@@ -90,8 +83,6 @@ const Routes = () => {
                   <Route exact={true} path="/repository/joined/create" component={JoinedRepositoryListWithCreateForm} />
                   <Route exact={true} path="/repository/all" component={AllRepositoryList} />
                   <Route exact={true} path="/repository/editor" component={RepositoryEditor} />
-                  <Route exact={true} path="/repository/tester" component={RepositoryTester} />
-                  <Route exact={true} path="/repository/checker" component={RepositoryChecker} />
                   <Route component={NoMatch} />
                 </Switch>
               )}
@@ -123,8 +114,6 @@ const Routes = () => {
               children={() => (
                 <Switch>
                   <Route exact={true} path="/account/myAccount" component={MyAccountView} />
-                  <Route exact={true} path="/account" component={UserList} />
-                  <Route path="/account/users" component={UserList} />
                   <Route path="/account/login" component={LoginForm} />
                   <Route path="/account/register" component={RegisterForm} />
                   <Route component={NoMatch} />

@@ -1,3 +1,4 @@
+import { User } from 'actions/types'
 import { CREDENTIALS, serve, HEADERS } from './constant'
 
 export default {
@@ -11,7 +12,7 @@ export default {
   },
 
   // 注册用户
-  addUser(user: any) {
+  addUser(user: User) {
     return fetch(`${serve}/account/register`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -40,7 +41,7 @@ export default {
       .then(json => json.data)
   },
   // 修改密码
-  updateUser(user: any) {
+  updateUser(user: User) {
     return fetch(`${serve}/account/update`, {
       ...CREDENTIALS,
       method: 'POST',

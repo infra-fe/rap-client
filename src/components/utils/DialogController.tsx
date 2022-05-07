@@ -23,8 +23,9 @@ DialogControllerState
       onResolved()
       return
     }
+    // eslint-disable-next-line no-console
     console.warn('警告：Dialog 的回调应该放到调用组件中！')
-    const { history, location } = this.context
+    const { history, location } = this.context as any
     history.push(location.pathname + location.search + location.hash)
   }
   render() {

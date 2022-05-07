@@ -1,40 +1,55 @@
 import { RouterState } from 'connected-react-router'
 import { THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
 import { POS_TYPE } from 'components/editor/InterfaceSummary'
-
 export interface RootState {
-  auth: {
-    id: number
-    empId: string
-    fullname: string
-    email: string
-  }
+  auth: User
   router: RouterState
-  repository: any
-  repositories: any
-  organization: any
-  organizations: any
-  ownedRepositories: any
-  ownedOrganizations: any
-  joinedOrganizations: any
-  joinedRepositories: any
-  users: any
+  repository: Async<Repository>
+  repositories: AsyncWithPager<Repository>
+  organization: Async<Organization>
+  organizations: AsyncWithPager<Organization>
+  ownedRepositories: AsyncWithPager<Repository>
+  ownedOrganizations: AsyncWithPager<Organization>
+  joinedOrganizations: AsyncWithPager<Organization>
+  joinedRepositories: AsyncWithPager<Repository>
+  users: AsyncWithPager<User>
 
-  counter: any
-  logs: any
+  counter: Counter
+  analyticsRepositoriesCreated: Async<INumItem[]>
+  analyticsRepositoriesUpdated: Async<INumItem[]>
+  analyticsUsersActivation: Async<Array<{ userId: number; fullname: string; value: number }>>
+  analyticsRepositoriesActivation: Async<Array<{ repositoryId: number; label: string; value: number }>>
+
+  logs: AsyncWithPager<Log>
   loading: boolean
   message: IMessage
-
   userSettings: { [key: string]: string }
   userSettingsIsUpdating: boolean
-
   themeId: THEME_TEMPLATE_KEY
   guideOpen: boolean
+  defaultVals: DefaultValue[]
+  copyId: string | number | null
 }
 
-export interface Organization {
-  id: number
+export interface Log extends ModelBase {
+  type: string
+  creatorId: number
+  userId: number
+  organizationId: number
+  repositoryId: number
+  moduleId: number
+  interfaceId: number
+  user: User
+}
 
+export interface DefaultValue extends ModelBase {
+  name: string
+  rule: string
+  value: string
+  repositoryId: number
+}
+
+export interface Organization extends ModelBase {
   name: string
 
   description?: string
@@ -65,19 +80,18 @@ export interface ImportSwagger {
   repositoryId?: number
   swagger?: string
   modId?: number
+  cover?: number
 }
-export interface User {
-  id: number
-  fullname: string
-  email: string
-  empId: string
-}
+export interface User extends ModelBase {
+  fullname?: string
+  email?: string
+  empId?: string
+  password?: string
 
-export interface INumItem {
-  value: number
-  label: string
+  captcha?: string
+  code?: string
+  token?: string
 }
-
 export interface IConfig {
   serve: string
   keys: string[]
@@ -123,9 +137,7 @@ export interface RepositoryFormData {
   modules?: Module[]
 }
 
-export interface Repository {
-  id: number
-
+export interface Repository extends ModelBase {
   name: string
 
   description: string
@@ -206,11 +218,14 @@ export interface Interface {
   properties?: Property[]
 
   status?: number
-}
 
-export type Async<T> = {
-  data: T
-  fetching: boolean
+  bodyOption?: string
+
+  /** Is this API as a template? */
+  isTmpl?: boolean
+
+  /** For template selection */
+  tmplId?: number
 }
 export interface Property {
   id: number | string
@@ -224,4 +239,20 @@ export interface Property {
   value: string
   memory: boolean
   pos: POS_TYPE
+  required?: boolean
+  rule?: any
+  type: string
+  priority?: number
+}
+
+/**
+ * Counter data used for dashboard page
+ */
+export interface Counter {
+  /** eg-> 2.9.2 */
+  version: string
+  /** users count */
+  users: number
+  /** mock API invocation count */
+  mock: number
 }

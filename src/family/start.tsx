@@ -4,21 +4,20 @@ import { Store } from 'redux'
 import { connect, Provider } from 'react-redux'
 import { History } from 'history'
 import { ConnectedRouter } from 'connected-react-router'
-import { MuiThemeProvider } from '@material-ui/core/styles/'
+import { ThemeProvider } from '@mui/material/styles'
 import { SnackbarProvider } from 'notistack'
 import { GlobalProvider } from './GlobalProvider'
-import { ThemeProvider, CssBaseline } from '@material-ui/core'
-import GlobalStyles from '../components/common/GlobalStyles'
+import { Box, CssBaseline } from '@mui/material'
 import MuiTheme from '../components/common/MuiTheme'
 import Routes from 'routes'
 import { PropTypes } from 'family'
-import { THEME_TEMPLATES } from 'components/account/ThemeChangeOverlay'
+import { THEME_TEMPLATES, THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
 import { RootState } from 'actions/types'
+import GlobalStyles from 'components/common/GlobalStyles'
 
-const start = (
-  container: any,
-  { store, history }: { store: Store; history: History }
-) => {
+const DepressedWarningRouter = ConnectedRouter as any
+
+const start = (container: any, { store, history }: { store: Store; history: History }) => {
   class RootBase extends Component<any> {
     static childContextTypes = {
       store: PropTypes.object,
@@ -29,25 +28,20 @@ const start = (
     }
     render() {
       const themeId = this.props.themeId
-      const theme = MuiTheme(THEME_TEMPLATES[themeId].theme)
-      theme.overrides = {
-        ...theme.overrides,
-        MuiCssBaseline: {
-          ...GlobalStyles(theme),
-        },
-      }
+      const theme = MuiTheme(THEME_TEMPLATES[themeId ?? THEME_TEMPLATE_KEY.INDIGO].theme)
+
       return (
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <MuiThemeProvider theme={theme}>
-            <SnackbarProvider maxSnack={3}>
-              <GlobalProvider>
-                <ConnectedRouter history={history}>
+          <SnackbarProvider maxSnack={3}>
+            <GlobalProvider>
+              <CssBaseline />
+              <Box sx={GlobalStyles}>
+                <DepressedWarningRouter history={history}>
                   <Routes />
-                </ConnectedRouter>
-              </GlobalProvider>
-            </SnackbarProvider>
-          </MuiThemeProvider>
+                </DepressedWarningRouter>
+              </Box>
+            </GlobalProvider>
+          </SnackbarProvider>
         </ThemeProvider>
       )
     }

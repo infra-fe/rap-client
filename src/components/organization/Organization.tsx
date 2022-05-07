@@ -5,11 +5,7 @@ import { GoOrganization, GoPencil, GoSignOut, GoSignIn, GoTrashcan } from 'react
 import { useSelector } from 'react-redux'
 import { RootState, Organization } from '../../actions/types'
 import { useHandleDelete, useHandleExit, useHandleJoin } from './OrganizationListParts'
-import { Card } from '@material-ui/core'
-
-function avatar(user: any) {
-  return `https://work.alibaba-inc.com/photo/${user.empId}.220x220.jpg`
-}
+import { Card } from '@mui/material'
 
 interface Props {
   organization: Organization
@@ -36,11 +32,11 @@ function OrganizationBlock(props: Props) {
         </div>
         <div className="desc">{organization.description}</div>
         <div className="members">
-          <img
+          {/* <img
             alt={organization.owner!.fullname}
             src={avatar(organization.owner)}
             className="avatar owner"
-          />
+          /> */}
           <span>{organization.owner!.fullname}</span>
         </div>
         <div className="toolbar">

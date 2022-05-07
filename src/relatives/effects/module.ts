@@ -13,6 +13,9 @@ export function* addModule(action: any) {
   try {
     const module = yield call(EditorService.addModule, action.module)
     yield put(ModuleAction.addModuleSucceeded(module))
+    const router = yield select((state: RootState) => state.router)
+    const { pathname, hash, query } = router.location
+    yield put(replace(pathname + hash + `?id=${query.id}&mod=${module.id}`))
     yield put(RepositoryAction.refreshRepository())
     if (action.onResolved) { action.onResolved() }
   } catch (e) {

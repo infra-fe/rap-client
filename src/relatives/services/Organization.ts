@@ -22,7 +22,7 @@ export default {
       .then(res => res.json())
     // .then(json => json.data)
   },
-  fetchOrganization(id: any) {
+  fetchOrganization(id: number) {
     return fetch(`${serve}/organization/get?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)
@@ -47,7 +47,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  deleteOrganization(id: any) {
+  deleteOrganization(id: number) {
     return fetch(`${serve}/organization/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)

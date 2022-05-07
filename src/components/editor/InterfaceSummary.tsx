@@ -3,15 +3,20 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import copy from 'clipboard-copy'
 import { GlobalHotKeys } from 'react-hotkeys'
-import { replace, StoreStateRouterLocationURI, PropTypes } from '../../family'
+import { replace, PropTypes } from '../../family'
 import { serve } from '../../relatives/services/constant'
 import { METHODS, STATUS_LIST } from './InterfaceForm'
 import { CopyToClipboard } from '../utils/'
 import { getRelativeUrl } from '../../utils/URLUtils'
 import './InterfaceSummary.css'
-import { showMessage, MSG_TYPE } from 'actions/common'
-import { TextField, Select, InputLabel, Input, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from '@material-ui/core'
+import { TextField, Select, InputLabel, Input, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio, Switch, Tooltip } from '@mui/material'
 import Markdown from 'markdown-to-jsx'
+
+import CollectionsBookmarkTwoToneIcon from '@mui/icons-material/CollectionsBookmarkTwoTone'
+import SceneConfigModal from '../scene/SceneConfigModal'
+import { GoAlert, GoPlug } from 'react-icons/go'
+import { Interface } from 'actions/types'
+import { withSnackbar } from 'notistack'
 
 export enum BODY_OPTION {
   FORM_DATA = 'FORM_DATA',
@@ -117,8 +122,7 @@ function url2name(itf: any) {
 }
 type InterfaceSummaryProps = {
   store: any
-  handleChangeInterface: (itf: any) => void
-  showMessage: typeof showMessage
+  handleChangeInterface: (itf: Partial<Interface>) => void
   [x: string]: any
 }
 type InterfaceSummaryState = {
@@ -128,10 +132,7 @@ type InterfaceSummaryState = {
   posFilter: POS_TYPE
   [x: string]: any
 }
-class InterfaceSummary extends Component<
-InterfaceSummaryProps,
-InterfaceSummaryState
-> {
+class InterfaceSummary extends Component<InterfaceSummaryProps, InterfaceSummaryState> {
   static contextTypes = {
     onDeleteInterface: PropTypes.func.isRequired,
   }
@@ -140,6 +141,7 @@ InterfaceSummaryState
     this.state = {
       bodyOption: props?.itf?.bodyOption ?? BODY_OPTION.FORM_DATA,
       posFilter: props?.itf?.method === 'POST' ? POS_TYPE.BODY : POS_TYPE.QUERY,
+      showSceneConfig: false,
     }
     this.changeMethod = this.changeMethod.bind(this)
     this.changeHandler = this.changeHandler.bind(this)
@@ -179,19 +181,16 @@ InterfaceSummaryState
     const { itf = {} } = this.props
     const res = url2name(itf)
     if (!res.ok) {
-      this.props.showMessage(`复制失败: ${res.message}`, MSG_TYPE.ERROR)
+      this.props.enqueueSnackbar(`复制失败: ${res.message}`, { variant: 'warning' })
       return
     }
     const modelName = res.name
     copy(modelName)
       .then(() => {
-        this.props.showMessage(
-          `成功复制 ${modelName} 到剪贴板`,
-          MSG_TYPE.SUCCESS
-        )
+        this.props.enqueueSnackbar(`成功复制 ${modelName} 到剪贴板`, { variant: 'warning' })
       })
       .catch(() => {
-        this.props.showMessage(`复制失败`, MSG_TYPE.ERROR)
+        this.props.enqueueSnackbar(`复制失败`, { variant: 'warning' })
       })
   }
   render() {
@@ -200,6 +199,7 @@ InterfaceSummaryState
       itf = {},
       editable,
       handleChangeInterface,
+      onValidate,
     } = this.props
     const { posFilter } = this.state
     const keyMap = {
@@ -213,6 +213,7 @@ InterfaceSummaryState
     if (!itf.id) {
       return null
     }
+    const methodError = ['GET', 'DELETE'].includes(itf.method) && itf.properties?.some(x => x.scope === 'request' && x.pos === 3)
     return (
       <Translation>
         {(t) => (
@@ -245,7 +246,7 @@ InterfaceSummaryState
                   <div>
                     <TextField
                       id="url"
-                      label={t('address')}
+                      label={t('URL')}
                       value={itf.url || ''}
                       fullWidth={true}
                       autoComplete="off"
@@ -255,14 +256,14 @@ InterfaceSummaryState
                       margin="normal"
                     />
                   </div>
-                  <div>
-                    <div style={{ width: 90, display: 'inline-block' }}>
-                      <InputLabel shrink={true} htmlFor="method-label-placeholder"> {t('Type')} </InputLabel>
+                  <div className="mt2">
+                    <div style={{ width: 80, display: 'inline-block' }}>
+                      <InputLabel shrink={true} htmlFor="method-label-placeholder"> {t('Method')} </InputLabel>
                       <Select
                         value={itf.method}
                         input={<Input name="method" id="method-label-placeholder" />}
                         onChange={e => {
-                          handleChangeInterface({ method: e.target.value })
+                          handleChangeInterface({ method: e.target.value as any as string })
                         }}
                         displayEmpty={true}
                         name="method"
@@ -274,13 +275,13 @@ InterfaceSummaryState
                         ))}
                       </Select>
                     </div>
-                    <div style={{ width: 120, display: 'inline-block' }}>
+                    <div style={{ width: 80, display: 'inline-block' }}>
                       <InputLabel shrink={true} htmlFor="status-label-placeholder" style={{ width: 100 }}> {t('Status code')} </InputLabel>
                       <Select
                         value={itf.status}
                         input={<Input name="status" id="status-label-placeholder" />}
                         onChange={e => {
-                          handleChangeInterface({ status: e.target.value })
+                          handleChangeInterface({ status: e.target.value as any as number })
                         }}
                         displayEmpty={true}
                         name="status"
@@ -292,6 +293,19 @@ InterfaceSummaryState
                         ))}
                       </Select>
                     </div>
+                    <div style={{ width: 80, display: 'inline-block' }}>
+                      <Tooltip title={t('Is tmpl desc')} placement="right">
+                        <div>
+                          <InputLabel shrink={true} style={{ width: 100 }}> {t('Is tmpl')} </InputLabel>
+                          <Switch
+                            checked={itf.isTmpl}
+                            onChange={e => {
+                              handleChangeInterface({ isTmpl: e.target.checked })
+                            }}
+                          />
+                        </div>
+                      </Tooltip>
+                    </div>
                   </div>
                   <TextField
                     id="description"
@@ -300,7 +314,7 @@ InterfaceSummaryState
                     fullWidth={true}
                     multiline={true}
                     autoComplete="off"
-                    rowsMax={8}
+                    maxRows={8}
                     onChange={e => {
                       handleChangeInterface({ description: e.target.value })
                     }}
@@ -316,29 +330,48 @@ InterfaceSummaryState
                     </span>
                   </li>
                   <li>
-                    <CopyToClipboard text={itf.url} type="right">
-                      <span className="mr5">
-                        <span className="label">{t('Address:')}</span>
-                        <a
-                          href={`${serve}/app/mock/${repository.id}${getRelativeUrl(itf.url || '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {itf.url}
-                        </a>
-                      </span>
-                    </CopyToClipboard>
-                  </li>
-                  <li>
                     <span>
-                      <span className="label">{t('Type:')}</span>
-                      <span>{itf.method}</span>
+                      <span className="label">{t('URL')}: </span>
+                      <a
+                        href={`${serve}/app/mock/${repository.id}/${itf.method.toLowerCase()}${getRelativeUrl(itf.url || '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {itf.url}
+                      </a>
+                      <span className="ml8 scene-icon">
+                        <CopyToClipboard text={itf.url} type="right" label={t('copy')} tip={t('copy') + ' URL'}>
+                          <span></span>
+                        </CopyToClipboard>
+                      </span>
+                    </span>
+                    <span className="ml8 scene-icon" onClick={() => this.setState({ showSceneConfig: true })}>
+                      <CollectionsBookmarkTwoToneIcon style={{ fontSize: 18 }} /> {t('scene')}
+                    </span>
+                    <span className='ml8 validate-link' onClick={() => { onValidate && onValidate() }}>
+                      <GoPlug style={{ fontSize: 18 }} /> {t('Validation')}
                     </span>
                   </li>
                   <li>
                     <span>
-                      <span className="label">{t('Status code:')}</span>
+                      <span className="label">{t('Method')}: </span>
+                      <span>{itf.method}</span>
+                      {methodError && <span className="warning">
+                        <GoAlert className="icon" style={{ marginTop: '-2px', marginLeft: '5px' }} />
+                        <span>{t('methodErrorTip')}</span>
+                      </span>}
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span className="label">{t('Status code')}: </span>
                       <span>{itf.status}</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span className="label">{t('Is tmpl or not')}: </span>
+                      <span>{t(itf.isTmpl ? 'Yes' : 'No')}</span>
                     </span>
                   </li>
                 </>
@@ -397,35 +430,29 @@ InterfaceSummaryState
                 </FormControl>
               ) : null
             }
+            {this.state.showSceneConfig && (
+              <SceneConfigModal
+                itfMethod={itf.method}
+                itfUrl={itf.url}
+                itfName={itf.name}
+                moduleId={itf.moduleId}
+                repositoryId={itf.repositoryId}
+                interfaceId={itf.id}
+                showSceneConfig={this.state.showSceneConfig}
+                closeSceneConfig={() => this.setState({ showSceneConfig: false })}
+              />
+            )}
           </div >
         )}
       </Translation>
     )
   }
-  handleDelete = (e: any, itf: any, t: any) => {
-    e.preventDefault()
-    const message = `${t('Unrecoverable after the interface is deleted')}！\n${t('Confirm delete')}${t('?')}`
-    if (window.confirm(message)) {
-      const { onDeleteInterface } = this.context
-      onDeleteInterface(itf.id, () => {
-        const { router, replace } = this.props
-        const uri = StoreStateRouterLocationURI(router)
-        const deleteHref = this.props.active
-          ? uri.removeSearch('itf').href()
-          : uri.href()
-        replace(deleteHref)
-      })
-    }
-  }
+  handleDelete = () => { /** empty */ }
   handleUpdate = () => { /** empty */ }
 }
 const mapStateToProps = () => ({
 })
 const mapDispatchToProps = {
   replace,
-  showMessage,
 }
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(InterfaceSummary)
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(InterfaceSummary))

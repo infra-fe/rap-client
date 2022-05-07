@@ -1,29 +1,59 @@
-import { ThemeOptions, createTheme } from '@material-ui/core/styles'
+import { createTheme, ThemeOptions } from '@mui/material'
+import { grey } from '@mui/material/colors'
 import { THEME_TEMPLATES, THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
 
-export const theme = {
-  palette: THEME_TEMPLATES[THEME_TEMPLATE_KEY.INDIGO].theme,
+export const theme: ThemeOptions = {
+  palette: THEME_TEMPLATES[THEME_TEMPLATE_KEY.BLUE].theme.palette,
   typography: {
     fontSize: 13,
-    // 告知 Material-UI 此 html 元素的具体字体大小。
     htmlFontSize: 12,
   },
-  overrides: {
+  components: {
     MuiTableCell: {
-      root: {
-        padding: `8px 16px`,
+      styleOverrides: {
+        root: {
+          p: `8px 16px`,
+        },
       },
     },
     MuiFormControl: {
-      root: {
-        zIndex: 'inherit',
+      styleOverrides: {
+        root: {
+          zIndex: 'inherit',
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'standard',
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        variant: 'standard',
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        color: 'inherit',
+      },
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          margin: 0,
+          padding: 0,
+          backgroundColor: grey[200],
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif;',
+          fontSize: '1rem',
+        },
       },
     },
   },
 }
 
 const MuiTheme = (options?: ThemeOptions) => createTheme({
-  ...theme as ThemeOptions,
+  ...theme,
   ...(options || {}),
 })
 

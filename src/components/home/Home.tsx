@@ -9,7 +9,7 @@ import JoinedRepositoriesCard from './JoinedRepositoriesCard'
 import LogsCard from './LogsCard'
 import './Home.css'
 import { RootState } from 'actions/types'
-import Button from '@material-ui/core/Button'
+import Button from '@mui/material/Button'
 import RepositoryForm from 'components/repository/RepositoryForm'
 
 const Maiden = () => {
@@ -57,7 +57,7 @@ const Home = ({ owned, joined, logs }: any) => {
         <div className="distribute-2-3 pl15 pr15">
           <LogsCard logs={logs} />
         </div>
-        <div className="distribute-1-3 pl15 pl15">
+        <div className="distribute-1-3 pl15 pr15">
           <OwnedRepositoriesCard repositories={owned} />
           <div style={{ marginTop: 8 }}>
             <JoinedRepositoriesCard repositories={joined} />

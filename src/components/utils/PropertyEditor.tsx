@@ -40,6 +40,7 @@ const fixValue = ({ type, value }: Readonly<any>) => {
       try { // eslint-disable-next-line
         return eval(`(${value})`)
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.warn(type, value)
       }
       break
@@ -68,6 +69,7 @@ class StringRuleEditor extends Component<any, any> {
       case '|min-max':
         return { [`name|${this.state.min}-${this.state.max}`]: `${this.state.value}` }
       default:
+        // eslint-disable-next-line no-console
         console.warn('wrong generate rules')
     }
     return ''
@@ -150,6 +152,7 @@ class IntegerRuleEditor extends Component<any, any> {
       case '|min-max':
         return { [`name|${this.state.min}-${this.state.max}`]: 1 }
       default:
+        // eslint-disable-next-line no-console
         console.warn('错误的生成规则')
     }
     return ''
@@ -184,13 +187,6 @@ class IntegerRuleEditor extends Component<any, any> {
       </Translation>
     )
   }
-  componentDidUpdate() {
-    const template = this.get()
-    console.log(template, '=>', mock(template))
-  }
-  onChange = () => {
-    console.log(this.get())
-  }
 }
 class FloatRuleEditor extends Component<any, any> {
   constructor(props: any) {
@@ -212,6 +208,7 @@ class FloatRuleEditor extends Component<any, any> {
       case '|min-max.dmin-dmax':
         return { [`name|${this.state.min}-${this.state.max}.${this.state.dmin}-${this.state.dmax}`]: 1 }
       default:
+        // eslint-disable-next-line no-console
         console.warn('错误的生成规则')
     }
     return ''
@@ -252,13 +249,6 @@ class FloatRuleEditor extends Component<any, any> {
       </Translation>
     )
   }
-  componentDidUpdate() {
-    const template = this.get()
-    console.log(template, '=>', mock(template))
-  }
-  onChange = () => {
-    console.log(this.get())
-  }
 }
 
 class PropertyEditor extends Component<any, any> {
@@ -292,7 +282,7 @@ class PropertyEditor extends Component<any, any> {
                 <input type="text" value={this.state.name} onChange={e => this.setState({ name: e.target.value })} className="form-control" />
               </div>
               <div className="form-group">
-                <label className="control-label">{t('Type:')}</label>
+                <label className="control-label">{t('Type')}:</label>
                 <select
                   name="type"
                   value={this.state.type}

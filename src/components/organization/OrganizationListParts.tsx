@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   PropTypes,
   push,
@@ -16,9 +16,9 @@ import {
   updateOrganization,
 } from '../../actions/organization'
 import { useDispatch, useSelector } from 'react-redux'
-import { Select, MenuItem, TextField, Button } from '@material-ui/core'
-import { RootState } from 'actions/types'
-
+import { Select, MenuItem, TextField, Button } from '@mui/material'
+import { RootState, User } from 'actions/types'
+import { useConfirm } from 'hooks/useConfirm'
 export const contextTypes = {
   store: PropTypes.object,
 }
@@ -131,16 +131,20 @@ export function SearchGroup(props: { name: string }) {
 export function useHandleDelete() {
   const replaceLocation = useReplaceLocation()
   const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const confirm = useConfirm()
   return (organization: any) => {
-    const message = `团队被删除后不可恢复！\n确认继续删除『#${organization.id} ${organization.name}』吗？`
-    if (!window.confirm(message)) {
-      return
-    }
-    dispatch(
-      deleteOrganization(organization.id, () => {
-        replaceLocation()
-      })
-    )
+    const message = `${t('confirm delete organization')}『#${organization.id} ${organization.name}』${t('?')}`
+    confirm({
+      title: t('Confirm delete'),
+      content: message,
+    }).then(() => {
+      dispatch(
+        deleteOrganization(organization.id, () => {
+          replaceLocation()
+        })
+      )
+    })
   }
 }
 
@@ -161,7 +165,7 @@ export function useHandleJoin() {
   return (organization: any) => {
     const next = {
       id: organization.id,
-      memberIds: [...organization.members.map((user: any) => user.id), auth.id],
+      memberIds: [...organization.members.map((user: User) => user.id), auth.id],
     }
     dispatch(
       updateOrganization(next, () => {
@@ -175,23 +179,26 @@ export function useHandleExit() {
   const auth = useSelector((state: RootState) => state.auth)
   const replaceLocation = useReplaceLocation()
   const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const confirm = useConfirm()
 
   return (organization: any) => {
-    const message = `确认继续退出『#${organization.id} ${organization.name}』吗？`
-    if (!window.confirm(message)) {
-      return
-    }
-    const next = {
-      id: organization.id,
-      memberIds: organization.members
-        .filter((user: any) => user.id !== auth.id)
-        .map((user: any) => user.id),
-    }
-    dispatch(
-      updateOrganization(next, () => {
-        replaceLocation()
-      })
-    )
+    const message = `${t('confirm exit organization')}『#${organization.id} ${organization.name}』${t('?')}`
+    confirm({
+      content: message,
+    }).then(() => {
+      const next = {
+        id: organization.id,
+        memberIds: organization.members
+          .filter(user => user.id !== auth.id)
+          .map(user => user.id),
+      }
+      dispatch(
+        updateOrganization(next, () => {
+          replaceLocation()
+        })
+      )
+    })
   }
 }
 

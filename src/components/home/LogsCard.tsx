@@ -2,24 +2,11 @@ import { useTranslation } from 'react-i18next'
 import React from 'react'
 import { Link, moment } from '../../family'
 import { Spin } from '../utils'
-import { Card } from '@material-ui/core'
+import { Card } from '@mui/material'
 
-// DONE 2.3 重构 LogView
-// 1. √ 旧逻辑把 targe 和 type 混在一起，各种判断看的好蛋疼
-// 2. √ 部分路径删除时展示成全部删除线，应该是按需加删除线，例如 仓库/~~模块~~、仓库/模块/~~接口~~
-// 3. √ 不支持『上帝之手』`log.creator`
-//   1. 墨智将麦少移出群聊
-//   2. 墨智邀请麦少加入群聊
-// 4. √ 用户头像应该提成组件 UserAvatar，而不是混在 HTML 代码里
-// 5. √ FromNow 应该提成组件
-const UserAvatar = ({ user }: any) => (
-  user
-    ? <img alt={user.empId} src={`https://work.alibaba-inc.com/photo/${user.empId}.220x220.jpg`} className="Log-avatar" />
-    : null
-)
-const UserLink = ({ user }: any) => (
-  <Link to={`https://work.alibaba-inc.com/work/u/${user.empId}`} target="_blank" className="Log-user-link">{user.fullname}</Link>
-)
+//  <img alt={user.empId} src={`https://work.alibaba-inc.com/photo/${user.empId}.220x220.jpg`} className="Log-avatar" />
+const UserAvatar = ({ user }: any) => null
+const UserLink = ({ user }: any) => null
 const LogUserView = ({ user }: any) => {
   return (
     <span className="Log-user">
@@ -159,8 +146,10 @@ const ExitLogView = ({ log }: any) => {
 
 export const Log = ({ log }: any) => {
   const { t } = useTranslation()
-  const userAvatar = <img alt={log.user.empId} src={`https://work.alibaba-inc.com/photo/${log.user.empId}.220x220.jpg`} className="avatar" />
-  const userLink = <Link to={`https://work.alibaba-inc.com/work/u/${log.user.empId}`} target="_blank">{log.user.fullname}</Link>
+  // const userAvatar = <img alt={log.user.empId} src={`https://work.alibaba-inc.com/photo/${log.user.empId}.220x220.jpg`} className="avatar" />
+  const userAvatar = null
+  // const userLink = <Link to={`https://work.alibaba-inc.com/work/u/${log.user.empId}`} target="_blank">{log.user.fullname}</Link>
+  const userLink = null
   const fromNow = <i className="fromnow">{moment(log.updatedAt).fromNow()}</i>
   let targetName: any, targetLink: any, typeName: any
   if (log.organization) { // 团队

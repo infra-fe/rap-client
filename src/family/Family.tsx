@@ -33,7 +33,7 @@ const Family: {
     relatives.forEach(_relatives.push)
     return this
   },
-  addReducer(id: any, reducer: any) {
+  addReducer(id: number, reducer: any) {
     _reducers[id] = reducer
     return this
   },

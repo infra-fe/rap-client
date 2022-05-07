@@ -289,6 +289,7 @@
       justify-content: space-between
       flex-wrap: wrap
       margin-top: 1.65rem
+      margin-bottom: 1.65rem
       > .result-template,
       > .result-mocked
         width: 49%
@@ -320,6 +321,8 @@
   .SortableTreeTableRow
     .flex-row
       display: flex
+      &.focus
+        background: #fff3cd
       &.highlight
         .thtd
           animation: hightlight 1.5s 1
@@ -408,11 +411,20 @@
           word-break: break-word
           white-space: pre-line
 .SortableTreeTable.editable
-  .flex-row    
+  .flex-row
     .th, .td
       &.operations
         width: 4.5rem
         padding: .5rem .75rem
+        svg
+          display: none
+          &.freq
+            display: inline-block
+    &:hover
+      .th, .td
+        &.operations
+            svg
+              display: inline-block
     .td
       &.payload
         padding: 0
@@ -440,7 +452,11 @@
     background-color: transparent
 
 .Importer
-  .CodeMirror
-    height: 30rem
+  .form-horizontal
+    width: 880px
+  .rmodal-title.code-title
+    font-size: 1.5rem
+  .rmodal-body
+    padding: 0 0px 0 10px
   textarea.result
     font-family: Menlo, Monaco, 'Courier New', monospace

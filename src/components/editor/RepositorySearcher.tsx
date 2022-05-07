@@ -2,8 +2,8 @@ import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import { PropTypes, Link, StoreStateRouterLocationURI, connect } from '../../family'
 import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import { TextField, InputAdornment } from '@material-ui/core'
-import Search from '@material-ui/icons/Search'
+import { TextField, InputAdornment } from '@mui/material'
+import Search from '@mui/icons-material/Search'
 
 class Highlight extends Component<any, any> {
   static replace = (clip: any, seed: any) => {
@@ -53,23 +53,6 @@ class DropdownMenuBase extends Component<any, any> {
           }
           nextModule.interfaces.push(nextInterface)
         }
-
-        // itf.properties.forEach((property: any) => {
-        //   const nextProperty = { ...property }
-        //   const matchProperty = nextProperty.name.indexOf(seed) !== -1
-        //   if (matchProperty) {
-        //     counter++
-        //     if (!matchModule) {
-        //       matchModule = true
-        //       nextRespository.modules.push(nextModule)
-        //     }
-        //     if (!matchInterface) {
-        //       matchInterface = true
-        //       nextModule.interfaces.push(nextInterface)
-        //     }
-        //     nextInterface.properties.push(nextProperty)
-        //   }
-        // })
       })
     })
     return { nextRespository, counter }
@@ -158,7 +141,7 @@ class RepositorySearcher extends Component<any, IState> {
                 this.setState({ seed: val })
                 this.debouncedInput(val.trim())
               }}
-              style={{ backgroundColor: '#fafbfc', marginRight: 12 }}
+              sx={{ backgroundColor: '#fafbfc', mr: 1.5 }}
               className="dropdown-input form-control"
               placeholder={t('Search name or ID')}
               InputProps={{

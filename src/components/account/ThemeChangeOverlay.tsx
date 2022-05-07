@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
-import { grey, red, pink, purple, orange, blue, green, cyan, indigo } from '@material-ui/core/colors'
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Theme } from '@material-ui/core'
-import { SimplePaletteColorOptions, makeStyles, createStyles } from '@material-ui/core/styles'
+import { useState, useEffect } from 'react'
+import { grey, red, pink, purple, orange, blue, green, cyan, indigo } from '@mui/material/colors'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, ThemeOptions, Box } from '@mui/material'
+import { SimplePaletteColorOptions } from '@mui/material/styles'
 import { useDispatch } from 'react-redux'
-import classnames from 'classnames'
 import { changeTheme } from 'actions/account'
-import { ThemeOptions } from '@material-ui/core/styles'
 
 export enum THEME_TEMPLATE_KEY {
   INDIGO = 'INDIGO', // DEFAULT
@@ -32,30 +30,6 @@ export const THEME_TEMPLATE_KEY_LIST = [
   THEME_TEMPLATE_KEY.CYAN,
 ]
 
-const useStyles = makeStyles(({ palette, spacing }: Theme) => createStyles({
-  themeOptionList: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  themeOption: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginRight: spacing(0.5),
-  },
-  optionTitle: {
-    marginTop: spacing(0.5),
-    textAlign: 'center',
-  },
-  optionColor: {
-    width: 50,
-    height: 50,
-  },
-  themeOptionOn: {
-    color: '#FFFFFF',
-    backgroundColor: palette.primary.main,
-  },
-}))
-
 interface Props {
   handleClose: (themeId?: THEME_TEMPLATE_KEY) => void
   open: boolean
@@ -66,7 +40,6 @@ function ThemeChangeOverlay(props: Props) {
   const { handleClose, open, val } = props
   const [themeId, setThemeId] = useState(THEME_TEMPLATE_KEY.INDIGO)
   const dispatch = useDispatch()
-  const classes = useStyles()
   const { t } = useTranslation()
   const onChange = (themeId: THEME_TEMPLATE_KEY) => {
     setThemeId(themeId)
@@ -81,7 +54,7 @@ function ThemeChangeOverlay(props: Props) {
         <DialogTitle id="form-dialog-title">{t('Change the skin')}</DialogTitle>
         <DialogContent>
           <DialogContentText> {t('Please select a favorite skin')} </DialogContentText>
-          <div className={classes.themeOptionList}>
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             {THEME_TEMPLATE_KEY_LIST.map(key => ({ ...THEME_TEMPLATES[key], key })).map(template => (
               <ThemeTemplateOption
                 key={template.key}
@@ -92,7 +65,7 @@ function ThemeChangeOverlay(props: Props) {
                 onChange={onChange}
               />
             ))}
-          </div>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleClose()} color="primary">
@@ -237,12 +210,14 @@ export const THEME_TEMPLATES: { [key: string]: { theme: ThemeOptions; name: stri
 
 const ThemeTemplateOption = ({ ke, name, color, selected, onChange }:
 { ke: THEME_TEMPLATE_KEY; name: string; color: string; selected: boolean; onChange: (themeId: THEME_TEMPLATE_KEY) => void }) => {
-  const classes = useStyles()
   return (
-    <div onClick={() => onChange(ke)} className={classnames(classes.themeOption, selected ? classes.themeOptionOn : null)}>
-      <div className={classes.optionColor} style={{ backgroundColor: color }}>&nbsp;</div>
-      <div className={classes.optionTitle}>{name}</div>
-    </div>
+    <Box
+      onClick={() => onChange(ke)}
+      sx={{ display: 'flex', flexDirection: 'column', mr: 0.5, ...selected ? { color: '#FFFFFF', backgroundColor: 'primary.main' } : {} }}
+    >
+      <Box sx={{ width: '50px', height: '50px' }} style={{ backgroundColor: color }}>&nbsp;</Box>
+      <Box sx={{ mt: 0.5, textAlign: 'center' }}>{name}</Box>
+    </Box>
   )
 }
 

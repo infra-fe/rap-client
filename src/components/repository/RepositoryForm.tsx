@@ -3,47 +3,23 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { YUP_MSG } from '../../family/UIConst'
 import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-material-ui'
+import { TextField } from 'formik-mui'
 import * as Yup from 'yup'
-import { Button, Theme, Dialog, DialogContent, DialogTitle } from '@material-ui/core'
-import { makeStyles } from '@material-ui/styles'
+import { Button, Dialog, DialogContent, DialogTitle, Box, Select, MenuItem } from '@mui/material'
 import { RepositoryFormData, RootState, Repository } from '../../actions/types'
-import UserList from '../common/UserList'
-import Select from '../common/Select'
+// import UserList from '../common/UserList'
 import AccountService from '../../relatives/services/Account'
 import * as _ from 'lodash'
 import { updateRepository, addRepository } from '../../actions/repository'
 import { fetchOwnedOrganizationList, fetchJoinedOrganizationList } from '../../actions/organization'
 import { refresh } from '../../actions/common'
-import { SlideUp } from 'components/common/Transition'
+import Transition from 'components/common/Transition'
+import AsyncSelect, { AddMembers } from 'components/common/AsyncSelect'
 
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {},
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: spacing(2),
-    flex: 1,
-  },
-  preview: {
-    marginTop: spacing(1),
-  },
-  form: {
-    minWidth: 500,
-    minHeight: 300,
-  },
-  formTitle: {
-    color: 'rgba(0, 0, 0, 0.54)',
-    fontSize: 9,
-  },
-  formItem: {
-    marginBottom: spacing(1),
-  },
-  ctl: {
-    marginTop: spacing(3),
-  },
-}))
+const formTitleSX = {
+  color: 'rgba(0, 0, 0, 0.54)',
+  fontSize: 9,
+}
 
 
 const FORM_STATE_INIT: RepositoryFormData = {
@@ -69,7 +45,7 @@ function RepositoryForm(props: Props) {
   const schema = Yup.object().shape({
     name: Yup.string()
       .required(msg.REQUIRED)
-      .max(20, msg.MAX_LENGTH(20)),
+      .max(40, msg.MAX_LENGTH(40)),
     description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
   })
   const { open, onClose, title, organizationId } = props
@@ -85,7 +61,6 @@ function RepositoryForm(props: Props) {
     value: org.id,
   }))
 
-  const classes = useStyles()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -111,11 +86,11 @@ function RepositoryForm(props: Props) {
     <Dialog
       open={open}
       onClose={(_event, reason) => reason !== 'backdropClick' && onClose()}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent dividers={true}>
-        <div className={classes.form}>
+        <Box sx={{ minWidth: 500 }}>
           <Formik
             initialValues={repository}
             validationSchema={schema}
@@ -123,7 +98,7 @@ function RepositoryForm(props: Props) {
               const addOrUpdateRepository = values.id ? updateRepository : addRepository
               const repository: RepositoryFormData = {
                 ...values,
-                memberIds: (values.members || []).map((user: any) => user.id),
+                memberIds: (values.members || []).map(user => user.id),
                 collaboratorIds: (values.collaboratorIdstring || '').split(','),
               }
               const { owner, newOwner } = values
@@ -137,102 +112,95 @@ function RepositoryForm(props: Props) {
                 })
               )
             }}
-            render={({ isSubmitting, setFieldValue, values }) => {
-              function loadUserOptions(
-                input: string
-              ): Promise<Array<{ label: string; value: number }>> {
-                return new Promise(async resolve => {
-                  const users = await AccountService.fetchUserList({ name: input })
-                  const options = _.differenceWith(users.data, values.members || [], _.isEqual)
-                  resolve(
-                    options.map(x => ({
-                      label: `${x.fullname} ${x.empId || x.email}`,
-                      value: x.id,
-                    }))
-                  )
-                })
+          >
+            {({ isSubmitting, setFieldValue, values }) => {
+              const membersFetcher = async (query: string) => {
+                const users = (await AccountService.fetchUserList({ name: query })).data
+                if (values.members) {
+                  AddMembers(users, values.members)
+                }
+                return users.map(x => ({ label: `${x.fullname} ${x.empId || x.email}`, value: x.id }))
               }
-
-              const selectOrganization = organizations.find(
-                (x: any) => x.value === values.organizationId
-              )
+              const ownersFetcher = async (query: string) => {
+                const users = (await AccountService.fetchUserList({ name: query })).data
+                if (values.owner) {
+                  AddMembers(users, [values.owner])
+                }
+                return users.map(x => ({ label: `${x.fullname} ${x.empId || x.email}`, value: x.id }))
+              }
               return (
                 <Form>
                   <div className="rmodal-body">
                     {values.id > 0 && (
-                      <div className={classes.formItem}>
-                        <div className={classes.formTitle}>{t('The owner')}</div>
+                      <Box sx={{ mb: 1 }}>
+                        <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('The owner')}</Box>
 
                         {values.owner && values.owner.id === auth.id ? (
-                          <UserList
-                            isMulti={false}
-                            loadOptions={loadUserOptions}
-                            selected={
-                              values.owner
-                                ? [
-                                  {
-                                    label: values.owner.fullname,
-                                    value: values.owner.id,
-                                  },
-                                ]
-                                : []
-                            }
-                            onChange={(users: any) => setFieldValue('newOwner', users[0])}
+                          <AsyncSelect
+                            multiple={false}
+                            fetcher={ownersFetcher}
+                            value={values.newOwner ?
+                              { label: values?.newOwner?.fullname || '', value: values?.newOwner?.id || null }
+                              : { label: values?.owner?.fullname || '', value: values?.owner?.id || null }}
+                            onChange={selected => {
+                              if (selected[0]) {
+                                setFieldValue('newOwner', selected.map(x => ({ fullname: x.label, id: x.value }))[0])
+                              }
+                            }}
                           />
                         ) : (
                           <div className="pt7 pl9">{values.owner!.fullname}</div>
                         )}
-                      </div>
+                      </Box>
                     )}
-                    <div className={classes.formItem}>
+                    <Box sx={{ mb: 1 }}>
                       <Field name="name" label={t('The name of the repository')} component={TextField} fullWidth={true} />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="description"
                         label={t('Instructions (multiple lines, supporting the Markdown)')}
                         multiline={true}
                         component={TextField}
                         fullWidth={true}
-                        rowsMax={8}
+                        maxRows={8}
                       />
-                    </div>
-                    <div className={classes.formItem}>
-                      <div className={classes.formTitle}>{t('Members of the')}</div>
-                      <UserList
-                        isMulti={true}
-                        loadOptions={loadUserOptions}
-                        selected={values.members!.map(x => ({
-                          label: x.fullname,
-                          value: x.id,
-                        }))}
-                        onChange={selected => setFieldValue('members', selected)}
+                    </Box>
+                    <Box sx={{ mb: 1 }}>
+                      <Box sx={formTitleSX}>{t('Members')}</Box>
+                      <AsyncSelect
+                        multiple={true}
+                        fetcher={membersFetcher}
+                        value={values.members!.map(x => ({ label: x.fullname, value: x.id }))}
+                        onChange={selected => setFieldValue('members', selected.map(x => ({ fullname: x.label, id: x.value })))}
                       />
-                    </div>
-                    <div className={classes.formItem}>
-                      <div className={classes.formTitle}>{t('Organization')}</div>
-                      <Select
-                        isMulti={false}
-                        isClearable={true}
-                        options={organizations}
-                        value={selectOrganization}
-                        onChange={val => {
-                          if (!Array.isArray(val)) {
-                            setFieldValue('organizationId', val && val.value)
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className={classes.formItem}>
+                    </Box>
+                    {organizations.length > 0 && (
+                      <Box sx={{ mb: 1 }}>
+                        <Box sx={formTitleSX}>{t('Organization')}</Box>
+                        <Select
+                          value={values.organizationId}
+                          sx={{ width: 500 }}
+                          onChange={e => {
+                            setFieldValue('organizationId', e.target.value)
+                          }}
+                        >
+                          {organizations.map(option => (
+                            <MenuItem value={option.value} key={option.value}>{option.label}</MenuItem>
+                          ))}
+                        </Select>
+                      </Box>
+                    )}
+                    <Box sx={{ mb: 1 }}>
                       <Field
                         name="collaboratorIdstring"
                         label={t('Collaborative repository ID')}
                         component={TextField}
                         fullWidth={true}
                       />
-                    </div>
+                    </Box>
                   </div>
-                  <div className={classes.ctl}>
+                  <Box sx={{ mt: 3 }}>
                     <Button
                       type="submit"
                       variant="contained"
@@ -245,12 +213,12 @@ function RepositoryForm(props: Props) {
                     <Button onClick={() => onClose()} disabled={isSubmitting}>
                       {t('cancel')}
                     </Button>
-                  </div>
+                  </Box>
                 </Form>
               )
             }}
-          />
-        </div>
+          </Formik>
+        </Box>
       </DialogContent>
     </Dialog>
   )

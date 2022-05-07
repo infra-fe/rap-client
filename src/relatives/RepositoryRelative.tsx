@@ -502,8 +502,6 @@ export default {
       RepositoryAction.repositoryLocationChange,
     ],
     '/repository/all': [RepositoryAction.fetchRepositoryList],
-    '/repository/tester': [RepositoryAction.fetchRepository],
-    '/repository/checker': [RepositoryAction.fetchRepository],
     '/organization/repository': [RepositoryAction.fetchRepositoryList],
   },
 }

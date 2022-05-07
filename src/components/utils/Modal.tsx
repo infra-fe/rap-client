@@ -58,7 +58,7 @@ class Modal extends Component<any, any> {
       this.$modal = $modal
     }
     const dialog = (
-      <Provider store={this.context.store}>
+      <Provider store={(this.context as any).store}>
         <div className="Modal" ref={$dialog => { this.$dialog = $dialog }}>
           {this.props.children}
           <button type="button" className="close" onClick={() => this.props.onClose()}>

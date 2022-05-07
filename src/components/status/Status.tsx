@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { RChart } from '../utils/'
 import './Status.css'
-import { Card } from '@material-ui/core'
-import { withTheme } from '@material-ui/styles'
+import { Card } from '@mui/material'
+import { withTheme } from '@mui/styles'
 
 // TODO 2.3 仓库曲线 接口曲线
 // TODO 2.3 接口覆盖率
@@ -31,12 +31,6 @@ class Status extends Component<any, any> {
     const { counter, users, organizations, repositories, interfaces } = this.props
     let { analyticsUsersActivation, analyticsRepositoriesActivation } = this.props
     const { analyticsRepositoriesCreated, analyticsRepositoriesUpdated } = this.props
-    // analyticsRepositoriesCreated = analyticsRepositoriesCreated.map((item, index, array) => ({
-    //   label: item.label,
-    //   value: array.slice(0, index + 1).reduce((sum, item) => {
-    //     return sum + item.value
-    //   }, 0)
-    // })) // 不需要累积
     analyticsUsersActivation = analyticsUsersActivation.map((item: any) => ({
       label: item.fullname || item.empId || item.userId,
       value: item.value,

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
 import { getRouter } from './router'
-import { RootState } from 'actions/types'
+import { Repository, RootState } from 'actions/types'
 
 const interfaceSelector = (state: RootState) => {
   const router = getRouter(state)
@@ -22,7 +22,7 @@ export const getCurrentInterface = createSelector(interfaceSelector, result => r
 export const getCurrentInterfaceId = createSelector(
   (state => state.repository.data) as any,
   getRouter,
-  (repository: any, router: RootState['router']) => {
+  (repository: Repository, router: RootState['router']) => {
     const itfId = +((router.location as any).params || (router.location as any).query).itf
     if (itfId) {
       return itfId

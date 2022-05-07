@@ -4,7 +4,8 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import './nprogress.css'
 import MainMenu from 'components/layout/MainMenu'
-const Header = ({ fetching, user = {} }: any) => {
+import { RootState, User } from 'actions/types'
+const Header = ({ fetching, user = {} }: { fetching: number; user: User }) => {
   if (!user || !user.id) {
     return null
   }
@@ -19,7 +20,7 @@ const Header = ({ fetching, user = {} }: any) => {
   )
 }
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: RootState) => ({
   fetching: (() => {
     let fetching = 0
     for (const key in state) {
@@ -30,10 +31,4 @@ const mapStateToProps = (state: any) => ({
   user: state.auth,
 })
 
-const mapDispatchToProps = ({
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Header)
+export default connect(mapStateToProps, {})(Header)

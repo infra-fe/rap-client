@@ -2,6 +2,7 @@ import { CREDENTIALS, serve } from './constant'
 import { IDefaultVal } from 'components/editor/DefaultValueModal'
 import { ENTITY_TYPE } from 'utils/consts'
 import { IMPORT_TYPE } from 'components/repository/ImportSwaggerRepositoryForm'
+import { Repository } from 'actions/types'
 
 // 仓库
 export default {
@@ -25,7 +26,7 @@ export default {
       .then(res => res.json())
     // .then(json => json.data)
   },
-  fetchRepository(id: any, token?: string) {
+  fetchRepository(id: number, token?: string) {
     return fetch(
       `${serve}/repository/get?id=${id}&excludeProperty=true${
         token !== undefined ? `&token=${token}` : ''
@@ -35,7 +36,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  addRepository(repository: any) {
+  addRepository(repository: Repository) {
     return fetch(`${serve}/repository/create`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -45,7 +46,7 @@ export default {
       .then(res => res.json())
       .then(json => json.data)
   },
-  updateRepository(repository: any) {
+  updateRepository(repository: Repository) {
     return fetch(`${serve}/repository/update`, {
       ...CREDENTIALS,
       method: 'POST',
@@ -65,7 +66,17 @@ export default {
       .then(res => res.json())
   },
   importSwaggerRepository(data: any) {
-    return fetch(`${serve}/repository/${data.version === IMPORT_TYPE.SWAGGER_2_0 ? 'importswagger' : 'importRAP2Backup'}`, {
+    if (data.swagger?.data?.modules) {
+      data.version = IMPORT_TYPE.RAP
+      data.swagger = data.swagger.data
+    }
+    let importType = ''
+    switch(data.version) {
+      case IMPORT_TYPE.SWAGGER_2_0: importType = 'importswagger'; break
+      case IMPORT_TYPE.RAP2_ITF_BACKUP: importType = 'importRAP2Backup'; break
+      default: importType = 'import'
+    }
+    return fetch(`${serve}/repository/${importType}`, {
       ...CREDENTIALS,
       method: 'POST',
       body: JSON.stringify(data),
@@ -75,12 +86,13 @@ export default {
   },
   getSwaggerRepository(data: any) {
     return fetch(`${data.docUrl}`, {
+      ...CREDENTIALS,
       mode: 'cors',
       method: 'GET',
     })
       .then(res => res.json())
   },
-  deleteRepository(id: any) {
+  deleteRepository(id: number) {
     return fetch(`${serve}/repository/remove?id=${id}`, { ...CREDENTIALS })
       .then(res => res.json())
       .then(json => json.data)

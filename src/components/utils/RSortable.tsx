@@ -23,9 +23,9 @@ class RSortable extends Component<RSortableProps, RSortableState> {
     })
     this.$sortable = $sortable
   }
-  componentWillReceiveProps(nextProps: any) {
-    if (nextProps.disabled !== undefined) {
-      this.$sortable.option('disabled', nextProps.disabled)
+  componentDidUpdate() {
+    if (this.props.disabled !== undefined) {
+      this.$sortable.option('disabled', this.props.disabled)
     }
   }
 }

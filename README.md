@@ -24,16 +24,16 @@ RAP是在RAP1 & RAP2基础上重做的新项目，它包含两个组件(对应�
 ```sh
 
 # initialize 初始化
-npm install
+yarn install
 
 # config development mode server API path in /src/config/config.dev.js
 # 配置开发模式后端服务器的地址。 /src/config/config.dev.js
 
 # test cases 测试用例
-npm run test
+yarn test
 
 # will watch & serve automatically 会自动监视改变后重新编译
-npm run dev
+yarn dev
 
 ```
 
@@ -45,7 +45,7 @@ npm run dev
 
 # 2. produce react production package
 # 2. 编译React生产包
-npm run build
+yarn build
 
 # 3. use serve or nginx to serve the static build directory
 # 3. 用serve命令或nginx服务器路由到编译产出的build文件夹作为静态服务器即可
@@ -58,8 +58,11 @@ serve -s ./build -p 80
 * Owner: Shopee Infra FE Team
 * Contributers: [link](https://github.com/infra-fe/rap-client/graphs/contributors)
 
-* 所有人: Shopee Infra FE Team
-* 贡献者: [link](https://github.com/infra-fe/rap-client/graphs/contributors)
+* Owner: Shopee FE Team
+* Author:
+  * Before v2.3: all by [@Nuysoft](https://github.com/nuysoft/), creator of [mockjs](mockjs.com).
+  * v2.4+ / CE version: [Bosn](http://github.com/bosn/)(creator of [RAP1](https://github.com/thx/RAP)) [Nuysoft](https://github.com/nuysoft/)
+  * We are looking for more and more contributors :)
 
 
 ### Tech Arch 技术栈

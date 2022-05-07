@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import { SlideUp } from 'components/common/Transition'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Transition from 'components/common/Transition'
 
 interface Props {
   open: boolean
@@ -19,18 +19,18 @@ export default function ConfirmDialog(props: Props) {
   const {t} = useTranslation()
   const { type, title = t('Confirm') } = props
   return (
-    <Dialog open={props.open} onClose={props.onCancel} TransitionComponent={SlideUp}>
+    <Dialog open={props.open} onClose={props.onCancel} TransitionComponent={Transition}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         {props.content}
       </DialogContent>
       <DialogActions>
         {type === 'confirm' && (
-          <Button onClick={props.onCancel} variant="outlined" color="default">
+          <Button onClick={props.onCancel} variant="outlined">
             {t('cancel')}
           </Button>
         )}
-        <Button onClick={props.onConfirm} variant="outlined" color="primary" autoFocus={true}>
+        <Button onClick={props.onConfirm} variant="contained" color="primary" autoFocus={true}>
           {t('confirm')}
         </Button>
       </DialogActions>

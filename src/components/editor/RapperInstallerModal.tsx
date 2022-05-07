@@ -1,21 +1,20 @@
 import { useTranslation } from 'react-i18next'
 import React, { useState } from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Dialog from '@material-ui/core/Dialog'
-import TextField from '@material-ui/core/TextField'
+import Dialog from '@mui/material/Dialog'
+import TextField from '@mui/material/TextField'
 import config from '../../config'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
-import CloseIcon from '@material-ui/icons/Close'
-import { SlideUp } from 'components/common/Transition'
-import Radio from '@material-ui/core/Radio'
-import RadioGroup from '@material-ui/core/RadioGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormLabel from '@material-ui/core/FormLabel'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import CloseIcon from '@mui/icons-material/Close'
+import Transition from 'components/common/Transition'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
 import { Repository } from 'actions/types'
-import { DialogContent } from '@material-ui/core'
+import { Box, DialogContent } from '@mui/material'
 
 type RapperType = 'normal' | 'redux'
 
@@ -30,24 +29,11 @@ const codeTmpl = ({ projectId, token, rapperType, rapperPath }: {
   return String.raw`"rapper": "rapper --type ${rapperType} --rapperPath \"${rapperPath}\" --apiUrl \"${apiUrl}\" --rapUrl \"${rapUrl}\""`
 }
 
-const useReadmeStyles = makeStyles({
-  root: {
-    '&': {
-      fontSize: 16,
-    },
-  },
-  badge: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
 
 function Readme() {
-  const classes = useReadmeStyles()
   const { t } = useTranslation()
   return (
-    <div className={classes.root}>
+    <Box sx={{ fontSize: 16 }}>
       <div style={{ textAlign: 'center' }}>
         <a href="https://github.com/thx/rapper" target="_blank" rel="noopener noreferrer">
           <img
@@ -57,7 +43,7 @@ function Readme() {
           />
         </a>
         <h3>{t('A built-in type request library (closed)')}</h3>
-        <div className={classes.badge}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <iframe
             title="star"
             src="https://ghbtns.com/github-btn.html?user=thx&repo=rapper&type=star&count=true"
@@ -73,7 +59,7 @@ function Readme() {
           >
             {t('The document')}
           </a>
-        </div>
+        </Box>
       </div>
 
       <h2>{t('What is the Rapper?')}</h2>
@@ -98,46 +84,9 @@ function Readme() {
       />
       {/* </div> */}
       <h2>{t('Rapid configuration')}</h2>
-    </div>
+    </Box>
   )
 }
-
-const useStyles = makeStyles(({ spacing }: Theme) =>
-  createStyles({
-    appBar: {
-      position: 'relative',
-    },
-    title: {
-      marginLeft: spacing(2),
-      flex: 1,
-    },
-    btn: {
-      marginBottom: spacing(2),
-      marginTop: spacing(2),
-    },
-    content: {
-      padding: '30px 15vw 40vh 15vw',
-    },
-    formControl: {
-      margin: 0,
-    },
-    formItem: {
-      marginBottom: 16,
-    },
-    formLabel: {
-      fontSize: 16,
-      marginBottom: 5,
-    },
-    step: {
-      fontSize: 16,
-      marginBottom: 10,
-    },
-    mode: {
-      fontSize: 12,
-      marginLeft: 10,
-    },
-  })
-)
 
 function RapperInstallerModal({
   open,
@@ -148,7 +97,6 @@ function RapperInstallerModal({
   handleClose: () => void
   repository: Repository
 }) {
-  const classes = useStyles()
 
   /** rapper 类型 normal redux */
   const [rapperType, setRapperType] = useState<RapperType>('normal')
@@ -165,39 +113,39 @@ function RapperInstallerModal({
       fullScreen={true}
       open={open}
       onClose={handleClose}
-      TransitionComponent={SlideUp}
+      TransitionComponent={Transition}
     >
-      <AppBar className={classes.appBar}>
+      <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
             onClick={handleClose}
             aria-label="close"
-          >
+            size="large">
             <CloseIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
             {t('Try to use Rapper help you generate code')}
           </Typography>
         </Toolbar>
       </AppBar>
-      <DialogContent className={classes.content}>
+      <DialogContent sx={{ padding: '30px 15vw 40vh 15vw' }}>
         <Readme />
-        <div className={classes.formItem}>
-          <FormLabel component="legend" className={classes.formLabel}>
+        <Box sx={{ mb: 2 }}>
+          <FormLabel component="legend" sx={{ fontSize: 16, mb: 0.5 }}>
             {t('The generated code')}
-            <a href="https://www.yuque.com/rap/rapper/which-model" className={classes.mode} target="_blank" rel="noopener noreferrer">
+            <Box component="a" href="https://www.yuque.com/rap/rapper/which-model" sx={{ fontSize: 12, ml: 1.5 }} target="_blank" rel="noopener noreferrer">
               {t('Which model should I choose?')}
-            </a>
+            </Box>
           </FormLabel>
           <RadioGroup aria-label="rapperType" row={true} name="rapperType" value={rapperType} onChange={handleRapperTypeChange}>
             <FormControlLabel value="normal" control={<Radio />} label={t('Basic mode')} />
             <FormControlLabel value="redux" control={<Radio />} label={t('The React + Redux advanced mode')} />
           </RadioGroup>
-        </div>
-        <div className={classes.formItem}>
-          <FormLabel component="legend" className={classes.formLabel}>{t('installMsg')}</FormLabel>
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <FormLabel component="legend" sx={{ fontSize: 16, mb: 0.5 }}>{t('installMsg')}</FormLabel>
           <TextField
             placeholder="src/rapper"
             fullWidth={true}
@@ -206,22 +154,22 @@ function RapperInstallerModal({
             value={rapperPath}
             onChange={(event) => setRapperPath(event.target.value)}
           />
-        </div>
-        <p className={classes.step}>{t('1. Install the rapper to project dependencies')}</p>
+        </Box>
+        <Box component="p" sx={{ fontSize: 16, mb: 0.5 }}>{t('1. Install the rapper to project dependencies')}</Box>
         <pre>npm install rap --save</pre>
-        <p className={classes.step}>{t('2. Give package. Under the json object of scripts to add the following line of the script')}</p>
+        <Box component="p" sx={{ fontSize: 16, mb: 0.5 }}>{t('2. Give package. Under the json object of scripts to add the following line of the script')}</Box>
         <pre>
           {codeTmpl({ projectId: repository.id, token: repository.token, rapperType, rapperPath })}
         </pre>
-        <p className={classes.step}>{t('3. Run the rapper generated code')}</p>
+        <Box component="p" sx={{ fontSize: 16, mb: 0.5 }}>{t('3. Run the rapper generated code')}</Box>
         <pre>
           npm run rapper
         </pre>
-        <p className={classes.step}>4.
+        <Box component="p" sx={{ fontSize: 16, mb: 0.5 }}>4.
           <a href="https://www.yuque.com/rap/rapper/use" target="_blank" rel="noopener noreferrer">
             {t('Good use!')}
           </a>
-        </p>
+        </Box>
 
       </DialogContent>
     </Dialog>

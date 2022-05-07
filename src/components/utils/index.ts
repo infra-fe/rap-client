@@ -6,10 +6,8 @@ import Pagination from './Pagination'
 import Popover from './Popover'
 import SmartTextarea from './SmartTextarea'
 import MembersInput from './MembersInput'
-import RCodeMirror from './RCodeMirror'
 import Tree from './Tree'
 import RSortable from './RSortable'
-import RParsley from './RParsley'
 import RChart from './RChart'
 import CopyToClipboard from './CopyToClipboard'
 import CustomScroll from './CustomScroll'
@@ -23,10 +21,8 @@ export {
   Popover,
   SmartTextarea,
   MembersInput,
-  RCodeMirror,
   Tree,
   RSortable,
-  RParsley,
   RChart,
   CopyToClipboard,
   CustomScroll,

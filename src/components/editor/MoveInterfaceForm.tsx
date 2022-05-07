@@ -4,58 +4,18 @@ import { moveInterface } from '../../actions/interface'
 import { fetchOwnedRepositoryList, fetchJoinedRepositoryList } from '../../actions/repository'
 import EditorService from 'relatives/services/Editor'
 
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core'
+import { Dialog, DialogTitle, DialogContent, SelectChangeEvent, Box } from '@mui/material'
 import _ from 'lodash'
-import {
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Theme,
-  makeStyles,
-} from '@material-ui/core'
+import { Button, Select, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
-import { Module, RootState } from 'actions/types'
+import { Module, Repository, RootState } from 'actions/types'
 
 export const OP_MOVE = 1
 export const OP_COPY = 2
 
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {},
-  appBar: {
-    position: 'relative',
-  },
-  title: {
-    marginLeft: spacing(2),
-    flex: 1,
-  },
-  preview: {
-    marginTop: spacing(1),
-  },
-  form: {
-    minWidth: 500,
-  },
-  formTitle: {
-    color: 'rgba(0, 0, 0, 0.54)',
-    fontSize: 9,
-  },
-  formItem: {
-    marginBottom: spacing(1),
-  },
-  ctl: {
-    marginTop: spacing(2),
-  },
-  select: {
-    width: spacing(20),
-  },
-}))
-
 interface Props {
   title: string
-  repository: any
+  repository: Repository
   itfId: number
   open: boolean
   mod: Module
@@ -64,7 +24,6 @@ interface Props {
 
 export default function MoveInterfaceForm(props: Props) {
   const { repository, title, itfId, onClose, open, mod } = props
-  const classes = useStyles()
   const [repositoryId, setRepositoryId] = useState(repository.id)
   const [modId, setModId] = useState(mod.id)
   const [op, setOp] = useState(OP_MOVE)
@@ -83,13 +42,8 @@ export default function MoveInterfaceForm(props: Props) {
     }
   }, [dispatch, repositories.length])
 
-  function onRepositoryChange(
-    e: React.ChangeEvent<{
-      name?: string | undefined
-      value: unknown
-    }>
-  ) {
-    const repositoryId = e.target.value
+  function onRepositoryChange(e: SelectChangeEvent<number>) {
+    const repositoryId = e.target.value as number
     setRepositoryId(repositoryId)
     EditorService.fetchModuleList({
       repositoryId,
@@ -99,7 +53,7 @@ export default function MoveInterfaceForm(props: Props) {
     })
   }
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e?: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault()
     const params = {
       modId,
@@ -117,13 +71,12 @@ export default function MoveInterfaceForm(props: Props) {
     <Dialog open={open} onClose={(_event, reason) => reason !== 'backdropClick' && onClose()}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent dividers={true}>
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <Box component="form" sx={{ minWidth: '500px' }} onSubmit={handleSubmit}>
           <div className="rmodal-body">
-            <div className={classes.formItem}>
-              <div className={classes.formTitle}>{t('Select the target repository:')}</div>
+            <Box sx={{ mb: 1 }}>
+              <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Select the target repository:')}</Box>
               <FormControl>
                 <Select
-                  className={classes.select}
                   onChange={onRepositoryChange}
                   value={repositoryId}
                   fullWidth={true}
@@ -135,12 +88,11 @@ export default function MoveInterfaceForm(props: Props) {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-            <div className={classes.formItem}>
-              <div className={classes.formTitle}>{t('Select the target module:')}</div>
+            </Box>
+            <Box sx={{ mb: 1 }}>
+              <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Select the target module:')}</Box>
               <FormControl>
                 <Select
-                  className={classes.select}
                   onChange={e => setModId(+((e.target.value as any) as string))}
                   value={modId}
                   fullWidth={true}
@@ -152,9 +104,9 @@ export default function MoveInterfaceForm(props: Props) {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-            <div className={classes.formItem}>
-              <div className={classes.formTitle}>{t('Operation type:')}</div>
+            </Box>
+            <Box sx={{ mb: 1 }}>
+              <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Operation type:')}</Box>
               <RadioGroup
                 name="radioListOp"
                 value={String(op)}
@@ -166,15 +118,15 @@ export default function MoveInterfaceForm(props: Props) {
                 <FormControlLabel value={String(OP_MOVE)} control={<Radio />} label={t('move')} />
                 <FormControlLabel value={String(OP_COPY)} control={<Radio />} label={t('copy')} />
               </RadioGroup>
-            </div>
-            <div className={classes.ctl}>
+            </Box>
+            <Box sx={{ mt: 3 }}>
               <Button type="submit" variant="contained" color="primary" style={{ marginRight: 8 }}>
                 {t('submit')}
               </Button>
               <Button onClick={() => onClose()}>{t('cancel')}</Button>
-            </div>
+            </Box>
           </div>
-        </form>
+        </Box>
       </DialogContent>
     </Dialog>
   )

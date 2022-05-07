@@ -1,12 +1,15 @@
 import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
-import { connect, Link, Mock, _, PropTypes } from '../../family'
-import { RCodeMirror } from '../utils/'
+import { connect, Mock, _, PropTypes } from '../../family'
 import { addProperty } from '../../actions/property'
 import { RootState, Property } from 'actions/types'
 import JSON5 from 'json5'
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 import { POS_TYPE } from './InterfaceSummary'
+import MonacoEditor from 'react-monaco-editor'
+import 'monaco-editor/esm/vs/language/json/monaco.contribution'
+import { ProviderContext, withSnackbar } from 'notistack'
+
 const mockResult =
   process.env.NODE_ENV === 'development'
     ? () => ({
@@ -40,7 +43,7 @@ const replaceLength = (obj: any) => {
 }
 
 function isPrimitiveType(type: string) {
-  return ['number', 'null', 'undefined', 'boolean', 'string'].indexOf(type.toLowerCase()) > -1
+  return ['number', 'null', 'undefined', 'boolean', 'string', 'array'].indexOf(type.toLowerCase()) > -1
 }
 const isIncreamentNumberSequence = (numbers: any) =>
   numbers.every((num: any) => typeof num === 'number' && ((num: any, i: number) => i === 0 || num - numbers[i - 1] === 1))
@@ -74,7 +77,7 @@ function mixItemsProperties(items: any) {
     return baseItem
   }
 }
-type ImporterProps = {
+interface Props extends ProviderContext {
   rmodal?: any
   title?: any
   handleAddMemoryProperties: (...args: any[]) => any
@@ -82,15 +85,16 @@ type ImporterProps = {
   [k: string]: any
   pos: POS_TYPE
 }
-type ImporterState = {
+
+type States = {
   result: string
 }
-class Importer extends Component<ImporterProps, ImporterState> {
+
+class Importer extends Component<Props, States> {
   static contextTypes = {
     rmodal: PropTypes.object.isRequired,
     handleAddMemoryProperties: PropTypes.func.isRequired,
   }
-  $rcm: any
   constructor(props: any) {
     super(props)
     this.state = {
@@ -98,27 +102,16 @@ class Importer extends Component<ImporterProps, ImporterState> {
     }
   }
   render() {
-    const { rmodal } = this.context
+    const { rmodal } = this.context as any
     return (
       <section className="Importer">
         <div className="rmodal-header">
-          <span className="rmodal-title">{this.props.title}</span>
-          <Link to="" onClick={e => this.handleBeautify(e)}>
-            <Translation>
-              {(t) => t('formatting')}
-            </Translation>
-          </Link>
+          <span className="rmodal-title code-title">{this.props.title}</span>
         </div>
-        <form className="form-horizontal w600" onSubmit={this.handleSubmit}>
+        <form className="form-horizontal" onSubmit={this.handleSubmit}>
           <div className="rmodal-body">
             <div className="form-group">
-              <RCodeMirror
-                value={this.state.result}
-                onChange={(value: any) => this.setState({ result: value })}
-                ref={$rcm => {
-                  this.$rcm = $rcm
-                }}
-              />
+              <MonacoEditor language="json" value={this.state.result} onChange={(value: string) => this.setState({ result: value })} width="870px" height="40rem" theme="vs" options={{ tabSize: 2 }} />
             </div>
           </div>
           <div className="rmodal-footer">
@@ -127,6 +120,12 @@ class Importer extends Component<ImporterProps, ImporterState> {
                 <div className="form-group mb0">
                   <Button type="submit" style={{ marginRight: 8 }} variant="contained" color="primary">
                     {t('submit')}
+                  </Button>
+                  <Button
+                    style={{ marginRight: 8 }}
+                    onClick={e => this.handleBeautify(e)}
+                    variant="contained">
+                    {t('format')}
                   </Button>
                   <Button onClick={() => rmodal.close()} > {t('cancel')} </Button>
                 </div>
@@ -138,15 +137,17 @@ class Importer extends Component<ImporterProps, ImporterState> {
     )
   }
   componentDidUpdate() {
-    this.context.rmodal.reposition()
+    (this.context as any).rmodal.reposition()
   }
   // DONE 2.1 支持格式化
-  handleBeautify = (e: any) => {
+  handleBeautify = (e) => {
     e.preventDefault()
-    if (this.$rcm) {
+    try {
       const result = JSON5.parse(this.state.result)
       const beautified = JSON.stringify(result, null, 2)
-      this.$rcm.cm.setValue(beautified)
+      this.setState({ result: beautified })
+    } catch (e) {
+      this.props.enqueueSnackbar(`Error, ${e}`, { variant: 'error' })
     }
   }
   // TODO 2.1 待完整测试各种输入
@@ -215,10 +216,13 @@ class Importer extends Component<ImporterProps, ImporterState> {
         id: _.uniqueId('memory-'),
       }
     )
+    if (scope === 'response') {
+      property['required'] = true
+    }
     memoryProperties.push(property)
     if (schema.properties) {
       schema.properties.forEach((item: any) => {
-        const childSiblings = hasSiblings ? siblings.map((s: any) => s && (s.properties.find((p: any) => p.name === item.name) || null)) : undefined
+        const childSiblings = hasSiblings ? siblings.map((s: any) => s && (s.properties?.find((p: any) => p.name === item.name) || null)) : undefined
         this.handleJSONSchema(item, property, memoryProperties, childSiblings)
       })
     }
@@ -228,26 +232,30 @@ class Importer extends Component<ImporterProps, ImporterState> {
     })
   }
   // DONE 2.1 因为 setState() 是异步的，导致重复调用 handleAddMemoryProperty() 时最后保留最后一个临时属性
-  handleSubmit = (e: any) => {
+  handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault()
-    let result = JSON5.parse(this.state.result)
-    if (this.state.result.indexOf('length') > -1) {
-      // 递归查找替换 length 是一个重操作，先进行一次字符串查找，发现存在 length 字符再进行
-      replaceLength(result)
-    }
+    try {
+      let result = JSON5.parse(this.state.result)
+      if (this.state.result.indexOf('length') > -1) {
+        // 递归查找替换 length 是一个重操作，先进行一次字符串查找，发现存在 length 字符再进行
+        replaceLength(result)
+      }
 
-    if (result instanceof Array) {
-      result = { __root__: result }
+      if (result instanceof Array) {
+        result = { __root__: result }
+      }
+      const schema = Mock.toJSONSchema(result)
+      const memoryProperties: any = []
+      if (schema.properties) { schema.properties.forEach((item: any) => this.handleJSONSchema(item, undefined, memoryProperties)) }
+      const { handleAddMemoryProperties } = this.context as any
+      handleAddMemoryProperties(memoryProperties, () => {
+        // done
+        const { rmodal } = this.context as any
+        if (rmodal) { rmodal.resolve() }
+      })
+    } catch (e) {
+      this.props.enqueueSnackbar(`Error, ${e}`, { variant: 'error' })
     }
-    const schema = Mock.toJSONSchema(result)
-    const memoryProperties: any = []
-    if (schema.properties) { schema.properties.forEach((item: any) => this.handleJSONSchema(item, undefined, memoryProperties)) }
-    const { handleAddMemoryProperties } = this.context
-    handleAddMemoryProperties(memoryProperties, () => {
-      // done
-      const { rmodal } = this.context
-      if (rmodal) { rmodal.resolve() }
-    })
   }
 }
 const mapStateToProps = (state: RootState) => ({
@@ -256,4 +264,4 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
   onAddProperty: addProperty,
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Importer)
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Importer))

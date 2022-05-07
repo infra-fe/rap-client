@@ -61,6 +61,7 @@ const treeToJson = (tree: any) => {
           // eslint-disable-next-line
           result[item.name + rule] = eval('(' + item.value + ')') // eslint-disable-line no-eval
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.warn(`{ ${item.name}: ${item.value} } => ${e.message}`) // TODO 2.2 初始值异常，应该直接提示到页面上。
           result[item.name + rule] = item.value
         }

@@ -3,7 +3,7 @@ import copy from 'clipboard-copy'
 import * as React from 'react'
 import Tooltip from 'rc-tooltip'
 import 'rc-tooltip/assets/bootstrap.css'
-import FileCopy from '@material-ui/icons/FileCopyTwoTone'
+import FileCopy from '@mui/icons-material/FileCopyTwoTone'
 import { withSnackbar, WithSnackbarProps } from 'notistack'
 
 import './CopyToClipboard.css'
@@ -12,6 +12,8 @@ type Props = {
   children: React.ReactElement<any>
   text: string
   type?: 'hover' | 'right'
+  label?: string
+  tip?: string
 } & WithSnackbarProps
 
 interface OwnState {
@@ -22,7 +24,7 @@ class CopyToClipboard extends React.Component<Props, OwnState> {
   public state: OwnState = { showTooltip: false }
 
   public render() {
-    const { type = 'hover', text } = this.props
+    const { type = 'hover', text, label, tip } = this.props
     return (
       <Translation>
         {(t) => type === 'hover' ? (
@@ -46,9 +48,10 @@ class CopyToClipboard extends React.Component<Props, OwnState> {
         ) : (
           <>
             {this.props.children}
-            <span className="copy-link edit" onClick={() => this.onCopy(text, t)} title={t('Copy the name')}>
+            <span className="copy-link edit" onClick={() => this.onCopy(text, t)} title={tip || t('Copy the name')}>
               <FileCopy fontSize="small" />
             </span>
+            {label ? <span onClick={() => this.onCopy(text, t)}>{label}</span> : null}
           </>
         )}</Translation>
     )

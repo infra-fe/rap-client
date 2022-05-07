@@ -19,6 +19,7 @@
     "importHelpers": true,
     "noEmitHelpers": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "preserveConstEnums": true,
     "allowJs": false,
     "strict": true,

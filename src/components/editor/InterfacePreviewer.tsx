@@ -65,6 +65,7 @@ class Previewer extends Component<any, any> {
       const { Assert } = Mock.valid
       const valid = Mock.valid(template, data)
       for (const i of valid) {
+        // eslint-disable-next-line no-console
         console.warn(Assert.message(i))
       }
       return (
