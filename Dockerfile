@@ -20,7 +20,7 @@ RUN yarn build
 # nginx
 FROM nginx:stable-alpine
 
-ENV  RAP_SERVER='http://rapserver:38081'
+ENV  RAP_SERVER=http://rapserver:38081
 
 COPY --from=builder app/build /rapclient
 
