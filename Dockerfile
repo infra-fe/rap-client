@@ -36,5 +36,6 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 EXPOSE 38081
 
-CMD ["/usr/local/nginx/sbin/nginx","-g","daemon off;"]
+CMD ["nginx","-g","daemon off;"]
+
 
