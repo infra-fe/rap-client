@@ -1,7 +1,8 @@
 # BUILDING
 FROM node:16-alpine AS builder
 
-ENV NODE_OPTIONS='--max-old-space-size=4096'
+ENV NODE_OPTIONS='--max-old-space-size=4096' \
+    RAP_SERVER='http://rapserver:38081'
 
 WORKDIR /app
 
@@ -22,4 +23,9 @@ FROM nginx:stable-alpine
 
 COPY --from=builder app/build /rapclient
 RUN rm /etc/nginx/conf.d/default.conf
-COPY docker/nginx.conf /etc/nginx/conf.d/
+COPY docker/nginx.conf.template /etc/nginx/conf.d/nginx.conf.template
+COPY docker-entrypoint.sh /
+RUN chmod 777 /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+

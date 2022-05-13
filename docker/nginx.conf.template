@@ -5,7 +5,7 @@ server {
     root /rapclient;
     
     location ^~/api/ {
-       proxy_pass http://rapserver:38080/;
+      proxy_pass ${RAP_SERVER}/;
     }
     location / {
         try_files $uri /index.html;
