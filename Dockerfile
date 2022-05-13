@@ -34,3 +34,7 @@ RUN chmod 777 /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
+EXPOSE 38081
+
+CMD ["/usr/local/nginx/sbin/nginx","-g","daemon off;"]
+
