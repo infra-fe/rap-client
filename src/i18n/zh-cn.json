@@ -291,7 +291,7 @@
   "unfold": "展开",
   "msg1": "名称不能为空",
   "msg2": "URL地址不能为空",
-  "msg3": "合法的URL地址，需以 http 或 / 开头，例如/a/b 或者 https://shopee.com/",
+  "msg3": "合法的URL地址，需以 http 或 / 开头，例如/a/b 或者 https://rap.com/",
   "msg4": "有参数未命名，请检查",
   "describe as": "描述为",
   "parameter": "参数",

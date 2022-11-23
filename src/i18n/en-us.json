@@ -290,7 +290,7 @@
   "unfold": "unfold",
   "msg1": "name cannot be empty",
   "msg2": "URL address cannot be empty",
-  "msg3": "the right url address，need start with http or / ，for examples, /a/b or https://shopee.com/",
+  "msg3": "the right url address，need start with http or / ，for examples, /a/b or https://rap.com/",
   "msg4": "there is parameters has no name, please check",
   "describe as": "describe as",
   "parameter": "parameters",
