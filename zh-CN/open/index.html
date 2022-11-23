@@ -9,7 +9,7 @@
     <link
       rel="shortcut icon"
       type="image/x-icon"
-      href="https://user-images.githubusercontent.com/13103261/163985832-064241bd-152c-4715-8be2-679ee20abab4.png"
+      href="http://rap2.taobao.org/favicon.png"
     />
     <link
       rel="stylesheet"
@@ -17,27 +17,30 @@
     />
     <link rel="stylesheet" href="/style.css" />
     <script>
-      window.routerBase = "/rap-client";
+      window.routerBase = "rap-client";
     </script>
     <script>
-      //! umi version: 3.5.21
+      //! umi version: 3.5.35
     </script>
     <script>
       !(function () {
-        var e = localStorage.getItem("dumi:prefers-color"),
-          t = window.matchMedia("(prefers-color-scheme: dark)").matches,
-          r = ["light", "dark", "auto"];
+        var e =
+            navigator.cookieEnabled && void 0 !== window.localStorage
+              ? localStorage.getItem("dumi:prefers-color")
+              : "auto",
+          o = window.matchMedia("(prefers-color-scheme: dark)").matches,
+          t = ["light", "dark", "auto"];
         document.documentElement.setAttribute(
           "data-prefers-color",
-          e === r[2] ? (t ? r[1] : r[0]) : r.indexOf(e) > -1 ? e : r[0]
+          e === t[2] ? (o ? t[1] : t[0]) : t.indexOf(e) > -1 ? e : t[0]
         );
       })();
     </script>
-    <title>open API - RAP</title>
+    <title>RAP</title>
   </head>
   <body>
     <div id="root"></div>
 
-    <script src="/rap-client/umi.ebd121cd.js"></script>
+    <script src="/rap-client/umi.29c80522.js"></script>
   </body>
 </html>
