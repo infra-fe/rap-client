@@ -17,5 +17,5 @@ This will only generate TS file
 ## Install
 
 ```bash
-yarn add @infra/rapper
+yarn add @rapper3/cli
 ```

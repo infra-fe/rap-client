@@ -1,6 +1,6 @@
-# @rapper/react-swr
+# @rapper3/react-swr
 
-`@rapper/react-swr` based on [SWR](https://swr.vercel.app/zh-CN)
+`@rapper3/react-swr` based on [SWR](https://swr.vercel.app/zh-CN)
 
 <code src="../demos/ReactSwr.tsx">
 
@@ -12,10 +12,10 @@
 
 <img width="850px" src="../images/normal-mode.jpg">
 
-### 3. Then install `swr` & `@rapper/react-swr`
+### 3. Then install `swr` & `@rapper3/react-swr`
 
 ```bash
-yarn add @rapper/react-swr swr
+yarn add @rapper3/react-swr swr
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ yarn add @rapper/react-swr swr
 <img width="700px" src="./../images/react-swr.jpg">
 
 ```ts
-import { createSwr } from '@rapper/react-swr'
+import { createSwr } from '@rapper3/react-swr'
 import { http, IModels } from './src/rapper'
 
 const useSwr = createSwr<IModels>(http)

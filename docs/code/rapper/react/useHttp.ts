@@ -10,7 +10,7 @@
  * Rap repository url: /repository/editor?id=308
  */
 
-import { createUseHttp } from '@rapper/ahooks'
+import { createUseHttp } from '@rapper3/react-ahooks'
 import { http } from './http'
 import { IModels } from './models'
 

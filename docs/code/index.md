@@ -9,13 +9,13 @@ http request in your project.
 
 Except the above generationg modes, we also provide the following packages
 
-- [@rapper/react-query](./code/react/react-query)
-- [@rapper/react-query3](./code/react/react-query3)
-- [@rapper/react-swr](./code/react/react-swr)
-- [@rapper/react-redux-toolkit](./code/react/redux-toolkit) `coming soon...`
-- [@rapper/react-redux](./code/react/redux) `coming soon...`
-- [@rapper/vue-query]('./code/vue/vue-query')
-- [@rapper/vue-swr](./code/vue/vue-swr)
+- [@rapper3/react-query](./code/react/react-query)
+- [@rapper3/react-query3](./code/react/react-query3)
+- [@rapper3/react-swr](./code/react/react-swr)
+- [@rapper3/react-redux-toolkit](./code/react/redux-toolkit) `coming soon...`
+- [@rapper3/react-redux](./code/react/redux) `coming soon...`
+- [@rapper3/vue-query]('./code/vue/vue-query')
+- [@rapper3/vue-swr](./code/vue/vue-swr)
 
 ## Contact
 

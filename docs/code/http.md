@@ -1,6 +1,6 @@
 # Http
 
-## @rapper/request
+## @rapper3/request
 
 <code src="./demos/http.tsx">
 
@@ -15,12 +15,12 @@
 ## Install
 
 ```bash
-yarn add @rapper/request @infra/rapper
+yarn add @rapper3/request @rapper3/cli
 ```
 
 Except the TS defination file，it will generate `http.ts` file.
 
-The `@rapper/request` based on `axios`
+The `@rapper3/request` based on `axios`
 
 ## Usage
 
@@ -74,11 +74,11 @@ async function Test() {
 
 ## Interceptor
 
-`@rapper/request` based on `axios`, so you can write interceptor as `axios`
+`@rapper3/request` based on `axios`, so you can write interceptor as `axios`
 
 ### 1. Cofig baseURL
 
-> `@rapper/request` has the following baseURL configuration built in
+> `@rapper3/request` has the following baseURL configuration built in
 >
 > <img width="850px" src="./images/http-file.jpg"/>
 

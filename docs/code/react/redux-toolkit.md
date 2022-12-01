@@ -1,3 +1,3 @@
-# @rapper/react-redux-toolkit
+# @rapper3/react-redux-toolkit
 
 Coming soon...

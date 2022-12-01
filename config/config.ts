@@ -192,23 +192,23 @@ export default {
             path: '/code/react',
           },
           {
-            title: '@rapper/react-query',
+            title: '@rapper3/react-query',
             path: '/code/react/react-query',
           },
           {
-            title: '@rapper/react-query3',
+            title: '@rapper3/react-query3',
             path: '/code/react/react-query3',
           },
           {
-            title: '@rapper/react-swr',
+            title: '@rapper3/react-swr',
             path: '/code/react/react-swr',
           },
           {
-            title: '@rapper/react-redux',
+            title: '@rapper3/react-redux',
             path: '/code/react/redux',
           },
           {
-            title: '@rapper/react-redux-toolkit',
+            title: '@rapper3/react-redux-toolkit',
             path: '/code/react/redux-toolkit',
           },
         ],
@@ -218,11 +218,11 @@ export default {
         path: '/code/vue',
         children: [
           {
-            title: '@rapper/vue-query',
+            title: '@rapper3/vue-query',
             path: '/code/vue/vue-query',
           },
           {
-            title: '@rapper/vue-swr',
+            title: '@rapper3/vue-swr',
             path: '/code/vue/vue-swr',
           },
         ],

@@ -81,7 +81,7 @@ export const IReqType = {
 ```
 ### 我应该选择rapper的哪种模式?
 
-@Infra/rapper分为三种模式：hoosk模式，基础模式 和Redux模式，供你根据项目的特点自行选择：
+@rapper3/cli分为三种模式：hoosk模式，基础模式 和Redux模式，供你根据项目的特点自行选择：
 
 模式 1：Hooks
 

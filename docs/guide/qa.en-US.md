@@ -81,7 +81,7 @@ export const IReqType = {
 ```
 ### Which Mode should I choose in rapper?
 
-@Infra/rapper has three mode: hooks, basic, redux, you can choose depend on your own project:
+@rapper3/cli has three mode: hooks, basic, redux, you can choose depend on your own project:
 
 Option 1：Hooks
 

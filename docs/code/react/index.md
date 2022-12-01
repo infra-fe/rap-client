@@ -1,6 +1,6 @@
 # React Hooks
 
-## @rapper/ahooks
+## @rapper3/react-ahooks
 
 <code src="../demos/ReactHooks.tsx">
 
@@ -31,8 +31,8 @@ For React, we provide [ahooks useRequest](https://ahooks.js.org/hooks/use-reques
 ## Install
 
 ```bash
-yarn add @infra/rapper @rapper/request
-yarn add @rapper/ahooks ahooks
+yarn add @rapper3/cli @rapper3/request
+yarn add @rapper3/react-ahooks ahooks
 ```
 
 ## Background

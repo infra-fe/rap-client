@@ -1,6 +1,6 @@
-# @rapper/vue-swr
+# @rapper3/vue-swr
 
-`@rapper/vue-swr` based on [swrv](https://docs-swrv.netlify.app/)
+`@rapper3/vue-swr` based on [swrv](https://docs-swrv.netlify.app/)
 
 ### 1. Click `Generate TS code`
 
@@ -10,10 +10,10 @@
 
 <img width="850px" src="../images/normal-mode.jpg">
 
-### 3. Then install `swrv` & `@rapper/vue-swr`
+### 3. Then install `swrv` & `@rapper3/vue-swr`
 
 ```bash
-yarn add @rapper/vue-swr swrv
+yarn add @rapper3/vue-swr swrv
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ yarn add @rapper/vue-swr swrv
 <img width="700px" src="./../images/vue-swr.jpg">
 
 ```ts
-import { createSwrv } from '@rapper/vue-swr'
+import { createSwrv } from '@rapper3/vue-swr'
 import { http, IModels } from './src/rapper'
 
 const useSwr = createSwrv<IModels>(http)

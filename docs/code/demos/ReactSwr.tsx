@@ -1,5 +1,5 @@
 import { Button } from 'antd'
-import { createSwr, createUseMutate } from '@rapper/react-swr'
+import { createSwr, createUseMutate } from '@rapper3/react-swr'
 import { Models, http } from '../rapper/http'
 import 'antd/dist/antd.min.css'
 

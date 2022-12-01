@@ -14,7 +14,7 @@ import {
   createHttpRequest,
   createFallbackFetch,
   createSeprateInterceptor,
-} from '@rapper/request'
+} from '@rapper3/request'
 import { IModels } from './models'
 import { POS_MAP } from './pos'
 

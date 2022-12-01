@@ -28,7 +28,7 @@ overrideFetch({
 
 ``` ts
 import axios, { AxiosError } from 'axios'
-import { FetchConfigFunc, IUserFetchParams } from '@infra/rapper/runtime/commonLib'
+import { FetchConfigFunc, IUserFetchParams } from '@rapper3/cli/runtime/commonLib'
 import { overrideFetch } from '../rapper'
 
 const baseURL = process.env.NODE_ENV === 'development' ? '/app/mock/142/post/' : '/'

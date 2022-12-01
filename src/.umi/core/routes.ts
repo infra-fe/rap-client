@@ -68,7 +68,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/index.en-US.md",
-          "updatedTime": 1669191571071,
+          "updatedTime": 1669200072000,
           "hero": {
             "title": "RAP",
             "desc": "<div class=\"markdown\"><p>An automation、visualization and documentation API management platform</p></div>",
@@ -115,7 +115,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/index.zh-CN.md",
-          "updatedTime": 1669191571090,
+          "updatedTime": 1669200072000,
           "hero": {
             "title": "RAP",
             "desc": "<div class=\"markdown\"><p>自动化、可视化、文档化的API管理平台</p></div>",
@@ -162,7 +162,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/dto.md",
-          "updatedTime": 1669191570708,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -199,7 +199,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/http.md",
-          "updatedTime": 1669191570709,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -208,8 +208,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "@rapper/request",
-              "heading": "rapperrequest"
+              "value": "@rapper3/request",
+              "heading": "rapper3request"
             },
             {
               "depth": 3,
@@ -292,7 +292,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/index.md",
-          "updatedTime": 1669191570728,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -319,7 +319,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/migration.md",
-          "updatedTime": 1669194459241,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -356,7 +356,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/ts.md",
-          "updatedTime": 1669191570736,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -398,7 +398,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/index.md",
-          "updatedTime": 1669191570733,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -407,8 +407,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "@rapper/ahooks",
-              "heading": "rapperahooks"
+              "value": "@rapper3/react-ahooks",
+              "heading": "rapper3react-ahooks"
             },
             {
               "depth": 3,
@@ -460,12 +460,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-query.md",
-          "updatedTime": 1669191570734,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-query",
-              "heading": "rapperreact-query"
+              "value": "@rapper3/react-query",
+              "heading": "rapper3react-query"
             },
             {
               "depth": 3,
@@ -479,8 +479,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install @tanstack/react-query & @rapper/react-query",
-              "heading": "3-then-install-tanstackreact-query--rapperreact-query"
+              "value": "3. Then install @tanstack/react-query & @rapper3/react-query",
+              "heading": "3-then-install-tanstackreact-query--rapper3react-query"
             },
             {
               "depth": 3,
@@ -513,7 +513,7 @@ export function getRoutes() {
               "heading": "userapperinfinitequery"
             }
           ],
-          "title": "@rapper/react-query",
+          "title": "@rapper3/react-query",
           "hasPreviewer": true,
           "nav": {
             "path": "/code",
@@ -524,7 +524,7 @@ export function getRoutes() {
             "title": "React"
           }
         },
-        "title": "@rapper/react-query - RAP"
+        "title": "@rapper3/react-query - RAP"
       },
       {
         "path": "/code/react/react-query3",
@@ -532,12 +532,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-query3.md",
-          "updatedTime": 1669194520984,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-query3",
-              "heading": "rapperreact-query3"
+              "value": "@rapper3/react-query3",
+              "heading": "rapper3react-query3"
             },
             {
               "depth": 3,
@@ -551,8 +551,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install react-query@3 & @rapper/react-query3",
-              "heading": "3-then-install-react-query3--rapperreact-query3"
+              "value": "3. Then install react-query@3 & @rapper3/react-query3",
+              "heading": "3-then-install-react-query3--rapper3react-query3"
             },
             {
               "depth": 3,
@@ -585,7 +585,7 @@ export function getRoutes() {
               "heading": "userapperinfinitequery"
             }
           ],
-          "title": "@rapper/react-query3",
+          "title": "@rapper3/react-query3",
           "nav": {
             "path": "/code",
             "title": "Code"
@@ -595,7 +595,7 @@ export function getRoutes() {
             "title": "React"
           }
         },
-        "title": "@rapper/react-query3 - RAP"
+        "title": "@rapper3/react-query3 - RAP"
       },
       {
         "path": "/code/react/react-swr",
@@ -603,12 +603,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-swr.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-swr",
-              "heading": "rapperreact-swr"
+              "value": "@rapper3/react-swr",
+              "heading": "rapper3react-swr"
             },
             {
               "depth": 3,
@@ -622,8 +622,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install swr & @rapper/react-swr",
-              "heading": "3-then-install-swr--rapperreact-swr"
+              "value": "3. Then install swr & @rapper3/react-swr",
+              "heading": "3-then-install-swr--rapper3react-swr"
             },
             {
               "depth": 2,
@@ -631,7 +631,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/react-swr",
+          "title": "@rapper3/react-swr",
           "hasPreviewer": true,
           "nav": {
             "path": "/code",
@@ -642,7 +642,7 @@ export function getRoutes() {
             "title": "React"
           }
         },
-        "title": "@rapper/react-swr - RAP"
+        "title": "@rapper3/react-swr - RAP"
       },
       {
         "path": "/code/react/redux-toolkit",
@@ -650,15 +650,15 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/redux-toolkit.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-redux-toolkit",
-              "heading": "rapperreact-redux-toolkit"
+              "value": "@rapper3/react-redux-toolkit",
+              "heading": "rapper3react-redux-toolkit"
             }
           ],
-          "title": "@rapper/react-redux-toolkit",
+          "title": "@rapper3/react-redux-toolkit",
           "nav": {
             "path": "/code",
             "title": "Code"
@@ -668,7 +668,7 @@ export function getRoutes() {
             "title": "React"
           }
         },
-        "title": "@rapper/react-redux-toolkit - RAP"
+        "title": "@rapper3/react-redux-toolkit - RAP"
       },
       {
         "path": "/code/react/redux",
@@ -676,15 +676,15 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/redux.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-redux",
-              "heading": "rapperreact-redux"
+              "value": "@rapper3/react-redux",
+              "heading": "rapper3react-redux"
             }
           ],
-          "title": "@rapper/react-redux",
+          "title": "@rapper3/react-redux",
           "nav": {
             "path": "/code",
             "title": "Code"
@@ -694,7 +694,7 @@ export function getRoutes() {
             "title": "React"
           }
         },
-        "title": "@rapper/react-redux - RAP"
+        "title": "@rapper3/react-redux - RAP"
       },
       {
         "path": "/code/vue",
@@ -702,7 +702,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/index.md",
-          "updatedTime": 1669191570737,
+          "updatedTime": 1669200072000,
           "slugs": [],
           "nav": {
             "path": "/code",
@@ -722,12 +722,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/vue-query.md",
-          "updatedTime": 1669191570737,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/vue-query",
-              "heading": "rappervue-query"
+              "value": "@rapper3/vue-query",
+              "heading": "rapper3vue-query"
             },
             {
               "depth": 2,
@@ -746,8 +746,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install vue-query & @rapper/vue-query",
-              "heading": "3-then-install-vue-query--rappervue-query"
+              "value": "3. Then install vue-query & @rapper3/vue-query",
+              "heading": "3-then-install-vue-query--rapper3vue-query"
             },
             {
               "depth": 2,
@@ -755,7 +755,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/vue-query",
+          "title": "@rapper3/vue-query",
           "nav": {
             "path": "/code",
             "title": "Code"
@@ -765,7 +765,7 @@ export function getRoutes() {
             "title": "Vue"
           }
         },
-        "title": "@rapper/vue-query - RAP"
+        "title": "@rapper3/vue-query - RAP"
       },
       {
         "path": "/code/vue/vue-swr",
@@ -773,12 +773,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/vue-swr.md",
-          "updatedTime": 1669191570738,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/vue-swr",
-              "heading": "rappervue-swr"
+              "value": "@rapper3/vue-swr",
+              "heading": "rapper3vue-swr"
             },
             {
               "depth": 3,
@@ -792,8 +792,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install swrv & @rapper/vue-swr",
-              "heading": "3-then-install-swrv--rappervue-swr"
+              "value": "3. Then install swrv & @rapper3/vue-swr",
+              "heading": "3-then-install-swrv--rapper3vue-swr"
             },
             {
               "depth": 2,
@@ -801,7 +801,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/vue-swr",
+          "title": "@rapper3/vue-swr",
           "nav": {
             "path": "/code",
             "title": "Code"
@@ -811,7 +811,7 @@ export function getRoutes() {
             "title": "Vue"
           }
         },
-        "title": "@rapper/vue-swr - RAP"
+        "title": "@rapper3/vue-swr - RAP"
       },
       {
         "path": "/guide/export",
@@ -819,7 +819,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/export.en-US.md",
-          "updatedTime": 1669191570882,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -852,7 +852,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/export.zh-CN.md",
-          "updatedTime": 1669191570883,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -885,7 +885,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/index.en-US.md",
-          "updatedTime": 1669191570901,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -938,7 +938,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/index.zh-CN.md",
-          "updatedTime": 1669191570902,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -991,7 +991,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/qa.en-US.md",
-          "updatedTime": 1669195782095,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1044,7 +1044,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/qa.zh-CN.md",
-          "updatedTime": 1669195793562,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1097,7 +1097,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/start.en-US.md",
-          "updatedTime": 1669191571014,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1130,7 +1130,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/start.zh-CN.md",
-          "updatedTime": 1669191571014,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1163,7 +1163,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/protobuf.en-US.md",
-          "updatedTime": 1669191570894,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1190,7 +1190,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/protobuf.zh-CN.md",
-          "updatedTime": 1669191570895,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1217,7 +1217,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/rap.en-US.md",
-          "updatedTime": 1669191570896,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1254,7 +1254,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/rap.zh-CN.md",
-          "updatedTime": 1669191570897,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1291,7 +1291,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/swagger.en-US.md",
-          "updatedTime": 1669191570898,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1318,7 +1318,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/swagger.zh-CN.md",
-          "updatedTime": 1669191570899,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1345,7 +1345,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/yapi.en-US.md",
-          "updatedTime": 1669191570900,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1372,7 +1372,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/import/yapi.zh-CN.md",
-          "updatedTime": 1669191570901,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1399,7 +1399,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/basic.en-US.md",
-          "updatedTime": 1669195760285,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1491,7 +1491,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/basic.zh-CN.md",
-          "updatedTime": 1669195760285,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1583,7 +1583,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/code.en-US.md",
-          "updatedTime": 1669195859596,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1625,7 +1625,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/code.zh-CN.md",
-          "updatedTime": 1669195893586,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1667,7 +1667,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/history.en-US.md",
-          "updatedTime": 1669191570977,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1699,7 +1699,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/history.zh-CN.md",
-          "updatedTime": 1669191570978,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1731,7 +1731,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/module.en-US.md",
-          "updatedTime": 1669191570978,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1773,7 +1773,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/module.zh-CN.md",
-          "updatedTime": 1669191570979,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1815,7 +1815,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/validation.en-US.md",
-          "updatedTime": 1669191570979,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1857,7 +1857,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/interface/validation.zh-CN.md",
-          "updatedTime": 1669191570979,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -1899,7 +1899,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/basic.en-US.md",
-          "updatedTime": 1669191570980,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1936,7 +1936,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/basic.zh-CN.md",
-          "updatedTime": 1669191570981,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -1973,7 +1973,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/rule.en-US.md",
-          "updatedTime": 1669194672776,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2005,7 +2005,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/rule.zh-CN.md",
-          "updatedTime": 1669194662066,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2037,7 +2037,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/scene.en-US.md",
-          "updatedTime": 1669191570993,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2064,7 +2064,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/mock/scene.zh-CN.md",
-          "updatedTime": 1669191570993,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2091,7 +2091,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/project/organization.en-US.md",
-          "updatedTime": 1669195760018,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2148,7 +2148,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/project/organization.zh-CN.md",
-          "updatedTime": 1669195760016,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2205,7 +2205,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/project/repository.en-US.md",
-          "updatedTime": 1669191571011,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2257,7 +2257,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/guide/project/repository.zh-CN.md",
-          "updatedTime": 1669191571012,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 2,
@@ -2309,7 +2309,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/data.en-US.md",
-          "updatedTime": 1669194632055,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2352,7 +2352,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/data.zh-CN.md",
-          "updatedTime": 1669194627472,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2395,7 +2395,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/detail.en-US.md",
-          "updatedTime": 1669194622993,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2438,7 +2438,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/detail.zh-CN.md",
-          "updatedTime": 1669194618595,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2481,7 +2481,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/interface.en-US.md",
-          "updatedTime": 1669194614360,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2524,7 +2524,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/interface.zh-CN.md",
-          "updatedTime": 1669194609541,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2567,7 +2567,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/organizations.en-US.md",
-          "updatedTime": 1669194604420,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2610,7 +2610,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/organizations.zh-CN.md",
-          "updatedTime": 1669194598920,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2653,7 +2653,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/repos.en-US.md",
-          "updatedTime": 1669194593253,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2696,7 +2696,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/repos.zh-CN.md",
-          "updatedTime": 1669194584841,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2739,7 +2739,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/upload.en-US.md",
-          "updatedTime": 1669195939684,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2782,7 +2782,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/open/upload.zh-CN.md",
-          "updatedTime": 1669195943125,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2825,7 +2825,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/dto.md",
-          "updatedTime": 1669191570708,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2863,7 +2863,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/http.md",
-          "updatedTime": 1669191570709,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2872,8 +2872,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "@rapper/request",
-              "heading": "rapperrequest"
+              "value": "@rapper3/request",
+              "heading": "rapper3request"
             },
             {
               "depth": 3,
@@ -2957,7 +2957,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/index.md",
-          "updatedTime": 1669191570728,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -2985,7 +2985,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/migration.md",
-          "updatedTime": 1669194459241,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -3023,7 +3023,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/ts.md",
-          "updatedTime": 1669191570736,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -3066,7 +3066,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/index.md",
-          "updatedTime": 1669191570733,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
@@ -3075,8 +3075,8 @@ export function getRoutes() {
             },
             {
               "depth": 2,
-              "value": "@rapper/ahooks",
-              "heading": "rapperahooks"
+              "value": "@rapper3/react-ahooks",
+              "heading": "rapper3react-ahooks"
             },
             {
               "depth": 3,
@@ -3129,12 +3129,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-query.md",
-          "updatedTime": 1669191570734,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-query",
-              "heading": "rapperreact-query"
+              "value": "@rapper3/react-query",
+              "heading": "rapper3react-query"
             },
             {
               "depth": 3,
@@ -3148,8 +3148,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install @tanstack/react-query & @rapper/react-query",
-              "heading": "3-then-install-tanstackreact-query--rapperreact-query"
+              "value": "3. Then install @tanstack/react-query & @rapper3/react-query",
+              "heading": "3-then-install-tanstackreact-query--rapper3react-query"
             },
             {
               "depth": 3,
@@ -3182,7 +3182,7 @@ export function getRoutes() {
               "heading": "userapperinfinitequery"
             }
           ],
-          "title": "@rapper/react-query",
+          "title": "@rapper3/react-query",
           "hasPreviewer": true,
           "nav": {
             "path": "/zh-CN/code",
@@ -3194,7 +3194,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/react-query - RAP"
+        "title": "@rapper3/react-query - RAP"
       },
       {
         "path": "/zh-CN/code/react/react-query3",
@@ -3202,12 +3202,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-query3.md",
-          "updatedTime": 1669194520984,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-query3",
-              "heading": "rapperreact-query3"
+              "value": "@rapper3/react-query3",
+              "heading": "rapper3react-query3"
             },
             {
               "depth": 3,
@@ -3221,8 +3221,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install react-query@3 & @rapper/react-query3",
-              "heading": "3-then-install-react-query3--rapperreact-query3"
+              "value": "3. Then install react-query@3 & @rapper3/react-query3",
+              "heading": "3-then-install-react-query3--rapper3react-query3"
             },
             {
               "depth": 3,
@@ -3255,7 +3255,7 @@ export function getRoutes() {
               "heading": "userapperinfinitequery"
             }
           ],
-          "title": "@rapper/react-query3",
+          "title": "@rapper3/react-query3",
           "nav": {
             "path": "/zh-CN/code",
             "title": "Code"
@@ -3266,7 +3266,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/react-query3 - RAP"
+        "title": "@rapper3/react-query3 - RAP"
       },
       {
         "path": "/zh-CN/code/react/react-swr",
@@ -3274,12 +3274,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/react-swr.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-swr",
-              "heading": "rapperreact-swr"
+              "value": "@rapper3/react-swr",
+              "heading": "rapper3react-swr"
             },
             {
               "depth": 3,
@@ -3293,8 +3293,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install swr & @rapper/react-swr",
-              "heading": "3-then-install-swr--rapperreact-swr"
+              "value": "3. Then install swr & @rapper3/react-swr",
+              "heading": "3-then-install-swr--rapper3react-swr"
             },
             {
               "depth": 2,
@@ -3302,7 +3302,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/react-swr",
+          "title": "@rapper3/react-swr",
           "hasPreviewer": true,
           "nav": {
             "path": "/zh-CN/code",
@@ -3314,7 +3314,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/react-swr - RAP"
+        "title": "@rapper3/react-swr - RAP"
       },
       {
         "path": "/zh-CN/code/react/redux-toolkit",
@@ -3322,15 +3322,15 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/redux-toolkit.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-redux-toolkit",
-              "heading": "rapperreact-redux-toolkit"
+              "value": "@rapper3/react-redux-toolkit",
+              "heading": "rapper3react-redux-toolkit"
             }
           ],
-          "title": "@rapper/react-redux-toolkit",
+          "title": "@rapper3/react-redux-toolkit",
           "nav": {
             "path": "/zh-CN/code",
             "title": "Code"
@@ -3341,7 +3341,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/react-redux-toolkit - RAP"
+        "title": "@rapper3/react-redux-toolkit - RAP"
       },
       {
         "path": "/zh-CN/code/react/redux",
@@ -3349,15 +3349,15 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/react/redux.md",
-          "updatedTime": 1669191570735,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/react-redux",
-              "heading": "rapperreact-redux"
+              "value": "@rapper3/react-redux",
+              "heading": "rapper3react-redux"
             }
           ],
-          "title": "@rapper/react-redux",
+          "title": "@rapper3/react-redux",
           "nav": {
             "path": "/zh-CN/code",
             "title": "Code"
@@ -3368,7 +3368,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/react-redux - RAP"
+        "title": "@rapper3/react-redux - RAP"
       },
       {
         "path": "/zh-CN/code/vue",
@@ -3376,7 +3376,7 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/index.md",
-          "updatedTime": 1669191570737,
+          "updatedTime": 1669200072000,
           "slugs": [],
           "nav": {
             "path": "/zh-CN/code",
@@ -3397,12 +3397,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/vue-query.md",
-          "updatedTime": 1669191570737,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/vue-query",
-              "heading": "rappervue-query"
+              "value": "@rapper3/vue-query",
+              "heading": "rapper3vue-query"
             },
             {
               "depth": 2,
@@ -3421,8 +3421,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install vue-query & @rapper/vue-query",
-              "heading": "3-then-install-vue-query--rappervue-query"
+              "value": "3. Then install vue-query & @rapper3/vue-query",
+              "heading": "3-then-install-vue-query--rapper3vue-query"
             },
             {
               "depth": 2,
@@ -3430,7 +3430,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/vue-query",
+          "title": "@rapper3/vue-query",
           "nav": {
             "path": "/zh-CN/code",
             "title": "Code"
@@ -3441,7 +3441,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/vue-query - RAP"
+        "title": "@rapper3/vue-query - RAP"
       },
       {
         "path": "/zh-CN/code/vue/vue-swr",
@@ -3449,12 +3449,12 @@ export function getRoutes() {
         "exact": true,
         "meta": {
           "filePath": "docs/code/vue/vue-swr.md",
-          "updatedTime": 1669191570738,
+          "updatedTime": 1669200072000,
           "slugs": [
             {
               "depth": 1,
-              "value": "@rapper/vue-swr",
-              "heading": "rappervue-swr"
+              "value": "@rapper3/vue-swr",
+              "heading": "rapper3vue-swr"
             },
             {
               "depth": 3,
@@ -3468,8 +3468,8 @@ export function getRoutes() {
             },
             {
               "depth": 3,
-              "value": "3. Then install swrv & @rapper/vue-swr",
-              "heading": "3-then-install-swrv--rappervue-swr"
+              "value": "3. Then install swrv & @rapper3/vue-swr",
+              "heading": "3-then-install-swrv--rapper3vue-swr"
             },
             {
               "depth": 2,
@@ -3477,7 +3477,7 @@ export function getRoutes() {
               "heading": "usage"
             }
           ],
-          "title": "@rapper/vue-swr",
+          "title": "@rapper3/vue-swr",
           "nav": {
             "path": "/zh-CN/code",
             "title": "Code"
@@ -3488,7 +3488,7 @@ export function getRoutes() {
           },
           "locale": "zh-CN"
         },
-        "title": "@rapper/vue-swr - RAP"
+        "title": "@rapper3/vue-swr - RAP"
       },
       {
         "path": "/guide/import",

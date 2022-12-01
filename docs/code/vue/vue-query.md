@@ -1,6 +1,6 @@
-# @rapper/vue-query
+# @rapper3/vue-query
 
-`@rapper/vue-query` based on [vue-query](https://vue-query.vercel.app/#/)
+`@rapper3/vue-query` based on [vue-query](https://vue-query.vercel.app/#/)
 
 ## Http
 
@@ -12,10 +12,10 @@
 
 <img width="850px" src="../images/normal-mode.jpg">
 
-### 3. Then install `vue-query` & `@rapper/vue-query`
+### 3. Then install `vue-query` & `@rapper3/vue-query`
 
 ```bash
-yarn add @rapper/vue-query vue-query
+yarn add @rapper3/vue-query vue-query
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ yarn add @rapper/vue-query vue-query
 <img width="700px" src="../images/vue-query.jpg">
 
 ```ts
-import { createUseQuery, createUseInfiniteQuery } from '@rapper/vue-query'
+import { createUseQuery, createUseInfiniteQuery } from '@rapper3/vue-query'
 import { http, IModels } from './src/rapper'
 
 const useQuery = createUseQuery<IModels>(http)

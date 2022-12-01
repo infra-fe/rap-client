@@ -1,6 +1,6 @@
-# @rapper/react-query
+# @rapper3/react-query
 
-`@rapper/react-query` based on [@tanstack/react-query](https://tanstack.com/query/v4/docs/adapters/react-query)
+`@rapper3/react-query` based on [@tanstack/react-query](https://tanstack.com/query/v4/docs/adapters/react-query)
 
 ### 1. Click `Generate TS code`
 
@@ -10,10 +10,10 @@
 
 <img width="850px" src="../images/normal-mode.jpg">
 
-### 3. Then install `@tanstack/react-query` & `@rapper/react-query`
+### 3. Then install `@tanstack/react-query` & `@rapper3/react-query`
 
 ```bash
-yarn add @rapper/react-query @tanstack/react-query
+yarn add @rapper3/react-query @tanstack/react-query
 ```
 
 ### Tips
@@ -47,7 +47,7 @@ import {
   createUseRapperQueries,
   createUseRapperInfiniteQuery,
   createRapperQueryOptions,
-} from '@rapper/react-query'
+} from '@rapper3/react-query'
 
 export const useRapperQuery = createUseRapperQuery(http, {
   baseURL: 'your baseURL',

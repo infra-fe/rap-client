@@ -32,6 +32,10 @@
     "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.11.4",
     "@mui/material": "^5.0.6",
+    "@rapper3/react-ahooks": "^0.1.0",
+    "@rapper3/react-query": "^0.2.0",
+    "@rapper3/react-swr": "^0.1.0",
+    "@rapper3/request": "^0.1.0",
     "animate.css": "4.1.1",
     "awesome-debounce-promise": "^2.1.0",
     "chart.js": "^3.6.0",
@@ -95,10 +99,6 @@
     ]
   },
   "devDependencies": {
-    "@rapper/ahooks": "^0.0.6",
-    "@rapper/react-query": "^0.1.6",
-    "@rapper/react-swr": "^0.0.5",
-    "@rapper/request": "^0.0.7",
     "@tanstack/react-query": "^4.16.1",
     "@types/chart.js": "^2.9.34",
     "@types/classnames": "^2.3.0",
