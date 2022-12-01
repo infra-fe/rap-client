@@ -10,13 +10,9 @@
 RAP is a new project based on [RAP1](https://github.com/thx/RAP) & [RAP2](https://github.com/thx/rap2-delos). It has two components:
 RAP是在RAP1 & RAP2基础上重做的新项目，它包含三个组件(对应三个Github Repository)。
 
-* rap-server: back-end data API server based on Koa + MySQL [link](https://github.com/infra-fe/rap-client)
-* rap-client: front-end static build based on React [link](https://github.com/infra-fe/rap-server)
-* rapper3: generate code tools based on RAP [link](https://github.com/infra-fe/rapper3)
-
-* rap-server:使用Koa + MySQL的后端API服务器 [link](https://github.com/infra-fe/rap-client)
-* rap-client: React前端App [link](https://github.com/infra-fe/rap-server)
-* rapper3: 基于RAP的代码生成工具 [link](https://github.com/infra-fe/rapper3)
+* rap-server: 使用Koa + MySQL的后端API服务器 back-end data API server based on Koa + MySQL [link](https://github.com/infra-fe/rap-server)
+* rap-client: React前端App front-end static build based on React [link](https://github.com/infra-fe/rap-client)
+* rapper3: 自动代码生成工具 generate code tools based on RAP [link](https://github.com/infra-fe/rapper3)
 
 ### Rapper 3
 
