@@ -1,6 +1,7 @@
 import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
-import { PropTypes, Link, Mock, _ } from '../../family'
+import _ from 'lodash'
+import { PropTypes, Link, Mock } from '../../family'
 import { Tree } from '../utils'
 import { serve } from '../../relatives/services/constant'
 import { GoLink, GoSync, GoBeaker, GoBug } from 'react-icons/go'
@@ -62,7 +63,7 @@ class Previewer extends Component<any, any> {
         data = data.__root__
       }
 
-      const { Assert } = Mock.valid
+      const Assert = Mock.valid.Assert
       const valid = Mock.valid(template, data)
       for (const i of valid) {
         // eslint-disable-next-line no-console

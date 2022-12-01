@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { PropTypes, connect } from '../../family'
 import Modal from './Modal'
-import './Utils.css'
+import './Utils.sass'
 import { RootState } from 'actions/types'
 
 class ModalContent extends Component<any, any> {
@@ -22,7 +22,7 @@ class ModalContent extends Component<any, any> {
 const mapStateToProps = (state: RootState) => ({
   auth: state.auth,
 })
-const mapDispatchToProps = ({})
+const mapDispatchToProps = {}
 
 const ModalContentContainer = connect(
   mapStateToProps,
@@ -39,14 +39,16 @@ class ModalExample extends Component<any, any> {
     const visible = this.state.visible
     return (
       <div>
-        <button onClick={() => this.setState({ visible: !visible })}>Trigger</button>
-        {visible &&
+        <button onClick={() => this.setState({ visible: !visible })}>
+                    Trigger
+        </button>
+        {visible && (
           <Modal onClose={() => this.setState({ visible: false })}>
             <ModalContentContainer />
             <ModalContentContainer />
             <ModalContentContainer />
           </Modal>
-        }
+        )}
       </div>
     )
   }

@@ -1,6 +1,6 @@
 import { Autocomplete, CircularProgress, Stack, TextField } from '@mui/material'
-import { useDebounce } from '../../hooks'
 import { useEffect, useState } from 'react'
+import { useDebounce } from '../../hooks'
 
 // const debounce = require('debounce-promise')
 interface Props {
@@ -11,17 +11,6 @@ interface Props {
 
   onChange: (value: INumItem[]) => void
   fetcher: (query: string) => Promise<INumItem[]>
-}
-export function AddMembers(users, members) {
-  members.forEach(value => {
-    const user = users.find(user => user.id === value.id)
-    if (user) {
-      user.email = value.email
-      user.fullname = value.fullname
-    } else {
-      users.push(value)
-    }
-  })
 }
 function AsyncSelect(props: Props) {
   const { fetcher, multiple = true, onChange, value, label = '' } = props

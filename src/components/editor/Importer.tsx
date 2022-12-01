@@ -1,6 +1,7 @@
 import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
-import { connect, Mock, _, PropTypes } from '../../family'
+import { connect, Mock, PropTypes } from '../../family'
+import _ from 'lodash'
 import { addProperty } from '../../actions/property'
 import { RootState, Property } from 'actions/types'
 import JSON5 from 'json5'

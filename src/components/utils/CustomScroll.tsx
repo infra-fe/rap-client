@@ -1,7 +1,7 @@
 import React from 'react'
 import 'react-custom-scroll/dist/customScroll.css'
-const CustomScroll = require('react-custom-scroll/dist/reactCustomScroll').default
-
+// const CustomScroll = require('react-custom-scroll/dist/reactCustomScroll').default
+import CustomScroll from 'react-custom-scroll/dist/reactCustomScroll'
 function getOS() {
   const userAgent = window.navigator.userAgent,
     platform = window.navigator.platform,

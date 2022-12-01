@@ -6,7 +6,9 @@ import { Card } from '@mui/material'
 
 //  <img alt={user.empId} src={`https://work.alibaba-inc.com/photo/${user.empId}.220x220.jpg`} className="Log-avatar" />
 const UserAvatar = ({ user }: any) => null
-const UserLink = ({ user }: any) => null
+const UserLink = ({ user }: any) => (
+  <span className="Log-user-link">{user.fullname}</span>
+)
 const LogUserView = ({ user }: any) => {
   return (
     <span className="Log-user">

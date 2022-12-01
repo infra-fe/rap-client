@@ -1,9 +1,9 @@
-import React, { useState, CSSProperties } from 'react'
+import React, { useState, CSSProperties, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Button, Input, Paper, IconButton, FormControl, FormHelperText, Box } from '@mui/material'
 import { Save, DeleteTwoTone, EditOutlined, Cancel } from '@mui/icons-material'
-import { IScene, SCENE_STATUS } from './SceneConfigModal'
+import { IScene, SCENE_STATUS, SceneContext } from './SceneConfigModal'
 import { useConfirm } from 'hooks/useConfirm'
 
 
@@ -219,6 +219,20 @@ const NoScene = () => {
 
 const SceneList = (props: ISceneListProp) => {
   const { t } = useTranslation()
+  const context = useContext(SceneContext)
+  const { json, jsonO } = context
+  const confirm = useConfirm()
+  const handleCreate = () => {
+    if (json !== jsonO) {
+      confirm({
+        content: t('Switch scene confirm'),
+      }).then(() => {
+        props.addSceneList()
+      })
+    } else {
+      props.addSceneList()
+    }
+  }
   return (
     <div>
       <Button
@@ -226,7 +240,7 @@ const SceneList = (props: ISceneListProp) => {
         color="primary"
         fullWidth={true}
         style={{ padding: '10px 16px', fontSize: 14 }}
-        onClick={() => props.addSceneList()}>
+        onClick={handleCreate}>
         {t('Create Scene')}
       </Button>
       {!!props.list.length ?

@@ -1,40 +1,76 @@
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import { Box, Collapse, Typography } from '@mui/material'
+import { doFetchUserSettings } from 'actions/account'
+import { Interface, Repository, RootState, User } from 'actions/types'
+import VersionSelect from 'components/RepoSettings/VersionSelect'
+import { RouterState } from 'connected-react-router'
+import _ from 'lodash'
+import Markdown from 'markdown-to-jsx'
+import { Component } from 'react'
 import { Translation } from 'react-i18next'
-import React, { Component } from 'react'
-import { PropTypes, connect, Link, replace, _ } from '../../family'
-import { serve } from '../../relatives/services/constant'
-import { Spin } from '../utils'
-import RepositoryForm from '../repository/RepositoryForm'
-import RepositorySearcher from './RepositorySearcher'
-import ModuleList from './ModuleList'
-import InterfaceList from './InterfaceList'
-import InterfaceEditor from './InterfaceEditor'
-import Validator from '../validator/Validator'
-import DuplicatedInterfacesWarning from './DuplicatedInterfacesWarning'
-import { addRepository, updateRepository, clearRepository, fetchRepository } from '../../actions/repository'
-import { addModule, updateModule, deleteModule, sortModuleList } from '../../actions/module'
-import { addInterface, updateInterface, deleteInterface, lockInterface, unlockInterface } from '../../actions/interface'
-import { addProperty, updateProperty, deleteProperty, updateProperties, sortPropertyList } from '../../actions/property'
-import { GoRepo, GoVersions, GoPlug, GoDatabase, GoCode, GoLinkExternal, GoPencil, GoEllipsis } from 'react-icons/go'
 import { FaHistory } from 'react-icons/fa'
-import './RepositoryEditor.css'
+import {
+  GoCode,
+  GoDatabase,
+  GoEllipsis,
+  GoGear,
+  GoLinkExternal,
+  GoPencil,
+  GoPlug,
+  GoRepo,
+  GoVersions,
+} from 'react-icons/go'
+import Joyride from 'react-joyride'
+import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
+import { formatDateTime } from 'utils/DateUtility'
+import {
+  addInterface,
+  deleteInterface,
+  lockInterface,
+  unlockInterface,
+  updateInterface,
+} from '../../actions/interface'
+import { addModule, deleteModule, sortModuleList, updateModule } from '../../actions/module'
+import {
+  addProperty,
+  deleteProperty,
+  sortPropertyList,
+  updateProperties,
+  updateProperty,
+} from '../../actions/property'
+import {
+  addRepository,
+  clearRepository,
+  fetchRepository,
+  updateRepository,
+} from '../../actions/repository'
+import { connect, Link, PropTypes, replace, StoreStateRouterLocationURI } from '../../family'
+import { serve } from '../../relatives/services/constant'
+import SettingsModal from '../RepoSettings/Settings'
 import ExportPostmanForm from '../repository/ExportPostmanForm'
 import ImportSwaggerRepositoryForm from '../repository/ImportSwaggerRepositoryForm'
-import { RootState, Repository, User } from 'actions/types'
+import RepositoryForm from '../repository/RepositoryForm'
+import { Spin } from '../utils'
+import CollapseButton from '../utils/CollapseUtil'
+import Validator from '../validator/Validator'
 import DefaultValueModal from './DefaultValueModal'
-import RapperInstallerModal from './RapperInstallerModal'
+import DuplicatedInterfacesWarning from './DuplicatedInterfacesWarning'
 import HistoryLogDrawer from './HistoryLogDrawer'
-import Joyride from 'react-joyride'
-import { Typography } from '@mui/material'
-import { doFetchUserSettings } from 'actions/account'
-import Markdown from 'markdown-to-jsx'
-import { CACHE_KEY, ENTITY_TYPE } from 'utils/consts'
-import { RouterState } from 'connected-react-router'
+import InterfaceEditor from './InterfaceEditor'
+import InterfaceList from './InterfaceList'
+import ModuleList from './ModuleList'
+import ModuleOperation from './ModuleOperation'
+import RapperInstallerModal from './RapperInstallerModal'
+import './RepositoryEditor.sass'
+import RepositorySearcher from './RepositorySearcher'
 
 // DONE 2.1 import Spin from '../utils/Spin'
 // TODO 2.2 缺少测试器
 // DONE 2.2 各种空数据下的视觉效果：空仓库、空模块、空接口、空属性
 // TODO 2.1 大数据测试，含有大量模块、接口、属性的仓库
-
+const REPO_DESC_FOLD_KEY = 'RepoDescFold'
+const MAX_LINE = 4
+const MAX_STR = 400
 interface Props {
   guideOpen: boolean
   auth: User
@@ -49,11 +85,16 @@ interface Props {
 interface States {
   rapperInstallerModalOpen: boolean
   defaultValuesModalOpen: boolean
+  settingsModalOpen: boolean
   historyLogDrawerOpen: boolean
   update: boolean
   exportPostman: boolean
   importSwagger: boolean
   openValidator: boolean
+  repoDescFold: boolean
+  modDescFold: boolean
+  tagIds: number[]
+  opVersion: boolean
 }
 
 // 展示组件
@@ -84,9 +125,14 @@ class RepositoryEditor extends Component<Props, States> {
       exportPostman: false,
       rapperInstallerModalOpen: false,
       defaultValuesModalOpen: false,
+      settingsModalOpen: false,
       importSwagger: false,
       historyLogDrawerOpen: false,
       openValidator: false,
+      repoDescFold: localStorage.getItem(REPO_DESC_FOLD_KEY) === 'true',
+      modDescFold: true,
+      tagIds: [],
+      opVersion: false,
     }
   }
 
@@ -115,14 +161,18 @@ class RepositoryEditor extends Component<Props, States> {
   }
 
   render() {
-    const { location: { params } } = this.props
+    const {
+      location: { params },
+    } = this.props
     const { repository: repositoryAsync } = this.props
     if (!repositoryAsync.fetching && !repositoryAsync.data) {
       return (
-        <Translation>{(t) => (
-          <div className="p100 fontsize-30 text-center">
-            {t('Corresponding to the repository was not found')}</div>
-        )}
+        <Translation>
+          {(t) => (
+            <div className="p100 fontsize-30 text-center">
+              {t('Corresponding to the repository was not found')}
+            </div>
+          )}
         </Translation>
       )
     }
@@ -135,27 +185,56 @@ class RepositoryEditor extends Component<Props, States> {
       document.title = `RAP2 ${repository.name}`
     }
 
-    let mod =
-      repository && repository.modules && repository.modules.length
-        ? repository.modules.find((item: any) => item.id === +params.mod) || repository.modules[0]
-        : null
+    const { mod: modId, itf: itfId } = params
 
-    if (!(+params.mod > 0) && +params.itf > 0) {
-      const tryMods = repository?.modules?.filter(m => m.interfaces.map(x => x.id).indexOf(+params.itf) > -1)
-      if (tryMods && tryMods[0]) {
-        mod = tryMods[0]
+    let mod = null
+    if (repository?.modules?.length) {
+      // 根据模块ID进行匹配，如果没有模块ID，则去第一个模块
+      mod = repository.modules.find((item) => item.id === +modId) || repository.modules[0]
+
+      if (+modId <= 0 && +itfId > 0) {
+        // 如果模块ID无效，尝试使用接口ID进行修正
+        const tryMods = repository.modules.filter((m) => {
+          const itfIds = m.interfaces.map((x) => x.id)
+          return itfIds.includes(+params.itf)
+        })
+        if (tryMods?.[0]) {
+          mod = tryMods[0]
+        }
       }
     }
 
-    const itf =
-      mod?.interfaces && mod?.interfaces?.length
-        ? mod?.interfaces?.find((item: any) => item.id === +params.itf) || mod?.interfaces[0]
-        : {}
+    const itfs = filterItfsByTags(mod?.interfaces, this.state.tagIds)
+
+    let itf = {}
+    if (itfs?.length) {
+      itf = itfs.find((item) => item.id === +itfId) || itfs[0]
+    }
 
     const ownerlink = repository.organization
       ? `/organization/repository?organization=${repository.organization.id}`
       : `/repository/joined?user=${repository.owner.id}`
-
+    const desc = repository.description || ''
+    const needFoldDesc = desc.length > MAX_STR || desc.split('\n').length > MAX_LINE
+    const handleSwitchVersion = (v) => {
+      if (v) {
+        const selectHref = StoreStateRouterLocationURI(window as any)
+          .setSearch('versionId', v.id.toString())
+          .href()
+        this.props.replace(selectHref)
+      }
+    }
+    const handleDeleteVersion = (v) => {
+      const vId = repository?.version?.id
+      if (vId !== v) {
+        this.setState({ opVersion: !this.state.opVersion })
+      } else {
+        const deleteHref = StoreStateRouterLocationURI(window as any)
+          .removeQuery('versionId')
+          .href()
+        this.props.replace(deleteHref)
+      }
+    }
     return (
       <Translation>
         {(t) => (
@@ -164,7 +243,9 @@ class RepositoryEditor extends Component<Props, States> {
               <span className="title">
                 <GoRepo className="mr6 color-9" />
                 <Link to={`${ownerlink}`} className="g-link">
-                  {repository.organization ? repository.organization.name : repository.owner.fullname}
+                  {repository.organization
+                    ? repository.organization.name
+                    : repository.owner.fullname}
                 </Link>
                 <span className="slash"> / </span>
                 <span>{repository.name}</span>
@@ -179,7 +260,7 @@ class RepositoryEditor extends Component<Props, States> {
                 ) : null}
                 <RepositoryForm
                   open={this.state.update}
-                  onClose={ok => {
+                  onClose={(ok) => {
                     ok && this.handleUpdate()
                     this.setState({ update: false })
                   }}
@@ -195,28 +276,43 @@ class RepositoryEditor extends Component<Props, States> {
                   <GoPlug /> {t('Plugin')}
                 </a>
                 <a
-                  href={`${serve}/repository/get?id=${repository.id}&token=${repository.token}`}
+                  href={`${serve}/repository/get?id=${repository.id}&token=${repository.token}${
+                    repository?.version?.id ? `&versionId=${repository.version.id}` : ''
+                  }`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="g-link"
                 >
                   <GoDatabase /> {t(' Data')}
                 </a>
-                <span className="g-link edit mr1" onClick={() => this.setState({ importSwagger: true })}>
-                  <GoLinkExternal /> {t('Import')}
-                </span>
+                {repository.canUserEdit ? (
+                  <span
+                    className="g-link edit mr1"
+                    onClick={() =>
+                      this.setState({
+                        importSwagger: true,
+                      })
+                    }
+                  >
+                    <GoLinkExternal /> {t('Import')}
+                  </span>
+                ) : null}
                 <ImportSwaggerRepositoryForm
                   open={this.state.importSwagger}
-                  onClose={ok => {
+                  onClose={(ok) => {
                     ok && this.handleUpdate()
                     this.setState({ importSwagger: false })
                   }}
+                  versionId={repository?.version?.id}
                   repositoryId={repository.id}
                   orgId={(repository.organization || {}).id}
                   modId={+mod?.id || 0}
                   mode="manual"
                 />
-                <span className="g-link edit mr1" onClick={() => this.setState({ exportPostman: true })}>
+                <span
+                  className="g-link edit mr1"
+                  onClick={() => this.setState({ exportPostman: true })}
+                >
                   <GoLinkExternal /> {t('Export')}
                 </span>
                 <ExportPostmanForm
@@ -225,55 +321,216 @@ class RepositoryEditor extends Component<Props, States> {
                   repoId={repository.id}
                   repoToken={repository.token}
                   onClose={() => this.setState({ exportPostman: false })}
+                  versionId={repository?.version?.id}
                 />
-                <span
-                  className="g-link edit mr1"
-                  onClick={() => this.setState({ defaultValuesModalOpen: true })}
-                >
-                  <GoEllipsis /> {t('Default')}
-                </span>
+                {repository.canUserEdit ? (
+                  <span
+                    className="g-link edit mr1"
+                    onClick={() =>
+                      this.setState({
+                        defaultValuesModalOpen: true,
+                      })
+                    }
+                  >
+                    <GoEllipsis /> {t('Default')}
+                  </span>
+                ) : null}
                 <span
                   className="g-link edit mr1 guide-1"
-                  onClick={() => this.setState({ historyLogDrawerOpen: true })}
+                  onClick={() =>
+                    this.setState({
+                      historyLogDrawerOpen: true,
+                    })
+                  }
                 >
                   <FaHistory /> {t('History')}
                 </span>
                 <DefaultValueModal
                   open={this.state.defaultValuesModalOpen}
-                  handleClose={() => this.setState({ defaultValuesModalOpen: false })}
+                  handleClose={() =>
+                    this.setState({
+                      defaultValuesModalOpen: false,
+                    })
+                  }
                   repositoryId={repository.id}
                 />
                 <HistoryLogDrawer
                   open={this.state.historyLogDrawerOpen}
-                  onClose={() => this.setState({ historyLogDrawerOpen: false })}
+                  onClose={() =>
+                    this.setState({
+                      historyLogDrawerOpen: false,
+                    })
+                  }
                   entityId={repository?.id}
                   entityType={ENTITY_TYPE.REPOSITORY}
+                  versionId={repository?.version?.id}
                 />
                 <span
-                  className="g-link edit"
-                  onClick={() => this.setState({ rapperInstallerModalOpen: true })}
+                  className="g-link edit mr1"
+                  onClick={() =>
+                    this.setState({
+                      rapperInstallerModalOpen: true,
+                    })
+                  }
                 >
                   <GoCode /> Rapper
                 </span>
                 <RapperInstallerModal
                   open={this.state.rapperInstallerModalOpen}
-                  handleClose={() => this.setState({ rapperInstallerModalOpen: false })}
+                  handleClose={() =>
+                    this.setState({
+                      rapperInstallerModalOpen: false,
+                    })
+                  }
                   repository={repository}
                 />
+                {repository.canUserEdit ? (
+                  <span
+                    className="g-link edit"
+                    onClick={() =>
+                      this.setState({
+                        settingsModalOpen: true,
+                      })
+                    }
+                  >
+                    <GoGear /> {t('Settings')}
+                  </span>
+                ) : null}
+                <SettingsModal
+                  id={repository.id}
+                  token={repository.token}
+                  version={repository.version}
+                  open={this.state.settingsModalOpen}
+                  onClose={(refresh?: boolean) => {
+                    if (refresh) {
+                      window.location.reload()
+                    }
+                    this.setState({ settingsModalOpen: false })
+                  }}
+                  onAddVersion={() => {
+                    this.setState({ opVersion: !this.state.opVersion })
+                  }}
+                  onDeleteVersion={handleDeleteVersion}
+                />
               </div>
-              <RepositorySearcher repository={repository} />
-              <div className="desc"><Markdown>{repository.description || ''}</Markdown></div>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '1.3rem',
+                  right: '1.3rem',
+                  left: 'auto',
+                  display: 'flex',
+                }}
+              >
+                <RepositorySearcher repository={repository} />
+              </Box>
+              {repository.version && (
+                <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center' }}>
+                  {t('Version')}
+                  <a
+                    href="https://github.com/infra-fe/rap-client/wiki/Repository-Version-Mangement"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <HelpOutlineOutlinedIcon
+                      sx={{ fontSize: '16px', color: '#3f51b5', cursor: 'pointer', margin: '2px' }}
+                    />
+                  </a>
+                  <span style={{ marginRight: '5px' }}>: </span>
+                  <VersionSelect
+                    initial={repository?.version?.versionName}
+                    width={200}
+                    size="small"
+                    variant="standard"
+                    repositoryId={repository.id}
+                    onChange={handleSwitchVersion}
+                    opVersion={this.state.opVersion}
+                  />
+                  {repository?.version?.updatedAt && (
+                    <span style={{ marginLeft: '10px' }}>
+                      Last updated time: {formatDateTime(repository?.version?.updatedAt || '')}
+                    </span>
+                  )}
+                </Box>
+              )}
+              {repository.basePath && (
+                <div className="basePath">
+                  {t('BasePath')}
+                  <a
+                    href="https://github.com/infra-fe/rap-client/wiki/BathPath"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <HelpOutlineOutlinedIcon
+                      sx={{ fontSize: '16px', color: '#3f51b5', cursor: 'pointer', margin: '2px' }}
+                    />
+                  </a>
+                  <span style={{ marginRight: '5px' }}>: </span>
+                  <span className="baseUrl">{repository.basePath}</span>
+                </div>
+              )}
+              <div className="desc">
+                {needFoldDesc ? (
+                  <>
+                    <CollapseButton
+                      fold={this.state.repoDescFold}
+                      setFold={this.handleRepoDescFold}
+                    />
+                    {this.state.repoDescFold && <span>{desc.split('\n')[0]}...</span>}
+                    <Collapse in={!this.state.repoDescFold}>
+                      <Markdown>{desc}</Markdown>
+                    </Collapse>
+                  </>
+                ) : (
+                  <Markdown>{desc}</Markdown>
+                )}
+              </div>
               {this.renderRelatedProjects()}
               <DuplicatedInterfacesWarning repository={repository} />
             </div>
             <div className="body">
               <ModuleList mods={repository.modules} repository={repository} mod={mod} />
+              {mod && (
+                <div className="moduleDesc">
+                  <span className="mr1">
+                    {t('Interface Count')}: {mod.interfaces.length}
+                  </span>
+                  <CollapseButton
+                    fold={this.state.modDescFold}
+                    setFold={(value) =>
+                      this.setState({
+                        modDescFold: value,
+                      })
+                    }
+                  />
+                  <ModuleOperation repository={repository} mod={mod} />
+                  <Collapse in={!this.state.modDescFold}>
+                    <Markdown>{mod.description || ''}</Markdown>
+                  </Collapse>
+                </div>
+              )}
               <div className="InterfaceWrapper">
-                <InterfaceList itfs={mod?.interfaces || []} repository={repository} mod={mod} itf={itf} />
-                <InterfaceEditor itf={itf} mod={mod} repository={repository}
-                  onValidate={() => this.setState({ openValidator: true })} />
-                <Validator open={this.state.openValidator} itf={itf} mod={mod} repository={repository}
-                  onClose={() => this.setState({ openValidator: false })} />
+                <InterfaceList
+                  itfs={itfs}
+                  repository={repository}
+                  mod={mod}
+                  itf={itf}
+                  tagIds={this.state.tagIds}
+                  onSelectTags={(tagIds) => this.setState({ tagIds: tagIds || [] })}
+                />
+                <InterfaceEditor
+                  itf={itf}
+                  mod={mod}
+                  repository={repository}
+                  onValidate={() => this.setState({ openValidator: true })}
+                />
+                <Validator
+                  open={this.state.openValidator}
+                  itf={itf as Interface}
+                  mod={mod}
+                  repository={repository}
+                  onClose={() => this.setState({ openValidator: false })}
+                />
               </div>
             </div>
             <Joyride
@@ -292,20 +549,35 @@ class RepositoryEditor extends Component<Props, States> {
                 {
                   title: t('Historical records online'),
                   disableBeacon: true,
-                  content: <Typography variant="h6">{t('Now you can view the project change history!')}</Typography>,
+                  content: (
+                    <Typography variant="h6">
+                      {t('Now you can view the project change history!')}
+                    </Typography>
+                  ),
                   placement: 'top',
                   target: '.guide-1',
                 },
                 {
                   title: t('Historical records online'),
                   disableBeacon: true,
-                  content: <Typography variant="h6">{t('You can also check the records of all changes to the specified interface.')}</Typography>,
+                  content: (
+                    <Typography variant="h6">
+                      {t(
+                        'You can also check the records of all changes to the specified interface.'
+                      )}
+                    </Typography>
+                  ),
                   placement: 'top',
                   target: '.guide-2',
-                }, {
+                },
+                {
                   title: t('Skin custom online'),
                   disableBeacon: true,
-                  content: <Typography variant="h6">{t('In system preferences, choose a favorite color! Such as green?')}</Typography>,
+                  content: (
+                    <Typography variant="h6">
+                      {t('In system preferences, choose a favorite color! Such as green?')}
+                    </Typography>
+                  ),
                   placement: 'top',
                   target: '.guide-3',
                 },
@@ -325,7 +597,7 @@ class RepositoryEditor extends Component<Props, States> {
           <div className="RelatedProjects">
             {collaborators &&
               Array.isArray(collaborators) &&
-              collaborators.map(collab => (
+              collaborators.map((collab) => (
                 <div className="CollabProject Project" key={`collab-${collab.id}`}>
                   <span className="title">
                     <GoVersions className="mr5" />
@@ -339,10 +611,35 @@ class RepositoryEditor extends Component<Props, States> {
       </Translation>
     )
   }
+  handleRepoDescFold = (value) => {
+    localStorage.setItem(REPO_DESC_FOLD_KEY, value)
+    this.setState({ repoDescFold: value })
+  }
   handleUpdate = () => {
     const { pathname, hash, search } = this.props.router.location
     this.props.replace(pathname + search + hash)
   }
+}
+
+function filterItfsByTags(itfs: Interface[], tagIds: number[]): Interface[] {
+  if (!itfs?.length) {
+    return []
+  }
+  if (!tagIds?.length) {
+    return itfs
+  }
+
+  const newList = itfs.filter((itf) => {
+    const { tags } = itf
+
+    if (!tags?.length) {
+      return false
+    }
+
+    return tags.some((tag) => tagIds.includes(tag.id))
+  })
+
+  return newList || []
 }
 
 // 容器组件

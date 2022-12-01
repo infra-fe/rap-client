@@ -1,9 +1,10 @@
-import { cloneDeep, clone } from 'lodash'
 import { Interface, Property } from 'actions/types'
 import { POS_TYPE } from 'components/editor/InterfaceSummary'
-import { IJSONSchema, IProperty, ItfProperty, IValidateError } from './JSONEditorTypes'
+import { FreePropertyType, JSONType } from 'components/validator/types'
+import { clone, cloneDeep, uniqueId, upperFirst } from 'lodash'
+import Mock from 'mockjs'
 import { Tree } from '../utils'
-import { Mock } from '../../family'
+import { IJSONSchema, IProperty, ItfProperty, IValidateError } from './JSONEditorTypes'
 
 /* const schema = {
   'title': 'Employee',
@@ -414,6 +415,10 @@ export function getMockData(properties: Property[]) {
  * @param properties
  */
 export function getJSONData(properties: Property[], removeRoot: boolean = false) {
+  if (!properties?.length) {
+    return null
+  }
+
   let jsonData = Tree.treeToJson(Tree.arrayToTree(cloneDeep(properties)))
 
   if (removeRoot && jsonData.__root__) {
@@ -575,4 +580,51 @@ export function mergeValidateErrors(errors: IValidateError[]): IValidateError[] 
 
 
   return Object.values(resultMap)
+}
+
+export function createPropertiesFromJSON(json: JSONType<unknown> | Array<JSONType<unknown>>): FreePropertyType[] {
+  if (!json) {
+    return null
+  }
+
+  if (Array.isArray(json)) {
+    json = { __root__: json }
+  }
+
+  const schema = Mock.toJSONSchema(json)
+  if (!schema?.properties?.length) {
+    return null
+  }
+
+  return parseSchema(schema)
+}
+
+function parseSchema(schema: Mock.MockjsToJSONSchemaRs, parentId: number | string = -1): FreePropertyType[] {
+  const { properties } = schema
+
+  const result: FreePropertyType[] = []
+  properties.forEach(property => {
+    const { name, template, properties } = property
+
+    const type = upperFirst(property.type)
+    const value = typeof template === 'string' ? template : JSON.stringify(template)
+
+    const item = {
+      id: uniqueId('import_'),
+      name,
+      value,
+      parentId,
+      scope: 'request',
+      pos: POS_TYPE.BODY,
+      type,
+    }
+    result.push(item)
+
+    if (['Object', 'Array'].includes(type) && properties?.length) {
+      result.push(...parseSchema(property, item.id))
+    }
+
+  })
+
+  return result
 }

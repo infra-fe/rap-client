@@ -1,5 +1,5 @@
 import React from 'react'
-import './Spin.css'
+import './Spin.sass'
 
 export default () => (
   <section className="Spin-inline">

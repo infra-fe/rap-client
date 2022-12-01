@@ -1,17 +1,18 @@
-import { useTranslation } from 'react-i18next'
-import { useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { YUP_MSG } from '../../family/UIConst'
-import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-mui'
-import * as Yup from 'yup'
-import { Button, Dialog, DialogContent, DialogTitle, Select, MenuItem, InputLabel, FormControl, Switch, Typography, Box } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, Switch, Typography } from '@mui/material'
 import Transition from 'components/common/Transition'
-import { Interface, Repository, RootState, Module } from '../../actions/types'
-import { updateInterface, addInterface } from '../../actions/interface'
-import { StoreStateRouterLocationURI, push } from 'family'
+import { push, StoreStateRouterLocationURI } from 'family'
+import { Field, Form, Formik } from 'formik'
+import { TextField } from 'formik-mui'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
+import * as Yup from 'yup'
+import { addInterface, updateInterface } from '../../actions/interface'
+import { Interface, Module, Repository, RootState } from '../../actions/types'
+import { YUP_MSG } from '../../family/UIConst'
+import InterfaceTagSelect from './InterfaceTagSelect'
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD']
-export const STATUS_LIST = [200, 301, 403, 404, 500, 502, 503, 504]
+export const STATUS_LIST = [200, 201, 301, 403, 404, 500, 502, 503, 504]
 
 
 interface FormState extends Interface {
@@ -39,11 +40,13 @@ interface Props {
   mod?: Module
   type?: 'create' | 'edit'
 }
+const PREFER_METHOD = 'PreferMethod'
 
 function InterfaceForm(props: Props) {
   const isEdit = props.type === 'edit'
   const auth = useSelector((state: RootState) => state.auth)
   const { open, onClose, itf, title, repository, mod } = props
+  const checkPrefer = !isEdit && open
   const dispatch = useDispatch()
   const router = useSelector((state: RootState) => state.router)
   const { t } = useTranslation()
@@ -57,6 +60,24 @@ function InterfaceForm(props: Props) {
     url: Yup.string().required(msg.REQUIRED).matches(/^(\/|https:|http:)/, t('msg3')),
     description: Yup.string().max(1000, msg.MAX_LENGTH(1000)),
   })
+  const initialState = { ...FORM_STATE_INIT }
+  const preferMethod = localStorage.getItem(PREFER_METHOD)
+  if (checkPrefer) {
+    if (preferMethod && preferMethod !== 'GET') {
+      initialState.method = preferMethod
+    }
+  }
+
+  // Tag选择器
+  const [tagIds, setTagIds] = useState<number[]>([])
+  const handleTagChange = (tagIds: number[]) => {
+    setTagIds(tagIds || [])
+  }
+
+  useEffect(() => {
+    const tagIds = itf?.tagIds || itf?.tags?.map?.(tag => tag.id) || []
+    setTagIds(tagIds)
+  }, [itf?.tagIds, itf?.tags])
 
   return (
     <Dialog
@@ -69,7 +90,7 @@ function InterfaceForm(props: Props) {
         <Box sx={{ minWidth: '500px', minHeight: '300px' }}>
           <Formik
             initialValues={{
-              ...FORM_STATE_INIT,
+              ...initialState,
               ...(itf || {}),
             }}
             validationSchema={schema}
@@ -79,9 +100,13 @@ function InterfaceForm(props: Props) {
                 : addInterface
               const itf: Interface = {
                 ...values,
+                tagIds,
                 creatorId: auth.id,
                 repositoryId: repository!.id,
                 moduleId: mod!.id,
+              }
+              if (checkPrefer && preferMethod !== values.method) {
+                localStorage.setItem(PREFER_METHOD, values.method)
               }
               dispatch(
                 addOrUpdateInterface(itf, (e) => {
@@ -118,12 +143,9 @@ function InterfaceForm(props: Props) {
                     </Box>
                     <Box sx={{ mb: 1 }}>
                       <FormControl>
-                        <InputLabel
-                          shrink={true}
-                          htmlFor="method-label-placeholder"
-                        >
+                        <div style={{ color: 'rgba(0, 0, 0, 0.6)' }}>
                           {t('Method')}
-                        </InputLabel>
+                        </div>
                         <Select
                           value={values.method}
                           displayEmpty={true}
@@ -205,6 +227,10 @@ function InterfaceForm(props: Props) {
                         </Select>
                       </Box>
                     }
+                    <Box sx={{ mb: 1, mt: 1 }}>
+                      <InterfaceTagSelect title={t('Add')} canUserEdit={repository?.canUserEdit}
+                        repositoryId={repository?.id} tagIds={tagIds} onChange={handleTagChange} />
+                    </Box>
                     <Box sx={{ mb: 1 }}>
                       <Field
                         name="description"
@@ -225,7 +251,7 @@ function InterfaceForm(props: Props) {
                     >
                       {t('submit')}
                     </Button>
-                    <Button onClick={() => onClose()} disabled={isSubmitting}>
+                    <Button onClick={() => onClose()} disabled={isSubmitting} sx={{ ml: 1 }}>
                       {t('cancel')}
                     </Button>
                   </Box>

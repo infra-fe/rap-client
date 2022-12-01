@@ -41,7 +41,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "paths": {
+      "lodash": ["node_modules/lodash-es"]
+    }
   },
   "filesGlob": [
     "types/*.d.ts",
@@ -64,5 +67,6 @@
   "compileOnSave": false,
   "include": [
     "src"
-  ]
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,13 +1,11 @@
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
+import { FormControlLabel, Grid, MenuItem, Select, Switch, TextField } from '@mui/material'
+import { Form, Formik } from 'formik'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  Select, MenuItem, FormControlLabel, Switch, TextField, Grid,
-} from '@mui/material'
-import PanelTitle from './PanelTitle'
 import { BiEditAlt } from 'react-icons/bi'
 import { GiConfirmed } from 'react-icons/gi'
-import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
+import PanelTitle from './PanelTitle'
 
 import { updatePropertiesOfID } from '../JSONEditor/JSONEditorUtils'
 import ParamsEditor from '../ParamsEditor/ParamsEditor'
@@ -15,10 +13,12 @@ import ParamsEditor from '../ParamsEditor/ParamsEditor'
 import { getDefaultServer } from './RequestUtils'
 
 import { cloneDeep, uniqueId } from 'lodash'
-import { BaseServerStorage, GlobalHeadersStorage, ExpireTimeEnum } from 'utils/Storage'
+import { BaseServerStorage, ExpireTimeEnum, GlobalHeadersStorage } from 'utils/Storage'
 
 // 类型定义
-import { CommonProps, BaseServerSettingProps, IBaseServerSettingData, ICheckSavedResult } from './types'
+import { Property } from 'actions/types'
+import { mergeObject, mergeObjectListBy } from 'utils/DataUtils'
+import { BaseServerSettingProps, CommonProps, FreePropertyType, IBaseServerSettingData, ICheckSavedResult } from './types'
 
 function FormLabel(props) {
   const { required, text } = props
@@ -132,7 +132,7 @@ export default BasePanelWrapper
 function BaseServerSetting(props: BaseServerSettingProps, ref: any) {
   const { t } = useTranslation()
 
-  const { disabled, repository, itf } = props
+  const { disabled, repository, itf, importData } = props
   const [data, setData] = useState<IBaseServerSettingData>(
     getDefaultServer({ repositoryId: repository.id, requestMethod: itf.method })
   )
@@ -142,9 +142,12 @@ function BaseServerSetting(props: BaseServerSettingProps, ref: any) {
 
   // 数据初始化
   const initData = async () => {
+    const { baseServer: importBaseServer, isCover } = importData || {}
     const data = await BaseServerStorage.get(S_SAVE_KEY)
-    if (data) {
-      setData(data)
+
+    const baseServer = isCover ? importBaseServer : mergeObject(data, importBaseServer)
+    if (baseServer) {
+      setData(baseServer)
     }
   }
   useEffect(() => {
@@ -156,7 +159,7 @@ function BaseServerSetting(props: BaseServerSettingProps, ref: any) {
       //   saveData()
       // }
     }
-  }, [])
+  }, [importData])
 
   // 数据更新
   const handleDataChange = (name: string, value: any) => {
@@ -321,7 +324,7 @@ const BaseServerSettingWrapper = forwardRef(BaseServerSetting)
  * @returns
  */
 function GlobalHeadersSetting(props: any, ref: any) {
-  const { itf, mod, repository, editable } = props
+  const { itf, mod, repository, importData, editable } = props
 
   const [properties, setProperties] = useState([])
 
@@ -330,10 +333,14 @@ function GlobalHeadersSetting(props: any, ref: any) {
 
   // ==================== 数据初始化 ====================
   const initData = async () => {
+    const { globalHeader: importGlobalHeader, isCover } = importData || {}
     const data = await GlobalHeadersStorage.get(S_SAVE_KEY)
-    if (data) {
-      updatePropertiesOfID(data)
-      setProperties(data)
+
+    const globalHeader = isCover ? importGlobalHeader : mergeObjectListBy<FreePropertyType>(data, importGlobalHeader, 'name') as Property[]
+
+    if (globalHeader) {
+      updatePropertiesOfID(globalHeader)
+      setProperties(globalHeader)
     }
   }
   useEffect(() => {
@@ -345,7 +352,7 @@ function GlobalHeadersSetting(props: any, ref: any) {
       //   saveData()
       // }
     }
-  }, [])
+  }, [importData])
   // useEffect(() => {
   // }, [properties])
   // ==================== // 数据初始化 ====================

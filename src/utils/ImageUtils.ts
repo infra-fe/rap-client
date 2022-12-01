@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 const BG_IMAGE_LIST = [
   'https://img.alicdn.com/tfs/TB1FrncarY1gK0jSZTEXXXDQVXa-4288-2848.jpg',
   'https://img.alicdn.com/tfs/TB1Xfrcaq61gK0jSZFlXXXDKFXa-5158-3434.jpg',

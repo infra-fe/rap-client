@@ -1,6 +1,6 @@
-import { RouterState } from 'connected-react-router'
 import { THEME_TEMPLATE_KEY } from 'components/account/ThemeChangeOverlay'
 import { POS_TYPE } from 'components/editor/InterfaceSummary'
+import { RouterState } from 'connected-react-router'
 export interface RootState {
   auth: User
   router: RouterState
@@ -13,6 +13,7 @@ export interface RootState {
   joinedOrganizations: AsyncWithPager<Organization>
   joinedRepositories: AsyncWithPager<Repository>
   users: AsyncWithPager<User>
+  interfaces: AsyncWithPager<Interface>
 
   counter: Counter
   analyticsRepositoriesCreated: Async<INumItem[]>
@@ -29,6 +30,7 @@ export interface RootState {
   guideOpen: boolean
   defaultVals: DefaultValue[]
   copyId: string | number | null
+  tags: ITag[]
 }
 
 export interface Log extends ModelBase {
@@ -49,6 +51,13 @@ export interface DefaultValue extends ModelBase {
   repositoryId: number
 }
 
+export interface RepositoryVersion {
+  versionName: string
+  lockType?: string
+  id: number
+  updatedAt: number
+  isMaster: boolean
+}
 export interface Organization extends ModelBase {
   name: string
 
@@ -81,6 +90,7 @@ export interface ImportSwagger {
   swagger?: string
   modId?: number
   cover?: number
+  versionId?: number
 }
 export interface User extends ModelBase {
   fullname?: string
@@ -106,6 +116,8 @@ export interface RepositoryFormData {
   name: string
 
   description?: string
+
+  basePath?: string
 
   logo?: string
 
@@ -142,6 +154,8 @@ export interface Repository extends ModelBase {
 
   description: string
 
+  basePath: string
+
   logo: string
 
   /** true: 公开, false: 私有 */
@@ -170,6 +184,9 @@ export interface Repository extends ModelBase {
   collaboratorIds: string[]
 
   canUserEdit?: boolean
+
+  version: RepositoryVersion
+
 }
 
 export interface Module {
@@ -190,6 +207,8 @@ export interface Module {
   repository?: Repository
 
   repositoryId?: number
+
+  versionId?: number
 }
 
 export interface Interface {
@@ -226,7 +245,19 @@ export interface Interface {
 
   /** For template selection */
   tmplId?: number
+
+  tagIds?: number[]
+  tags?: ITag[]
 }
+
+export interface ITag {
+  id: number
+  name: string
+  level: string
+  color?: string
+  repositoryId?: number
+}
+
 export interface Property {
   id: number | string
   name: string

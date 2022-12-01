@@ -1,16 +1,17 @@
-import NoMatch from './NoMatch'
-import Spin from './Spin'
-import DialogController from './DialogController'
-import RModal from './RModal'
-import Pagination from './Pagination'
-import Popover from './Popover'
-import SmartTextarea from './SmartTextarea'
-import MembersInput from './MembersInput'
-import Tree from './Tree'
-import RSortable from './RSortable'
-import RChart from './RChart'
 import CopyToClipboard from './CopyToClipboard'
 import CustomScroll from './CustomScroll'
+import DialogController from './DialogController'
+import MembersInput from './MembersInput'
+import NoMatch from './NoMatch'
+import Pagination from './Pagination'
+import Popover from './Popover'
+import RChart from './RChart'
+import RModal from './RModal'
+import RSortable from './RSortable'
+import SmartTextarea from './SmartTextarea'
+import Spin from './Spin'
+import TagView from './TagView'
+import Tree from './Tree'
 
 export {
   NoMatch,
@@ -26,4 +27,5 @@ export {
   RChart,
   CopyToClipboard,
   CustomScroll,
+  TagView,
 }

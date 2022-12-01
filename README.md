@@ -1,20 +1,34 @@
 # RAP-Client CE version (front-end static build)
 
+### Documents 文档站点
 
-### Intro
+[RAP User Manual](https://infra-fe.github.io/rap-client/)
+
+[RAP使用手册、帮助文档站点](https://infra-fe.github.io/rap-client/)
+### Introduction 简介
 
 RAP is a new project based on [RAP1](https://github.com/thx/RAP) & [RAP2](https://github.com/thx/rap2-delos). It has two components:
-RAP是在RAP1 & RAP2基础上重做的新项目，它包含两个组件(对应两个Github Repository)。
+RAP是在RAP1 & RAP2基础上重做的新项目，它包含三个组件(对应三个Github Repository)。
 
 * rap-server: back-end data API server based on Koa + MySQL [link](https://github.com/infra-fe/rap-client)
 * rap-client: front-end static build based on React [link](https://github.com/infra-fe/rap-server)
+* rapper3: generate code tools based on RAP [link](https://github.com/infra-fe/rapper3)
 
 * rap-server:使用Koa + MySQL的后端API服务器 [link](https://github.com/infra-fe/rap-client)
 * rap-client: React前端App [link](https://github.com/infra-fe/rap-server)
+* rapper3: 基于RAP的代码生成工具 [link](https://github.com/infra-fe/rapper3)
+
+### Rapper 3
+
+Rapper3 has been refactored on the basis of Rapper, providing more code generation modes and more flexible configuration methods, welcome to experience.
+[Document link](https://infra-fe.github.io/rap-client/code), [NPM list](https://www.npmjs.com/search?q=%40rapper3)
+
+Rapper3在Rapper基础上进行了重构，提供更多的代码生成模式，更灵活的配置方式，欢迎体验
+[文档链接](https://infra-fe.github.io/rap-client/code), [NPM列表](https://www.npmjs.com/search?q=%40rapper3)
 
 ### Support 客户支持
 
-<img src="https://user-images.githubusercontent.com/13103261/167248620-1e8e65fd-57a9-434c-b2fc-2d8c215d56fe.png" alt="wechat support" width=200 />
+<img src="https://user-images.githubusercontent.com/13103261/205011922-fb031bd9-2651-4844-bd3b-1cc414c11ac6.png" alt="wechat support" width=200 />
 
 
 ## Deployment 部署

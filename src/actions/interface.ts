@@ -1,3 +1,4 @@
+import { ITag } from 'actions/types'
 export const addInterface = (itf: any, onResolved: (res: any) => void) => ({ type: 'INTERFACE_ADD', interface: itf, onResolved })
 export const addInterfaceSucceeded = (payload: any) => ({ type: 'INTERFACE_ADD_SUCCEEDED', payload })
 export const addInterfaceFailed = (message: string) => ({ type: 'INTERFACE_ADD_FAILED', message })
@@ -34,3 +35,5 @@ export const sortInterfaceList = (ids: any, moduleId: number, onResolved: () => 
 export const sortInterfaceListSucceeded = (count: number, ids: any, moduleId: number) => ({ type: 'INTERFACE_LIST_SORT_SUCCEEDED', count, ids, moduleId })
 export const sortInterfaceListFailed = (message: string) => ({ type: 'INTERFACE_LIST_SORT_FAILED', message })
 export const updateCopyId = (copyId: number | string | null) => ({ type: 'UPDATE_COPY_ID', payload: copyId })
+
+export const updateTagList = (tags: ITag[]) => ({ type: 'UPDATE_TAG_LIST', payload: tags })

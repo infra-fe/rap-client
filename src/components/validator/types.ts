@@ -1,11 +1,12 @@
-import { Property, Repository } from 'actions/types'
+import { Interface, Module, Property, Repository } from 'actions/types'
 /**
  * 参数的通用字段抽离
  */
 export interface CommonProps {
-  itf: any // 接口级别，代号'I'
-  mod: any // 模块级别，代号'M'
+  itf: Interface // 接口级别，代号'I'
+  mod: Module // 模块级别，代号'M'
   repository: Repository // 项目级别，代号'P'
+  importData?: InitDataType
 }
 
 /**
@@ -33,12 +34,6 @@ export interface IBaseServerSettingData {
   protocolType?: string
   useSSL?: boolean
   withCookie?: boolean
-}
-
-export interface TabPanelProps {
-  children?: React.ReactNode
-  index: any
-  value: any
 }
 
 export interface ResponseValidatorProps extends CommonProps {
@@ -75,4 +70,21 @@ export interface InvokeParams {
 export interface ICheckSavedResult {
   isSaved: boolean
   message?: string
+}
+
+export type FreePropertyType = Partial<Omit<Property, 'scope'> & { scope: string }>
+export type JSONType<V> = {
+  [key: string]: V
+}
+
+export type InitDataType = {
+  baseServer: IBaseServerSettingData
+  requestBase: IRequestBaseData
+  headers: JSONType<string>
+  query: JSONType<string | string[]>
+  body: JSONType<string>
+  globalHeader?: FreePropertyType[]
+  queryParams?: FreePropertyType[]
+  bodyParams?: FreePropertyType[]
+  isCover?: boolean
 }

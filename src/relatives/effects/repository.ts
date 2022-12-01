@@ -1,9 +1,10 @@
+import { RootState } from 'actions/types'
+import { StoreStateRouterLocationURI } from 'family'
 import { call, put, select } from 'redux-saga/effects'
 import * as RepositoryAction from '../../actions/repository'
+import { fetchDefaultValsFailed, IFetchDefaultValsAction, IInitVersionAction, IRefreshTokenAction, IUpdateDefaultValsAction } from '../../actions/repository'
 import RepositoryService from '../services/Repository'
-import { RootState } from 'actions/types'
-import { IFetchDefaultValsAction, fetchDefaultValsFailed, IUpdateDefaultValsAction } from '../../actions/repository'
-import { StoreStateRouterLocationURI } from 'family'
+import RepositoryVersionService from '../services/Version'
 
 //
 export function* fetchRepositoryCount(action: any) {
@@ -43,7 +44,8 @@ export function* deleteRepository(action: any) {
 export function* updateRepository(action: any) {
   try {
     const r = action.repository
-    const acceptedKeys = ['creatorId', 'organizationId', 'memberIds', 'id', 'collaboratorIds', 'description', 'ownerId', 'visibility', 'name']
+    const acceptedKeys = ['creatorId', 'organizationId', 'memberIds', 'id', 'collaboratorIds',
+      'description', 'ownerId', 'visibility', 'name', 'basePath']
     const params: any = {}
     acceptedKeys.forEach(x => {
       params[x] = r[x]
@@ -92,7 +94,8 @@ export function* fetchRepository(action: any) {
     const repository = yield call(
       RepositoryService.fetchRepository as any,
       action.repository || action.id,
-      params.token
+      params.token,
+      params.versionId
     )
     yield put(RepositoryAction.fetchRepositorySucceeded(repository))
   } catch (e) {
@@ -105,14 +108,21 @@ export function* refreshRepository() {
   const repositoryId = yield select(
     (state: RootState) => state.repository && state.repository.data && state.repository.data.id
   )
-  yield put(RepositoryAction.fetchRepository({id: repositoryId}))
+  yield put(RepositoryAction.fetchRepository({ id: repositoryId }))
 }
 
 export function* handleRepositoryLocationChange(action: any) {
   const repositoryId = yield select(
     (state: RootState) => state.repository && state.repository.data && state.repository.data.id
   )
-  if (Number(action.id) !== repositoryId) {
+  const version = yield select(
+    (state: RootState) => state.repository && state.repository.data && state.repository.data.version && state.repository.data.version
+  )
+
+  if (
+    Number(action.id) !== repositoryId ||
+    (version && ((!action.versionId && !version?.isMaster) || (action.versionId && Number(action.versionId) !== version?.id)))
+  ) {
     // 切换仓库
     yield put(RepositoryAction.fetchRepository(action))
   }
@@ -151,5 +161,35 @@ export function* updateDefaultVals(action: IUpdateDefaultValsAction) {
     yield put(RepositoryAction.updateDefaultValsSucceeded())
   } catch (e) {
     yield put(RepositoryAction.updateDefaultValsFailed({ message: e.message }))
+  }
+}
+
+export function* refreshToken(action: IRefreshTokenAction) {
+  try {
+    const payload = yield call(RepositoryService.refreshToken, action.id)
+    if (payload.token) {
+      yield put(RepositoryAction.refreshTokenSucceeded(payload))
+      action?.onResolved(payload)
+    } else {
+      yield put(RepositoryAction.refreshTokenFailed(payload))
+    }
+  } catch (e) {
+    yield put(RepositoryAction.refreshTokenFailed({ message: e.message }))
+    action?.onRejected()
+  }
+}
+
+export function* initVersion(action: IInitVersionAction) {
+  try {
+    const payload = yield call(RepositoryVersionService.initVersion, action.id)
+    if (payload) {
+      yield put(RepositoryAction.initVersionSucceeded(payload))
+    } else {
+      yield put(RepositoryAction.initVersionFailed(payload))
+    }
+    action?.onResolved(payload)
+  } catch (e) {
+    yield put(RepositoryAction.initVersionFailed({ message: e.message }))
+    action?.onRejected()
   }
 }

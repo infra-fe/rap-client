@@ -2,7 +2,7 @@ import { Translation } from 'react-i18next'
 import React, { Component } from 'react'
 import _ from 'lodash'
 import AccountService from '../../relatives/services/Account'
-import './TagsInput.css'
+import './TagsInput.sass'
 import { GoX } from 'react-icons/go'
 
 // TODO 2.3 input 宽度自适应
@@ -24,15 +24,23 @@ class MembersInput extends Component<any, any> {
   }
   render() {
     return (
-      <div className="TagsInput clearfix" onClick={() => this.$seed && this.$seed.focus()}>
+      <div
+        className="TagsInput clearfix"
+        onClick={() => this.$seed && this.$seed.focus()}
+      >
         {this.state.value.map((item: any) => (
           <span key={item.id} className="tag">
             <span className="label">{item.fullname}</span>
-            <span className="remove" onClick={() => this.handleRemove(item)}><GoX /></span>
+            <span
+              className="remove"
+              onClick={() => this.handleRemove(item)}
+            >
+              <GoX />
+            </span>
           </span>
-        )
-        )}
-        {(!this.state.limit || this.state.value.length < this.state.limit) &&
+        ))}
+        {(!this.state.limit ||
+                    this.state.value.length < this.state.limit) && (
           <div className="dropdown">
             <Translation>
               {(t) => (
@@ -41,27 +49,38 @@ class MembersInput extends Component<any, any> {
                   value={this.state.seed}
                   placeholder={t('Flower or working')}
                   autoComplete="off"
-                  onChange={e => this.handleSeed(e.target.value)}
-                  ref={$seed => { this.$seed = $seed }}
+                  onChange={(e) =>
+                    this.handleSeed(e.target.value)
+                  }
+                  ref={($seed) => {
+                    this.$seed = $seed
+                  }}
                 />
               )}
             </Translation>
             {this.state.options.length ? (
-              <div className="dropdown-menu" ref={$options => { this.$options = $options }}>
+              <div
+                className="dropdown-menu"
+                ref={($options) => {
+                  this.$options = $options
+                }}
+              >
                 {this.state.options.map((item: any) => (
                   <button
                     key={item.id}
                     className="dropdown-item"
-                    onClick={e => this.handleSelect(e, item)}
+                    onClick={(e) =>
+                      this.handleSelect(e, item)
+                    }
                   >
-                    {item.fullname} {item.empId} {item.email}
+                    {item.fullname} {item.empId}{' '}
+                    {item.email}
                   </button>
-                )
-                )}
+                ))}
               </div>
             ) : null}
           </div>
-        }
+        )}
       </div>
     )
   }
@@ -72,7 +91,11 @@ class MembersInput extends Component<any, any> {
       return
     }
     const users = await AccountService.fetchUserList({ name: seed })
-    const options = _.differenceWith(users.data, this.state.value, _.isEqual)
+    const options = _.differenceWith(
+      users.data,
+      this.state.value,
+      _.isEqual
+    )
     this.setState({ options })
   }
   handleSelect = (e: any, selected: any) => {
@@ -82,7 +105,9 @@ class MembersInput extends Component<any, any> {
   }
   // √remove vs delete
   handleRemove = (removed: any) => {
-    const nextState = { value: this.state.value.filter((item: any) => item !== removed) }
+    const nextState = {
+      value: this.state.value.filter((item: any) => item !== removed),
+    }
     this.setState(nextState, this.handleChange)
   }
   // √change vs update

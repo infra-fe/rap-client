@@ -2,9 +2,17 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import URI from 'urijs'
 import _ from 'lodash'
-import './Pagination.css'
+import './Pagination.sass'
+import { useTranslation } from 'react-i18next'
 
-export const Pagination = ({ location, url = '', calculated, total, cursor = 1, limit = 10 }: {
+export const Pagination = ({
+  location,
+  url = '',
+  calculated,
+  total,
+  cursor = 1,
+  limit = 10,
+}: {
   location: any
   url?: any
   calculated: any
@@ -13,10 +21,17 @@ export const Pagination = ({ location, url = '', calculated, total, cursor = 1, 
   limit?: number
   className?: string
 }) => {
-  if (location && !url) { url = location.pathname + location.hash + location.search }
-  if (calculated) { ({ total, cursor, limit } = calculated) }
+  const { t } = useTranslation()
+  if (location && !url) {
+    url = location.pathname + location.hash + location.search
+  }
+  if (calculated) {
+    ({ total, cursor, limit } = calculated)
+  }
 
-  if (!total) { return null }
+  if (!total) {
+    return null
+  }
   const paging = new (Calculator as any)(total, cursor, limit)
 
   url = URI(url).setSearch({ limit: paging.limit })
@@ -24,64 +39,118 @@ export const Pagination = ({ location, url = '', calculated, total, cursor = 1, 
   const step = 7
   const barStart = Math.min(
     paging.pages,
-    Math.max(
-      1,
-      paging.cursor - parseInt((step / 2).toString(), 10)
-    )
+    Math.max(1, paging.cursor - parseInt((step / 2).toString(), 10))
   )
   const barEnd = Math.min(paging.pages, barStart + step - 1)
 
   return (
     <nav className="Pagination clearfix">
       <div className="summary">
-        <span>{`当前第 ${paging.start + 1} - ${paging.end} 条，共 ${paging.total} 条，每页展现 ${paging.limit} 条`}</span>
+        <span>{`${t('Current')} ${paging.start + 1} - ${paging.end} ${t(
+          'counts'
+        )}，${t('total')} ${paging.total} ${t('counts')}，${t(
+          'shows per page'
+        )} ${paging.limit} ${t('counts')}`}</span>
       </div>
       <ul className="page-list">
-        <li className={paging.hasPrev ? 'page-item' : 'page-item-disabled'}>
-          <Link className="page-link" to={URI(url).setSearch({ cursor: paging.prev }).href()}><span>&laquo;</span></Link>
+        <li
+          className={
+            paging.hasPrev ? 'page-item' : 'page-item-disabled'
+          }
+        >
+          <Link
+            className="page-link"
+            to={URI(url).setSearch({ cursor: paging.prev }).href()}
+          >
+            <span>&laquo;</span>
+          </Link>
         </li>
 
-        {barStart === 2 &&
+        {barStart === 2 && (
           <li className="page-item">
-            <Link className="page-link" to={URI(url).setSearch({ cursor: 1 }).href()}>1</Link>
+            <Link
+              className="page-link"
+              to={URI(url).setSearch({ cursor: 1 }).href()}
+            >
+                            1
+            </Link>
           </li>
-        }
-        {barStart >= 3 &&
+        )}
+        {barStart >= 3 && (
           <li className="page-item">
-            <Link className="page-link" to={URI(url).setSearch({ cursor: 1 }).href()}>1</Link>
+            <Link
+              className="page-link"
+              to={URI(url).setSearch({ cursor: 1 }).href()}
+            >
+                            1
+            </Link>
           </li>
-        }
-        {barStart >= 3 &&
+        )}
+        {barStart >= 3 && (
           <li className="page-item">
-            <Link className="page-link" to={URI(url).setSearch({ cursor: 2 }).href()}>2</Link>
+            <Link
+              className="page-link"
+              to={URI(url).setSearch({ cursor: 2 }).href()}
+            >
+                            2
+            </Link>
           </li>
-        }
-        {barStart > 3 &&
+        )}
+        {barStart > 3 && (
           <li className="page-item-disabled">
-            <Link className="page-link" to="">...</Link>
+            <Link className="page-link" to="">
+                            ...
+            </Link>
           </li>
-        }
-
-        {_.range(barStart, barEnd + 1).map(page => (
-          <li key={page} className={page === +cursor ? 'page-item-active' : 'page-item'}>
-            <Link className="page-link" to={URI(url).setSearch({ cursor: page }).href()}>{page}</Link>
-          </li>
-        )
         )}
 
-        {barEnd < paging.pages - 1 &&
-          <li className="page-item-disabled">
-            <Link className="page-link" to="">...</Link>
+        {_.range(barStart, barEnd + 1).map((page) => (
+          <li
+            key={page}
+            className={
+              page === +cursor ? 'page-item-active' : 'page-item'
+            }
+          >
+            <Link
+              className="page-link"
+              to={URI(url).setSearch({ cursor: page }).href()}
+            >
+              {page}
+            </Link>
           </li>
-        }
-        {barEnd < paging.pages &&
-          <li className="page-item">
-            <Link className="page-link" to={URI(url).setSearch({ cursor: paging.pages }).href()}>{paging.pages}</Link>
-          </li>
-        }
+        ))}
 
-        <li className={paging.hasNext ? 'page-item' : 'page-item-disabled'}>
-          <Link className="page-link" to={URI(url).setSearch({ cursor: paging.next }).href()}><span>&raquo;</span></Link>
+        {barEnd < paging.pages - 1 && (
+          <li className="page-item-disabled">
+            <Link className="page-link" to="">
+                            ...
+            </Link>
+          </li>
+        )}
+        {barEnd < paging.pages && (
+          <li className="page-item">
+            <Link
+              className="page-link"
+              to={URI(url)
+                .setSearch({ cursor: paging.pages })
+                .href()}
+            >
+              {paging.pages}
+            </Link>
+          </li>
+        )}
+
+        <li
+          className={
+            paging.hasNext ? 'page-item' : 'page-item-disabled'
+          }
+        >
+          <Link
+            className="page-link"
+            to={URI(url).setSearch({ cursor: paging.next }).href()}
+          >
+            <span>&raquo;</span>
+          </Link>
         </li>
       </ul>
     </nav>
@@ -139,7 +208,8 @@ export function Calculator(this: any, data: any, cursor: any, limit: number) {
   if (!this) {
     throw new Error(`use new Calculator instead of direct call`)
   }
-  this.data = (typeof data === 'number' || typeof data === 'string') ? undefined : data
+  this.data =
+        typeof data === 'number' || typeof data === 'string' ? undefined : data
   this.total = this.data ? this.data.length : parseInt(data, 10)
   this.cursor = parseInt(cursor, 10)
   this.limit = parseInt(limit as any as string, 10)
@@ -150,18 +220,25 @@ Calculator.prototype = {
     if (this.total && parseInt(this.total, 10) > 0) {
       this.limit = this.limit < 1 ? 1 : this.limit
 
-      this.pages = (this.total % this.limit === 0) ? this.total / this.limit : this.total / this.limit + 1
+      this.pages =
+                this.total % this.limit === 0
+                  ? this.total / this.limit
+                  : this.total / this.limit + 1
       this.pages = parseInt(this.pages, 10)
-      this.cursor = (this.cursor > this.pages) ? this.pages : this.cursor
-      this.cursor = (this.cursor < 1) ? this.pages > 0 ? 1 : 0 : this.cursor
+      this.cursor = this.cursor > this.pages ? this.pages : this.cursor
+      this.cursor =
+                this.cursor < 1 ? (this.pages > 0 ? 1 : 0) : this.cursor
 
       this.start = (this.cursor - 1) * this.limit
-      this.start = (this.start < 0) ? 0 : this.start // 从 0 开始计数
-      this.end = (this.start + this.limit > this.total) ? this.total : this.start + this.limit
-      this.end = (this.total < this.limit) ? this.total : this.end
+      this.start = this.start < 0 ? 0 : this.start // 从 0 开始计数
+      this.end =
+                this.start + this.limit > this.total
+                  ? this.total
+                  : this.start + this.limit
+      this.end = this.total < this.limit ? this.total : this.end
 
-      this.hasPrev = (this.cursor > 1)
-      this.hasNext = (this.cursor < this.pages)
+      this.hasPrev = this.cursor > 1
+      this.hasNext = this.cursor < this.pages
       this.hasFirst = this.hasPrev
       this.hasLast = this.hasNext
 
@@ -171,7 +248,7 @@ Calculator.prototype = {
       this.last = this.hasLast ? this.pages : 0
 
       this.focus = this.focus ? this.focus : 0
-      this.focus = this.focus % this.limit + this.start
+      this.focus = (this.focus % this.limit) + this.start
       this.focus = this.focus > this.end - 1 ? this.end - 1 : this.focus
     } else {
       this.pages = this.cursor = this.start = this.end = 0
@@ -216,8 +293,12 @@ Calculator.prototype = {
   },
   setFocus: function(focus: any) {
     this.focus = parseInt(focus, 10)
-    if (this.focus < 0) { this.focus += this.total }
-    if (this.focus >= this.total) { this.focus -= this.total }
+    if (this.focus < 0) {
+      this.focus += this.total
+    }
+    if (this.focus >= this.total) {
+      this.focus -= this.total
+    }
     this.cursor = parseInt((this.focus / this.limit).toString(), 10) + 1
     return this.calc()
   },
@@ -226,7 +307,11 @@ Calculator.prototype = {
     return this.calc()
   },
   get: function(focus: any) {
-    if (focus !== undefined) { return this.data[focus % this.data.length] } else { return this.data[this.focus] }
+    if (focus !== undefined) {
+      return this.data[focus % this.data.length]
+    } else {
+      return this.data[this.focus]
+    }
   },
   toString: function() {
     return JSON.stringify(this, null, 4)

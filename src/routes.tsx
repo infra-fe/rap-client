@@ -1,23 +1,23 @@
 import { lazy, Suspense } from 'react'
 
-import { Switch, Route } from './family'
+import { Route, Switch } from './family'
 
-import { NoMatch, Spin } from './components/utils'
-import Header from './components/common/Header'
-import Footer from './components/common/Footer'
-import Home from './components/home/Home'
-import LoginForm from './components/account/LoginForm'
-import RegisterForm from './components/account/RegisterForm'
-import FindpwdForm from './components/account/FindpwdForm'
-import ResetpwdForm from './components/account/ResetpwdForm'
-import { useSelector } from 'react-redux'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import Fab from '@mui/material/Fab'
 import { RootState } from 'actions/types'
-import MySettingsView from './components/account/MySettingsView'
-import AboutView from './components/home/AboutView'
 import MyAccountView from 'components/account/MyAccountView'
 import ScrollTop from 'components/utils/ScrollTop'
-import Fab from '@mui/material/Fab'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import { useSelector } from 'react-redux'
+import FindpwdForm from './components/account/FindpwdForm'
+import LoginForm from './components/account/LoginForm'
+import MySettingsView from './components/account/MySettingsView'
+import RegisterForm from './components/account/RegisterForm'
+import ResetpwdForm from './components/account/ResetpwdForm'
+import Footer from './components/common/Footer'
+import Header from './components/common/Header'
+import AboutView from './components/home/AboutView'
+import Home from './components/home/Home'
+import { NoMatch, Spin } from './components/utils'
 
 const JoinedRepositoryList =
   lazy(() => import(/* webpackChunkName: "./components/repository/JoinedRepositoryList" */ './components/repository/JoinedRepositoryList'))
@@ -29,7 +29,10 @@ const AllRepositoryList =
   lazy(() => import(/* webpackChunkName: "./components/repository/AllRepositoryList" */ './components/repository/AllRepositoryList'))
 
 const RepositoryEditor =
-  lazy(() => import(/* webpackChunkName: "./components/repository/RepositoryEditor" */ './components/editor/RepositoryEditor'))
+  lazy(() => import(/* webpackChunkName: "./components/editor/RepositoryEditor" */ './components/editor/RepositoryEditor'))
+
+const RepositoryDiff =
+  lazy(() => import(/* webpackChunkName: "./components/editor/RepositoryDiff" */ './components/editor/RepositoryDiff'))
 
 const JoinedOrganizationList =
   lazy(() => import(/* webpackChunkName: "./components/organization/JoinedOrganizationList" */ './components/organization/JoinedOrganizationList'))
@@ -83,6 +86,7 @@ const Routes = () => {
                   <Route exact={true} path="/repository/joined/create" component={JoinedRepositoryListWithCreateForm} />
                   <Route exact={true} path="/repository/all" component={AllRepositoryList} />
                   <Route exact={true} path="/repository/editor" component={RepositoryEditor} />
+                  <Route exact={true} path="/repository/diff/:r1/:r2/:v1/:v2" component={RepositoryDiff} />
                   <Route component={NoMatch} />
                 </Switch>
               )}

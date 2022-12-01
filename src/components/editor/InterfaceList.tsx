@@ -1,20 +1,18 @@
-import { useTranslation, Translation } from 'react-i18next'
-import { useState, MouseEventHandler, CSSProperties } from 'react'
-import { connect, Link, StoreStateRouterLocationURI, replace } from '../../family'
-import { sortInterfaceList, deleteInterface, unlockInterface } from '../../actions/interface'
-import { deleteModule } from '../../actions/module'
-import { Module, Repository, RootState, Interface, User } from '../../actions/types'
-import { RSortable, CustomScroll } from '../utils'
-import InterfaceForm from './InterfaceForm'
+import { Box, Button, Tooltip } from '@mui/material'
 import { useConfirm } from 'hooks/useConfirm'
-import { GoPencil, GoTrashcan, GoLock } from 'react-icons/go'
-import { getCurrentInterface } from '../../selectors/interface'
-import { Box, Button, ButtonGroup } from '@mui/material/'
-import ModuleForm from './ModuleForm'
-import MoveModuleForm from './MoveModuleForm'
-import { useSelector, useDispatch } from 'react-redux'
+import { MouseEventHandler, useState } from 'react'
+import { Translation, useTranslation } from 'react-i18next'
+import { GoLock, GoPencil, GoTrashcan } from 'react-icons/go'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import './InterfaceList.css'
+import { deleteInterface, sortInterfaceList, unlockInterface } from '../../actions/interface'
+import { Interface, Module, Repository, RootState, User } from '../../actions/types'
+import { connect, Link, replace, StoreStateRouterLocationURI } from '../../family'
+import { getCurrentInterface } from '../../selectors/interface'
+import { CustomScroll, RSortable, TagView } from '../utils'
+import InterfaceForm from './InterfaceForm'
+import './InterfaceList.sass'
+import InterfaceTagSelect from './InterfaceTagSelect'
 
 interface InterfaceBaseProps {
   repository: Repository
@@ -34,15 +32,15 @@ function InterfaceBase(props: InterfaceBaseProps) {
   const auth = useSelector((state: RootState) => state.auth)
   const router = useSelector((state: RootState) => state.router)
   const history = useHistory()
-  const selectHref = StoreStateRouterLocationURI(router)
-    .setSearch('itf', itf!.id.toString())
-    .href()
+  const selectHref = StoreStateRouterLocationURI(router).setSearch('itf', itf!.id.toString()).href()
   const [open, setOpen] = useState(false)
   const confirm = useConfirm()
   const { t } = useTranslation()
-  const handleDeleteInterface: MouseEventHandler<HTMLAnchorElement> = e => {
+  const handleDeleteInterface: MouseEventHandler<HTMLAnchorElement> = (e) => {
     e.preventDefault()
-    const message = `${t('Unrecoverable after the interface is deleted')}！\n${t('Confirm delete')}『#${itf!.id} ${itf!.name}』${t('?')}`
+    const message = `${t('Unrecoverable after the interface is deleted')}！\n${t(
+      'Confirm delete'
+    )}『#${itf!.id} ${itf!.name}』${t('?')}`
     confirm({
       title: t('Confirm delete'),
       content: message,
@@ -61,7 +59,7 @@ function InterfaceBase(props: InterfaceBaseProps) {
       <span>
         <Link
           to={selectHref}
-          onClick={e => {
+          onClick={(e) => {
             if (curItf?.locker?.id === auth.id) {
               e.preventDefault()
               confirm({
@@ -80,8 +78,14 @@ function InterfaceBase(props: InterfaceBaseProps) {
           }}
         >
           <div className="name">{`${serialNumber ? serialNumber + '.' : ''} ${itf!.name}`}</div>
-          <div className="url">{itf!.url}</div>
+          <Tooltip title={itf!.url} arrow={true}>
+            <div className="url">
+              <span className={`methodTag tag${itf!.method}`}>{itf!.method}</span>
+              {itf!.url}
+            </div>
+          </Tooltip>
         </Link>
+        {itf?.tags?.length ? <TagView tags={itf?.tags} style={{ marginTop: '5px' }} /> : null}
       </span>
       {repository.canUserEdit ? (
         <div className="toolbar">
@@ -135,48 +139,15 @@ interface InterfaceListProps {
   curItf: Interface
   mod: Module
   repository: Repository
+  tagIds?: number[]
+  onSelectTags?: (tagIds: number[]) => void
 }
 function InterfaceList(props: InterfaceListProps) {
   const [interfaceFormOpen, setInterfaceFormOpen] = useState(false)
-  const [moduleFormOpen, setModuleFormOpen] = useState(false)
-  const [moveModuleFormOpen, setMoveModuleFormOpen] = useState(false)
   const dispatch = useDispatch()
-  const confirm = useConfirm()
-  const auth = useSelector((state: RootState) => state.auth)
-  const { repository, itf, itfs = [], mod } = props
   const { t } = useTranslation()
-  const dangerousStyles: CSSProperties = { color: '#CC0000', fontWeight: 'bold', fontSize: 16, display: 'inline', margin: '0 4px' } // 给眼神不太好的同学专门的设计
-
-  const handleDeleteModule: MouseEventHandler<HTMLButtonElement> = e => {
-    e.preventDefault()
-    const message = (
-      <div style={{ width: 800 }}>
-        <div>
-          <div style={dangerousStyles}>{t('Module')}</div>
-          {t('Deleted after')}
-          <div style={dangerousStyles}>{t('unrecoverable')}</div>
-          {t('! And will be deleted')}
-          <div style={dangerousStyles}>{t('The relevant interface')}</div>！</div>
-        <div>
-          {t('Confirm delete')}『#{mod.id} ${mod.name}』{t('?')}
-        </div>
-      </div>
-    )
-    confirm({
-      title: t('Confirm delete module'),
-      content: message,
-    }).then(() => {
-      dispatch(
-        deleteModule(
-          props.mod.id,
-          () => {
-            // TODO:
-          },
-          repository!.id
-        )
-      )
-    })
-  }
+  const auth = useSelector((state: RootState) => state.auth)
+  const { repository, itf, itfs = [], mod, tagIds, onSelectTags } = props
 
   const handleSort = (_: any, sortable: any) => {
     dispatch(
@@ -190,16 +161,15 @@ function InterfaceList(props: InterfaceListProps) {
     return <div style={{ height: 600 }}>{t('Please add the module')}</div>
   }
 
-
   return (
     <article className="InterfaceList">
       {repository.canUserEdit ? (
         <div className="header">
           <Button
             className="newIntf"
-            variant="outlined"
-            fullWidth={true}
+            variant="contained"
             color="primary"
+            fullWidth={true}
             onClick={() => setInterfaceFormOpen(true)}
           >
             {t('Create Interface')}
@@ -212,42 +182,24 @@ function InterfaceList(props: InterfaceListProps) {
             open={interfaceFormOpen}
             onClose={() => setInterfaceFormOpen(false)}
           />
-
-          <ButtonGroup fullWidth={true} size="medium">
-            <Button variant="outlined" color="primary" onClick={() => setModuleFormOpen(true)}>
-              {t('modify module')}
-            </Button>
-            <Button variant="outlined" color="primary" onClick={() => setMoveModuleFormOpen(true)}>
-              {t('Move/copy module')}
-            </Button>
-            <Button variant="outlined" color="primary" onClick={handleDeleteModule}>
-              {t('Delete module')}
-            </Button>
-          </ButtonGroup>
-
-          {moduleFormOpen && (
-            <ModuleForm
-              title={t('modify module')}
-              module={mod}
-              repository={repository}
-              open={moduleFormOpen}
-              onClose={() => setModuleFormOpen(false)}
-            />
-          )}
-
-          {moveModuleFormOpen && (
-            <MoveModuleForm
-              title={t('Move/copy module')}
-              mod={mod}
-              repository={repository}
-              open={moveModuleFormOpen}
-              onClose={() => setMoveModuleFormOpen(false)}
-            />
-          )}
         </div>
       ) : null}
+
+      <Box sx={{ marginBottom: '0.65rem' }}>
+        <InterfaceTagSelect
+          canUserEdit={repository?.canUserEdit}
+          repositoryId={repository.id}
+          tagIds={tagIds}
+          onChange={onSelectTags}
+        />
+      </Box>
       {itfs.length ? (
-        <Box className="scrollWrapper" sx={theme => ({ border: `1px solid ${theme.palette.primary.main}` })}>
+        <Box
+          className="scrollWrapper"
+          sx={(theme) => ({
+            border: `1px solid ${theme.palette.primary.main}`,
+          })}
+        >
           <CustomScroll>
             <RSortable onChange={handleSort} disabled={!repository.canUserEdit}>
               <ul className="body">
@@ -255,7 +207,14 @@ function InterfaceList(props: InterfaceListProps) {
                   <Box
                     component="li"
                     key={item.id}
-                    sx={theme => ({ borderBottom: `1px solid ${theme.palette.primary.main}`, ...item.id === itf!.id ? { borderLeft: `3px solid ${theme.palette.primary.main}` }: {} })}
+                    sx={(theme) => ({
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                      ...(item.id === itf!.id
+                        ? {
+                          borderLeft: `3px solid ${theme.palette.primary.main}`,
+                        }
+                        : {}),
+                    })}
                     className="sortable"
                     data-id={item.id}
                   >

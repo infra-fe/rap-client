@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './Dialog.css'
+import './Dialog.sass'
 type DialogProps = any
 type DialogState = any
 class Dialog extends Component<DialogProps, DialogState> {
@@ -19,9 +19,13 @@ class Dialog extends Component<DialogProps, DialogState> {
     })
   }
   rePosition = () => {
-    const left = (document.documentElement.clientWidth - this.related.clientWidth) / 2
+    const left =
+            (document.documentElement.clientWidth - this.related.clientWidth) /
+            2
     const top =
-      (document.documentElement.clientHeight - this.related.clientHeight) / 2
+            (document.documentElement.clientHeight -
+                this.related.clientHeight) /
+            2
     this.related.style.left = left + 'px'
     this.related.style.top = top + 'px'
   }
@@ -47,15 +51,21 @@ class Dialog extends Component<DialogProps, DialogState> {
     window.removeEventListener('resize', this.rePosition)
   }
   render() {
-    if (!this.state.visible) { return null }
+    if (!this.state.visible) {
+      return null
+    }
     return (
       <div
         className="dialog"
-        ref={related => {
+        ref={(related) => {
           this.related = related
         }}
       >
-        <button type="button" className="dialog-close" onClick={this.close}>
+        <button
+          type="button"
+          className="dialog-close"
+          onClick={this.close}
+        >
           <span className="rapfont">&#xe74c;</span>
         </button>
         <div className="dialog-content">

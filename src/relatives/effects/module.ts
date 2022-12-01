@@ -1,13 +1,9 @@
-import {
-  call,
-  put,
-  select,
-} from 'redux-saga/effects'
+import { RootState } from 'actions/types'
+import { replace } from 'family'
+import { call, put, select } from 'redux-saga/effects'
 import * as ModuleAction from '../../actions/module'
 import * as RepositoryAction from '../../actions/repository'
 import EditorService from '../services/Editor'
-import { RootState } from 'actions/types'
-import { replace } from 'family'
 
 export function* addModule(action: any) {
   try {
@@ -15,7 +11,7 @@ export function* addModule(action: any) {
     yield put(ModuleAction.addModuleSucceeded(module))
     const router = yield select((state: RootState) => state.router)
     const { pathname, hash, query } = router.location
-    yield put(replace(pathname + hash + `?id=${query.id}&mod=${module.id}`))
+    yield put(replace(pathname + hash + `?id=${query.id}&mod=${module.id}${module.versionId ? `&versionId=${module.versionId}` : ''}`))
     yield put(RepositoryAction.refreshRepository())
     if (action.onResolved) { action.onResolved() }
   } catch (e) {
@@ -52,7 +48,7 @@ export function* moveModule(action: any) {
     yield call(EditorService.moveModule, params)
     const router = yield select((state: RootState) => state.router)
     const { pathname, hash, query } = router.location
-    yield put(replace(pathname + hash + `?id=${query.id}`))
+    yield put(replace(pathname + hash + `?id=${query.id}${query.versionId ? `&versionId=${query.versionId}` : ''}`))
     yield put(RepositoryAction.refreshRepository())
     action.onResolved && action.onResolved()
   } catch (e) {
@@ -65,7 +61,7 @@ export function* deleteModule(action: any) {
     yield put(ModuleAction.deleteModuleSucceeded(count))
     const router = yield select((state: RootState) => state.router)
     const { pathname, hash, query } = router.location
-    yield put(replace(pathname + hash + `?id=${query.id}`))
+    yield put(replace(pathname + hash + `?id=${query.id}${query.versionId ? `&versionId=${query.versionId}` : ''}`))
     yield put(RepositoryAction.refreshRepository())
     if (action.onResolved) { action.onResolved() }
   } catch (e) {

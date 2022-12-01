@@ -1,9 +1,9 @@
 import moment, { Moment } from 'moment'
 
-const formatDate = (d: Date | string | Moment) => `${moment(d).format('YYYY-MM-DD')}`
-const formatTime = (d: Date | string | Moment) => `${moment(d).format('HH:mm')}`
-const formatDateTime = (d: Date | string | Moment) => `${formatDate(d)} ${formatTime(d)}`
-
+const formatDate = (d: Date | string | Moment | number) => `${moment(d).format('YYYY-MM-DD')}`
+const formatTime = (d: Date | string | Moment | number ) => `${moment(d).format('HH:mm')}`
+export const formatDateTime = (d: Date | string | Moment | number) => `${formatDate(d)} ${formatTime(d)}`
+export const formatDateTimeSecond = (d: number) => formatDateTime(d * 1000)
 /** 时间转分钟，例如 2:30 -》 150分钟 */
 export const parseTimeToMinutes = (str?: string) => {
   const strArr = str?.split(':')

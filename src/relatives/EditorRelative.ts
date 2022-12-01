@@ -1,7 +1,7 @@
 // import * as OrganizationAction from '../actions/organization'
 // import * as RespositoryAction from '../actions/repository'
-import * as ModuleEffects from './effects/module'
 import * as InterfaceEffects from './effects/interface'
+import * as ModuleEffects from './effects/module'
 import * as PropertyEffects from './effects/property'
 import * as SceneEffects from './effects/scene'
 
@@ -10,6 +10,13 @@ export default {
     copyId(state = null, action: any) {
       switch (action.type) {
         case 'UPDATE_COPY_ID':
+          return action.payload
+      }
+      return state
+    },
+    tags(state = [], action: any) {
+      switch (action.type) {
+        case 'UPDATE_TAG_LIST':
           return action.payload
       }
       return state

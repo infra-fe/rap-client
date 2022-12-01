@@ -1,5 +1,5 @@
 import { IDefaultVal } from 'components/editor/DefaultValueModal'
-import { ImportSwagger } from './types'
+import { ImportSwagger, RepositoryVersion } from './types'
 
 export const addRepository = (repository: any, onResolved: () => void) => ({ type: 'REPOSITORY_ADD', repository, onResolved })
 export const addRepositorySucceeded = (repository: any) => ({ type: 'REPOSITORY_ADD_SUCCEEDED', repository })
@@ -26,7 +26,7 @@ export const fetchRepositorySucceeded = (repository: any) => ({ type: 'REPOSITOR
 export const fetchRepositoryFailed = (message: string) => ({ type: 'REPOSITORY_FETCH_FAILED', message })
 
 export const refreshRepository = () => ({ type: 'REPOSITORY_REFRESH' })
-export const repositoryLocationChange = ({ id, repository }: any) => ({ type: 'REPOSITORY_LOCATION_CHANGE', id, repository })
+export const repositoryLocationChange = ({ id, repository, versionId }: any) => ({ type: 'REPOSITORY_LOCATION_CHANGE', id, repository, versionId })
 
 export const clearRepository = () => ({ type: 'REPOSITORY_CLEAR' })
 
@@ -60,3 +60,16 @@ export const updateDefaultValsSucceeded = () => ({ type: 'UPDATE_DEFAULT_VALS_SU
 export const updateDefaultValsFailed = (payload: { message: string }) => ({ type: 'UPDATE_DEFAULT_VALS_FAILED', payload })
 
 export type IUpdateDefaultValsAction = ReturnType<typeof updateDefaultVals>
+
+export const refreshToken = (id: number, onResolved?: ({id, token}) => void, onRejected?: () => void) => ({ type: 'REFRESH_REPOSITORY_TOKEN', id, onResolved, onRejected })
+export const refreshTokenSucceeded = (payload: {token: string}) => ({ type: 'REFRESH_REPOSITORY_TOKEN_SUCCEEDED', payload })
+export const refreshTokenFailed = (payload: {message: string}) => ({ type: 'REFRESH_REPOSITORY_TOKEN_FAILED', payload })
+
+export type IRefreshTokenAction = ReturnType<typeof refreshToken>
+
+
+export const initVersion = (id: number, onResolved?: (data: RepositoryVersion) => void, onRejected?: () => void) => ({ type: 'INIT_REPOSITORY_VERSION', id, onResolved, onRejected })
+export const initVersionSucceeded = (payload: {data: RepositoryVersion}) => ({ type: 'INIT_REPOSITORY_VERSION_SUCCEEDED', payload })
+export const initVersionFailed = (payload: {message: string}) => ({ type: 'INIT_REPOSITORY_VERSION_FAILED', payload })
+
+export type IInitVersionAction = ReturnType<typeof initVersion>

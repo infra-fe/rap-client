@@ -1,8 +1,8 @@
-import { CREDENTIALS, serve } from './constant'
-import { IDefaultVal } from 'components/editor/DefaultValueModal'
-import { ENTITY_TYPE } from 'utils/consts'
-import { IMPORT_TYPE } from 'components/repository/ImportSwaggerRepositoryForm'
 import { Repository } from 'actions/types'
+import { IDefaultVal } from 'components/editor/DefaultValueModal'
+import { IMPORT_TYPE } from 'components/repository/ImportSwaggerRepositoryForm'
+import { ENTITY_TYPE } from 'utils/consts'
+import { CREDENTIALS, serve } from './constant'
 
 // 仓库
 export default {
@@ -26,10 +26,12 @@ export default {
       .then(res => res.json())
     // .then(json => json.data)
   },
-  fetchRepository(id: number, token?: string) {
+  fetchRepository(id: number, token?: string, versionId?: number) {
     return fetch(
       `${serve}/repository/get?id=${id}&excludeProperty=true${
         token !== undefined ? `&token=${token}` : ''
+      }${
+        versionId !== undefined ? `&versionId=${versionId}` : ''
       }`,
       { ...CREDENTIALS }
     )
@@ -82,7 +84,7 @@ export default {
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' },
     })
-      .then(res => res.json())
+      .then(res => res.json()).catch(reason => reason)
   },
   getSwaggerRepository(data: any) {
     return fetch(`${data.docUrl}`, {
@@ -111,9 +113,14 @@ export default {
     })
       .then(res => res.json())
   },
-  fetchHistoryLogs({ entityId, entityType, limit, offset }:
-  { entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; limit: number; offset: number }) {
-    return fetch(`${serve}/${entityType === ENTITY_TYPE.INTERFACE ? 'interface' : 'repository'}/history/${entityId}?limit=${limit}&offset=${offset}`, { ...CREDENTIALS })
+  fetchHistoryLogs({ versionId, entityId, entityType, limit, offset }:
+  { versionId?: number; entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; limit: number; offset: number }) {
+    return fetch(`${serve}/${entityType === ENTITY_TYPE.INTERFACE ? 'interface' : 'repository'}/history/${entityId}?limit=${limit}&offset=${offset}${versionId ? `&versionId=${versionId}` : ''}`, { ...CREDENTIALS })
+      .then(res => res.json())
+      .then(json => json.data)
+  },
+  refreshToken(id: number) {
+    return fetch(`${serve}/repository/settings/token/update?id=${id}`, { ...CREDENTIALS, method: 'POST' })
       .then(res => res.json())
       .then(json => json.data)
   },

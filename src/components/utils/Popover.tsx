@@ -1,9 +1,15 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import './Popover.css'
+import './Popover.sass'
 
 // 烦恼：没有 jQuery .offset() 处理定位好麻烦
-const [TOP, BOTTOM, LEFT, RIGHT, CENTER] = ['top', 'bottom', 'left', 'right', 'center']
+const [TOP, BOTTOM, LEFT, RIGHT, CENTER] = [
+  'top',
+  'bottom',
+  'left',
+  'right',
+  'center',
+]
 class Popover extends Component<any, any> {
   timer: any
   related: any
@@ -98,19 +104,31 @@ class Popover extends Component<any, any> {
     const related = this.related
     let offset = this.replacement(elem, related)
     offset = this.realign(elem, related, offset)
-    offset.top += parseFloat(window.getComputedStyle(related).marginTop || '0')
-    offset.left += parseFloat(window.getComputedStyle(related).marginLeft || '0')
+    offset.top += parseFloat(
+      window.getComputedStyle(related).marginTop || '0'
+    )
+    offset.left += parseFloat(
+      window.getComputedStyle(related).marginLeft || '0'
+    )
     related.style.top = offset.top + 'px'
     related.style.left = offset.left + 'px'
   }
   componentDidMount() {
-    if (this.state.visible) { this.reposition() }
+    if (this.state.visible) {
+      this.reposition()
+    }
   }
   render() {
     let popover
     if (this.state.visible) {
       popover = (
-        <div className={`popover ${this.state.placement}`} style={{ width: this.props.width }} ref={related => { this.related = related }}>
+        <div
+          className={`popover ${this.state.placement}`}
+          style={{ width: this.props.width }}
+          ref={(related) => {
+            this.related = related
+          }}
+        >
           <div className="arrow" />
           <div className="popover-title">{this.props.title}</div>
           <div className="popover-content">{this.props.content}</div>
@@ -118,7 +136,11 @@ class Popover extends Component<any, any> {
       )
     }
     return (
-      <span className={`Popover ${this.props.className || ''}`} onMouseOver={this.show} onMouseOut={this.hide}>
+      <span
+        className={`Popover ${this.props.className || ''}`}
+        onMouseOver={this.show}
+        onMouseOut={this.hide}
+      >
         {this.props.children}
         {popover}
       </span>

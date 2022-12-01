@@ -1,18 +1,18 @@
-import { useTranslation, Translation } from 'react-i18next'
-import React, { Component } from 'react'
-import { PropTypes, connect, _ } from '../../family'
+import { fetchInterface, lockInterface, unlockInterface, updateCopyId, updateInterface } from 'actions/interface'
+import { updateProperties } from 'actions/property'
+import { Property, Repository, RootState } from 'actions/types'
+import _ from 'lodash'
+import { ProviderContext, withSnackbar } from 'notistack'
+import { Component } from 'react'
+import { Translation, useTranslation } from 'react-i18next'
+import { fetchRepository } from '../../actions/repository'
+import Spin from '../../components/utils/Spin'
+import { connect, PropTypes } from '../../family'
+import i18n from '../../i18n'
 import InterfaceEditorToolbar from './InterfaceEditorToolbar'
 import InterfaceSummary from './InterfaceSummary'
-import PropertyList from './PropertyList'
 import MoveInterfaceForm from './MoveInterfaceForm'
-import { fetchRepository } from '../../actions/repository'
-import { RootState, Property, Repository } from 'actions/types'
-import { lockInterface, unlockInterface, fetchInterface, updateCopyId } from 'actions/interface'
-import { updateProperties } from 'actions/property'
-import { updateInterface } from 'actions/interface'
-import Spin from '../../components/utils/Spin'
-import i18n from '../../i18n'
-import { ProviderContext, withSnackbar } from 'notistack'
+import PropertyList from './PropertyList'
 export const RequestPropertyList = (props: any) => {
   const { t } = useTranslation()
   return <PropertyList scope="request" title={t('Request Parameters')} label={t('Request')} {...props} />
@@ -158,12 +158,13 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
               auth={auth}
               repository={repository}
               editable={editable}
-              itfId={itf.id}
+              itf={itf}
               moveInterface={this.handleMoveInterface}
               handleEditInterface={this.handleEditInterface}
               handleMoveInterface={this.handleMoveInterface}
               handleSaveInterfaceAndProperties={(e) => this.handleSaveInterfaceAndProperties(e, t)}
               handleUnlockInterface={this.handleUnlockInterface}
+              onValidate={onValidate}
             />
           )}</Translation>
         <InterfaceSummary
@@ -174,7 +175,6 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
           editable={editable}
           stateChangeHandler={this.summaryStateChange}
           handleChangeInterface={this.handleChangeInterface}
-          onValidate={onValidate}
         />
 
         {this.state.properties ? (
@@ -342,6 +342,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         status: itf.status,
         description: itf.description,
         isTmpl: itf.isTmpl,
+        tagIds: itf.tagIds || itf.tags.map(v => v.id) || [],
       },
       () => {
         /** empty */

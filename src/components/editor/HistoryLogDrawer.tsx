@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next'
-import React, { useEffect, useState } from 'react'
-import { List, ListItem, ListItemText, Drawer, ListItemSecondaryAction, IconButton, TablePagination, Button } from '@mui/material'
-import { ENTITY_TYPE, TablePaginationProps } from 'utils/consts'
-import RepositoryService from '../../relatives/services/Repository'
-import DateUtility from 'utils/DateUtility'
-import Markdown from 'markdown-to-jsx'
-import NoData from 'components/common/NoData'
 import DownloadIcon from '@mui/icons-material/GetApp'
+import { Button, Drawer, IconButton, List, ListItem, ListItemSecondaryAction, ListItemText, TablePagination } from '@mui/material'
+import NoData from 'components/common/NoData'
+import Markdown from 'markdown-to-jsx'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { serve } from 'relatives/services/constant'
+import { ENTITY_TYPE, TablePaginationProps } from 'utils/consts'
+import DateUtility from 'utils/DateUtility'
+import RepositoryService from '../../relatives/services/Repository'
 
 export interface HistoryLog {
   id: number
@@ -42,6 +42,7 @@ const HistoryDirection = {
   'updated': '更新了',
   'added': '新增了',
   'data is backup': '数据已备份',
+  'repository has been updated by importing swagger data': '仓库导入了新的Swagger数据',
 }
 const FormattedRow = ({ row }: { row: HistoryLog }) => {
   const [expanded, setExpanded] = useState(false)
@@ -80,7 +81,7 @@ const FormattedRow = ({ row }: { row: HistoryLog }) => {
           size="small"
           className="mb1"
         >
-          {expanded ? t('Fold') : t('Unfold')}
+          {expanded ? t('fold') : t('unfold')}
         </Button>
       )}
     </div>
@@ -89,15 +90,15 @@ const FormattedRow = ({ row }: { row: HistoryLog }) => {
 
 const EMPTY = { rows: [], count: 0 }
 
-function HistoryLogDrawer({ entityId, entityType, open, onClose }:
-{ entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; open: boolean; onClose: () => void }) {
+function HistoryLogDrawer({ versionId, entityId, entityType, open, onClose }:
+{ versionId?: number; entityId: number; entityType: ENTITY_TYPE.INTERFACE | ENTITY_TYPE.REPOSITORY; open: boolean; onClose: () => void }) {
   const [result, setResult] = useState<IPagerList<HistoryLog>>(EMPTY)
   const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(0)
   const { t } = useTranslation()
   useEffect(() => {
     if (open) {
-      RepositoryService.fetchHistoryLogs({ entityId, entityType, limit, offset: page * limit }).then(res => {
+      RepositoryService.fetchHistoryLogs({ versionId, entityId, entityType, limit, offset: page * limit }).then(res => {
         setResult(res)
       })
     }
@@ -111,7 +112,7 @@ function HistoryLogDrawer({ entityId, entityType, open, onClose }:
       <List sx={{ width: '650px', overflow: 'auto', height: 'calc(100% - 50px)' }}>
         {result.rows.map(row => (
           <ListItem key={row.id}>
-            <ListItemText primary={<FormattedRow row={row} />} secondary={`${DateUtility.formatDate(row.createdAt)} by ${row.user.fullname}`} />
+            <ListItemText primary={<FormattedRow row={row} />} secondary={`${DateUtility.formatDateTime(row.createdAt)} by ${row.user.fullname}`} />
             {!row.jsonDataIsNull &&
               <ListItemSecondaryAction>
                 <IconButton

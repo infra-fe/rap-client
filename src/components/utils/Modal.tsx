@@ -1,7 +1,7 @@
 // DONE 2.x 待解决 context 不完整的问题（引入 react-modal）
 import React, { Component } from 'react'
 import { PropTypes, render, Provider } from '../../family'
-import './Modal.css'
+import './Modal.sass'
 
 /*
   <div className='modal-header'>
@@ -24,8 +24,10 @@ class Modal extends Component<any, any> {
   $backdrop: any
   $dialog: any
   static rePosition($dialog: any) {
-    const left = (document.documentElement.clientWidth - $dialog.clientWidth) / 2
-    const top = (document.documentElement.clientHeight - $dialog.clientHeight) / 2
+    const left =
+            (document.documentElement.clientWidth - $dialog.clientWidth) / 2
+    const top =
+            (document.documentElement.clientHeight - $dialog.clientHeight) / 2
     $dialog.style.left = left + 'px'
     $dialog.style.top = top + 'px'
   }
@@ -59,9 +61,18 @@ class Modal extends Component<any, any> {
     }
     const dialog = (
       <Provider store={(this.context as any).store}>
-        <div className="Modal" ref={$dialog => { this.$dialog = $dialog }}>
+        <div
+          className="Modal"
+          ref={($dialog) => {
+            this.$dialog = $dialog
+          }}
+        >
           {this.props.children}
-          <button type="button" className="close" onClick={() => this.props.onClose()}>
+          <button
+            type="button"
+            className="close"
+            onClick={() => this.props.onClose()}
+          >
             <span className="rapfont">&#xe74c;</span>
           </button>
         </div>
@@ -81,7 +92,9 @@ class Modal extends Component<any, any> {
     Modal.rePosition(this.$dialog)
   }
   handleEsc = (e: any) => {
-    if (e.keyCode === 27) { this.props.onClose() }
+    if (e.keyCode === 27) {
+      this.props.onClose()
+    }
   }
   // if (!this.state.visible) {
   //   if ($backdrop) document.body.removeChild($backdrop)

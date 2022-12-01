@@ -7,7 +7,7 @@ import { Spin } from '../utils'
 import OwnedRepositoriesCard from './OwnedRepositoriesCard'
 import JoinedRepositoriesCard from './JoinedRepositoriesCard'
 import LogsCard from './LogsCard'
-import './Home.css'
+import './Home.sass'
 import { RootState } from 'actions/types'
 import Button from '@mui/material/Button'
 import RepositoryForm from 'components/repository/RepositoryForm'
@@ -22,7 +22,9 @@ const Maiden = () => {
         className="RepositoryCreateButton"
         variant="contained"
         color="primary"
-        onClick={() => { setCreating(true) }}
+        onClick={() => {
+          setCreating(true)
+        }}
       >
         {t('Create Repository')}
       </Button>
@@ -42,7 +44,9 @@ const Maiden = () => {
 
 // 展示组件
 const Home = ({ owned, joined, logs }: any) => {
-  if (owned.fetching || joined.fetching || logs.fetching) { return <Spin /> }
+  if (owned.fetching || joined.fetching || logs.fetching) {
+    return <Spin />
+  }
 
   if (!owned.data.length && !joined.data.length) {
     return (
@@ -74,8 +78,5 @@ const mapStateToProps = (state: RootState) => ({
   joined: state.joinedRepositories,
   logs: state.logs,
 })
-const mapDispatchToProps = ({})
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home)
+const mapDispatchToProps = {}
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

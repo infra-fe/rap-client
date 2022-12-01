@@ -1,9 +1,21 @@
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
-import { IJSONEditorProperty, IJSONEditorInstance, IJSONEditorOptions, IJSONSchema, IJSON } from './JSONEditorTypes'
+import {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from 'react'
+import {
+  IJSONEditorProperty,
+  IJSONEditorInstance,
+  IJSONEditorOptions,
+  IJSONSchema,
+  IJSON,
+} from './JSONEditorTypes'
 
 import JED from 'jsoneditor'
 import 'jsoneditor/dist/jsoneditor.css'
-import './JSONEditor.css'
+import './JSONEditor.sass'
 
 const DefaultOptions: IJSONEditorOptions = {
   // schema: schema,
@@ -75,7 +87,6 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
     }
   }, [data])
   useEffect(() => {
-
     return () => {
       // unmount
       if (editor) {
@@ -86,9 +97,9 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
   }, [editor])
 
   /**
-   * 切换是否可编辑
-   * @param jsonEditor
-   */
+     * 切换是否可编辑
+     * @param jsonEditor
+     */
   function switchEditable(jsonEditor?: any) {
     jsonEditor = jsonEditor || editor
     if (disabled) {
@@ -104,9 +115,9 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
 
   // ================== 编辑器实例暴露方法 ==================
   /**
-   * 设置校验规则
-   * @param schema
-   */
+     * 设置校验规则
+     * @param schema
+     */
   const _setSchema = (schema: IJSONSchema) => {
     if (schema) {
       setSchema(schema)
@@ -114,23 +125,23 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
     }
   }
   /**
-   * 获取校验规则
-   * @returns
-   */
+     * 获取校验规则
+     * @returns
+     */
   const _getSchema = () => {
     return schema
   }
   /**
-   * 设置json数据
-   * @param json
-   */
+     * 设置json数据
+     * @param json
+     */
   const _setJSON = (json: IJSON) => {
     setData(json)
   }
   /**
-   * 获取json数据
-   * @returns
-   */
+     * 获取json数据
+     * @returns
+     */
   const _getJSON = () => {
     try {
       return editor?.get() ?? data
@@ -141,11 +152,11 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
     }
   }
   /**
-   * 进行json数据校验
-   * @param json
-   * @param schema
-   * @returns
-   */
+     * 进行json数据校验
+     * @param json
+     * @param schema
+     * @returns
+     */
   const _validate = (json?: IJSON, jsonSchema?: IJSONSchema) => {
     json = json ?? _getJSON()
     jsonSchema = jsonSchema ?? schema
@@ -176,7 +187,6 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
     return json_ajv
   }
 
-
   const imperativeHandle: IJSONEditorInstance = {
     setSchema: _setSchema,
     getSchema: _getSchema,
@@ -189,7 +199,10 @@ function JSONEditor(props: IJSONEditorProperty, ref: any) {
 
   return (
     <div className="jsoneditor-parent" style={style}>
-      <div className={`jsoneditor-container ${disabled ? 'noTools' : ''}`} ref={$editorContainerRef} />
+      <div
+        className={`jsoneditor-container ${disabled ? 'noTools' : ''}`}
+        ref={$editorContainerRef}
+      />
       {/* <div className={`jsoneditor-cover ${disabled ? 'show' : 'hide'}`}></div> */}
     </div>
   )

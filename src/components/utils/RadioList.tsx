@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import './RadioList.css'
+import './RadioList.sass'
 
 /**
  *
@@ -24,32 +24,31 @@ class RadioList extends Component<any, any> {
     const that = this
     return (
       <div className="ctl-radio-list">
-        {
-          this.props.data.map((item: any) => (
-            <label className="label mr8" key={item.value}>
-              <input
-                className="input"
-                type="radio"
-                name={that.props.name}
-                value={item.value}
-                disabled={that.props.disabled}
-                checked={this.state.curVal + '' === item.value + ''}
-                data-log={typeof this.state.curVal + '|' + typeof item.value}
-                onChange={e => that.handleChange(e)}
-              />
-              {item.label}
-            </label>
-          ))
-        }
+        {this.props.data.map((item: any) => (
+          <label className="label mr8" key={item.value}>
+            <input
+              className="input"
+              type="radio"
+              name={that.props.name}
+              value={item.value}
+              disabled={that.props.disabled}
+              checked={this.state.curVal + '' === item.value + ''}
+              data-log={
+                typeof this.state.curVal +
+                                '|' +
+                                typeof item.value
+              }
+              onChange={(e) => that.handleChange(e)}
+            />
+            {item.label}
+          </label>
+        ))}
       </div>
     )
   }
 }
 
 const mapStateToProps = () => ({})
-const mapDispatchToProps = ({})
+const mapDispatchToProps = {}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(RadioList)
+export default connect(mapStateToProps, mapDispatchToProps)(RadioList)

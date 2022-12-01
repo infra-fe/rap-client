@@ -1,24 +1,26 @@
-import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Typography, Select, MenuItem, Button, TextField, FormControlLabel, Grid, RadioGroup, Radio } from '@mui/material'
-import PanelTitle from './PanelTitle'
+import { Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, Select, Switch, TextField, Typography } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
-import { Formik, Form } from 'formik'
-import { METHODS } from '../editor/InterfaceForm'
-import ParamsEditor from '../ParamsEditor/ParamsEditor'
-import { CommonProps, ResponseValidatorProps, RequestParamsProps, IRequestBaseData, IRequestParamsData, ICheckSavedResult } from './types'
-import JSONEditor from '../JSONEditor/JSONEditor'
-import { createJSONSchema, createJSONData, filterProperties, mockPropertiesValue, getJSONData, updatePropertiesOfID, mergeValidateErrors } from '../JSONEditor/JSONEditorUtils'
-import { IJSONEditorInstance, IJSONEditorOptions, IValidateError } from '../JSONEditor/JSONEditorTypes'
-import { BODY_OPTION_LIST } from '../editor/InterfaceSummary'
-import { getDefaultServer, invoke } from './RequestUtils'
-import { uniqueId, cloneDeep } from 'lodash'
-import { BaseServerStorage, GlobalHeadersStorage, TargetResponseStorage, RequestParamsStorage, ExpireTimeEnum } from 'utils/Storage'
+import { Form, Formik } from 'formik'
+import { cloneDeep, uniqueId } from 'lodash'
 import { useSnackbar } from 'notistack'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { mergeObject, mergeObjectListBy } from 'utils/DataUtils'
+import { BaseServerStorage, ExpireTimeEnum, GlobalHeadersStorage, RequestParamsStorage, TargetResponseStorage } from 'utils/Storage'
+import { METHODS } from '../editor/InterfaceForm'
+import { BODY_OPTION_LIST } from '../editor/InterfaceSummary'
+import JSONEditor from '../JSONEditor/JSONEditor'
+import { IJSONEditorInstance, IJSONEditorOptions, IValidateError } from '../JSONEditor/JSONEditorTypes'
+import { createJSONData, createJSONSchema, filterProperties, getJSONData, mergeValidateErrors, mockPropertiesValue, updatePropertiesOfID } from '../JSONEditor/JSONEditorUtils'
+import ParamsEditor from '../ParamsEditor/ParamsEditor'
+import PanelTitle from './PanelTitle'
+import { getDefaultServer, invoke } from './RequestUtils'
+import { CommonProps, FreePropertyType, ICheckSavedResult, IRequestBaseData, IRequestParamsData, RequestParamsProps, ResponseValidatorProps } from './types'
 
 export function RequestPanel(props: CommonProps, ref: any) {
-  const { repository, itf } = props
+  const { repository, itf, importData } = props
   const $resultArea = useRef(null)
+  const $RequestParams = useRef(null)
   const { t } = useTranslation()
   // const dispatch = useDispatch()
 
@@ -56,18 +58,20 @@ export function RequestPanel(props: CommonProps, ref: any) {
   const S_GLOBAL_KEY = `P${repository.id}` // 全局头信息
 
   const initData = async () => {
+    const { baseServer: importBaseServer, headers: importHeaders, isCover } = importData || {}
     const local_baseServer = await BaseServerStorage.get(S_SERVER_KEY)
     const local_globalHeaders = await GlobalHeadersStorage.get(S_GLOBAL_KEY)
 
-    const headers = local_globalHeaders?.length ? getJSONData(local_globalHeaders) : null
+    const baseServer = isCover ? importBaseServer : mergeObject(local_baseServer, importBaseServer)
+    const headers = isCover ? importHeaders : mergeObject(getJSONData(local_globalHeaders), importHeaders)
 
-    local_baseServer && setBaseServer(local_baseServer)
+    baseServer && setBaseServer(baseServer)
     headers && setGlobalHeaders(headers)
   }
 
   useEffect(() => {
     initData()
-  }, [])
+  }, [importData])
 
   const handleInvoke = async (requestBase: IRequestBaseData, params: IRequestParamsData, onSuccess?: () => void, onFail?: () => void) => {
     let { headerParams, queryParams, bodyParams } = params
@@ -122,7 +126,7 @@ export function RequestPanel(props: CommonProps, ref: any) {
     }
   }
   const checkAndAutoSave = () => {
-    // 无需实现
+    $RequestParams?.current?.saveData?.()
   }
   useImperativeHandle(ref, () => ({
     checkSaved: checkSaved,
@@ -148,7 +152,7 @@ export function RequestPanel(props: CommonProps, ref: any) {
           // { icon: LockOutlined, hide: !isLocked, props: { title: t('Locked'), onClick: handleLock } },
           // { icon: LockOpenOutlined, hide: isLocked, props: { title: t('Unlocked'), onClick: handleLock } },
         ]} />
-      <RequestParams  {...props} isLocked={false} onInvoke={handleInvoke} />
+      <RequestParamsWrapper ref={$RequestParams}  {...props} isLocked={false} onInvoke={handleInvoke} />
 
       {/* 结果校验 */}
       <div ref={$resultArea}></div>
@@ -190,19 +194,26 @@ const DefaultBaseData = {
 }
 
 function RequestParams(props: RequestParamsProps, ref: any) {
-  const { itf, mod, repository, isLocked, onInvoke } = props
+  const { itf, mod, repository, importData, isLocked, onInvoke } = props
   const { t } = useTranslation()
 
   const [base, setBase] = useState<IRequestBaseData>(null) // {method,bodyOption,path,byProxy}
   const [params, setParams] = useState<IRequestParamsData>(null) // {headerParams:properties,queryParams:properties,bodyParams:properties}
 
-  // const S_SAVE_KEY = `P${repository.id}.M${mod.id}.I${itf.id}-RequestParams` // 按照仓库级别保存接口服务基本信息
-  const S_SAVE_KEY = `P${repository.id}.M${mod.id}.I${itf.id}` // 按照仓库级别保存接口服务基本信息
+  const S_SAVE_REPO_KEY = `P${repository.id}` // 按照仓库级别保存代理信息
+  const S_SAVE_KEY = `P${repository.id}.M${mod.id}.I${itf.id}` // 按照接口级别保存接口请求信息
 
 
   // =================== 数据初始化 ===================
   const initData = async () => {
+    const {
+      requestBase: importRequestBase,
+      queryParams: importQueryParams,
+      bodyParams: importBodyParams,
+      isCover,
+    } = importData || {}
     const data = await RequestParamsStorage.get(S_SAVE_KEY)
+    const proxyData = await RequestParamsStorage.get(S_SAVE_REPO_KEY)
     let { base, params } = data || {}
     if (!base) {
       base = {
@@ -212,6 +223,10 @@ function RequestParams(props: RequestParamsProps, ref: any) {
         byProxy: false,
       }
     }
+
+    base = isCover ? importRequestBase : mergeObject(base, importRequestBase)
+
+    base.byProxy = proxyData?.byProxy ?? importRequestBase?.byProxy
     base.bodyOption = base.bodyOption || DefaultBaseData.bodyOption
 
     if (!params) {
@@ -235,20 +250,28 @@ function RequestParams(props: RequestParamsProps, ref: any) {
       updatePropertiesOfID(params.bodyParams)
     }
 
+    params.queryParams = isCover ? importQueryParams : mergeObjectListBy<FreePropertyType>(params.queryParams, importQueryParams, 'name')
+    params.bodyParams = isCover ? importBodyParams : mergeObjectListBy<FreePropertyType>(params.bodyParams, importBodyParams, 'name')
+
     setBase(base)
     setParams(params)
   }
   useEffect(() => {
     initData()
-  }, [])
+  }, [importData])
   // =================== //数据初始化 ===================
 
   // =================== 数据保存 ===================
   const saveData = () => {
     // TODO：先不存储了，涉及文档更新后字段名同步问题，以后可以加JSONSchema校验
     RequestParamsStorage.set(S_SAVE_KEY, { base, params }, ExpireTimeEnum.oneDay * 3)
+    RequestParamsStorage.set(S_SAVE_REPO_KEY, { byProxy: base?.byProxy }, ExpireTimeEnum.oneMonth)
   }
   // =================== //数据保存 ===================
+
+  useImperativeHandle(ref, () => ({
+    saveData: saveData,
+  }))
 
   // =================== 基本数据编辑 ===================
   const [isLoading, setIsLoading] = useState(false)
@@ -260,9 +283,9 @@ function RequestParams(props: RequestParamsProps, ref: any) {
   }
   const handleInvoke = () => {
     setIsLoading(true)
+    saveData()
     onInvoke && onInvoke(base, params, () => {
       setIsLoading(false)
-      saveData()
     }, () => {
       setIsLoading(false)
     })
@@ -373,17 +396,17 @@ function RequestParams(props: RequestParamsProps, ref: any) {
                 />
               </Grid>
               <Grid item={true} xs={3}>
-                {/* <FormControlLabel
+                <FormControlLabel
                   control={
                     <Switch
                       name="byProxy" color="primary"
-                      checked={base?.byProxy || DefaultBaseData.byProxy} disabled={true}
+                      checked={base?.byProxy || DefaultBaseData.byProxy}
                       onChange={(e) => handleDataChange('byProxy', !base?.byProxy)} />
                   }
                   label={t('By Proxy')}
                   labelPlacement="start"
                   style={{ width: '100%' }}
-                /> */}
+                />
               </Grid>
               <Grid item={true} xs={1}>
                 <Button variant="contained" color="primary" disabled={isLoading} onClick={handleInvoke} style={{ width: '85px' }}>
@@ -432,6 +455,8 @@ function RequestParams(props: RequestParamsProps, ref: any) {
     </div>
   )
 }
+
+const RequestParamsWrapper = forwardRef(RequestParams)
 
 const DefaultTViewerOptions = {
   mode: 'preview',

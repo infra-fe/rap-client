@@ -1,7 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { CreateButton, OrganizationsTypeDropdown, SearchGroup, OrganizationListWithSpin, PaginationWithLocation, mapDispatchToProps } from './OrganizationListParts'
-import './Organization.css'
+import {
+  CreateButton,
+  OrganizationsTypeDropdown,
+  SearchGroup,
+  OrganizationListWithSpin,
+  PaginationWithLocation,
+  mapDispatchToProps,
+} from './OrganizationListParts'
+import './Organization.sass'
 import { RootState } from 'actions/types'
 
 // 所有团队
@@ -16,10 +23,15 @@ class JoinedOrganizationList extends Component<any, any> {
           <CreateButton />
         </nav>
         <div className="body">
-          <OrganizationListWithSpin name={location.params.name} organizations={organizations} />
+          <OrganizationListWithSpin
+            name={location.params.name}
+            organizations={organizations}
+          />
         </div>
         <div className="footer">
-          <PaginationWithLocation calculated={organizations.pagination} />
+          <PaginationWithLocation
+            calculated={organizations.pagination}
+          />
         </div>
       </section>
     )

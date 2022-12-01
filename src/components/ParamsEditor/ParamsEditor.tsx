@@ -2,7 +2,7 @@ import { PureComponent } from 'react'
 import { PropTypes } from '../../family'
 import { Tree } from '../utils'
 
-import './ParamsEditor.css'
+import './ParamsEditor.sass'
 import { cloneDeep, uniqueId } from 'lodash'
 
 import SortableTreeTable from './SortableTreeTable'
@@ -18,7 +18,6 @@ const DefaultFieldData = {
 }
 
 class ParamsEditor extends PureComponent<any, any> {
-
   static propTypes = {
     scope: PropTypes.string.isRequired,
     properties: PropTypes.array,
@@ -58,7 +57,9 @@ class ParamsEditor extends PureComponent<any, any> {
       return null
     }
 
-    const scopedProperties = cloneDeep(filterProperties(properties, scope, posFilter)) // 数据需要深度克隆，不然会被子组件污染
+    const scopedProperties = cloneDeep(
+      filterProperties(properties, scope, posFilter)
+    ) // 数据需要深度克隆，不然会被子组件污染
     const json = autoMock ? getMockData(scopedProperties) : null
 
     return (
@@ -72,17 +73,24 @@ class ParamsEditor extends PureComponent<any, any> {
             editable={editable}
             highlightId={this.state.highlightId}
             interfaceId={interfaceId}
-
             /* 字段排序 */
             handleSortProperties={this.handleSortProperties}
             /* 修改字段 */
             handleChangeProperty={this.handleChangeProperty}
-            handleChangePropertyField={this.handleChangePropertyField}
+            handleChangePropertyField={
+              this.handleChangePropertyField
+            }
             /* 删除字段 */
-            handleDeleteMemoryProperty={this.handleDeleteMemoryProperty}
+            handleDeleteMemoryProperty={
+              this.handleDeleteMemoryProperty
+            }
             /* 添加新字段 */
-            handleClickCreatePropertyButton={this.handleClickCreatePropertyButton}
-            handleClickCreateChildPropertyButton={this.handleClickCreateChildPropertyButton}
+            handleClickCreatePropertyButton={
+              this.handleClickCreatePropertyButton
+            }
+            handleClickCreateChildPropertyButton={
+              this.handleClickCreateChildPropertyButton
+            }
           />
         </div>
         <div className="footer"></div>
@@ -90,15 +98,15 @@ class ParamsEditor extends PureComponent<any, any> {
     )
   }
   /**
-   * 添加字段
-   */
+     * 添加字段
+     */
   handleClickCreatePropertyButton = () => {
     this.handleClickCreateChildPropertyButton()
   }
   /**
-   * 添加子元素字段
-   * @param parent
-   */
+     * 添加子元素字段
+     * @param parent
+     */
   handleClickCreateChildPropertyButton = (parent: any = { id: -1 }) => {
     const { handleAddMemoryProperty } = this.props
     const { scope, interfaceId } = this.props
@@ -119,11 +127,11 @@ class ParamsEditor extends PureComponent<any, any> {
     })
   }
   /**
-   * 修改一个字段
-   * @param id
-   * @param key
-   * @param value
-   */
+     * 修改一个字段
+     * @param id
+     * @param key
+     * @param value
+     */
   handleChangePropertyField = (id: number, key: any, value: any) => {
     const { handleChangeProperty } = this.props
     const { properties } = this.props
@@ -131,35 +139,37 @@ class ParamsEditor extends PureComponent<any, any> {
     handleChangeProperty({ ...property, [key]: value })
   }
   /**
-   * 修改一个字段
-   * @param id
-   * @param value
-   */
+     * 修改一个字段
+     * @param id
+     * @param value
+     */
   handleChangeProperty = (id: number, value: any) => {
     const { properties, handleChangeProperty } = this.props
     const property = properties.find((property: any) => property.id === id)
     handleChangeProperty({ ...property, ...value })
   }
   /**
-   * 删除一个字段
-   * @param e
-   * @param property
-   */
+     * 删除一个字段
+     * @param e
+     * @param property
+     */
   handleDeleteMemoryProperty = (e: any, property: any) => {
     e.preventDefault()
     const { handleDeleteMemoryProperty } = this.props
     handleDeleteMemoryProperty(property)
   }
   /**
-   * 拖拽排序
-   * @param _
-   * @param sortable
-   */
+     * 拖拽排序
+     * @param _
+     * @param sortable
+     */
   handleSortProperties = (_: any, sortable: any) => {
     const { properties } = this.props
     const ids = sortable.toArray()
     ids.forEach((id: number, index: any) => {
-      const property = properties.find((item: any) => item.id === id || item.id === +id)
+      const property = properties.find(
+        (item: any) => item.id === id || item.id === +id
+      )
       property.priority = index + 1
     })
   }

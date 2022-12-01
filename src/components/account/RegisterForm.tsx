@@ -7,7 +7,7 @@ import { addUser } from '../../actions/account'
 import { Button, Card } from '@mui/material'
 import { getBGImageUrl } from 'utils/ImageUtils'
 import { ProviderContext, withSnackbar } from 'notistack'
-import './RegisterForm.css'
+import './RegisterForm.sass'
 
 interface State {
   fullname: string
@@ -47,7 +47,10 @@ class RegisterForm extends Component<Props, State> {
     return (
       <Translation>
         {(t) => (
-          <div className="wrapper" style={{ background: this.state.bg }}>
+          <div
+            className="wrapper"
+            style={{ background: this.state.bg }}
+          >
             <Card className="RegisterForm">
               <div className="header">
                 <span className="title">{t('Register')}</span>
@@ -57,7 +60,11 @@ class RegisterForm extends Component<Props, State> {
                   <label>{t('Name:')}</label>
                   <input
                     value={this.state.fullname}
-                    onChange={e => this.setState({ fullname: e.target.value })}
+                    onChange={(e) =>
+                      this.setState({
+                        fullname: e.target.value,
+                      })
+                    }
                     className="form-control"
                     placeholder="Name"
                     autoFocus={true}
@@ -68,7 +75,11 @@ class RegisterForm extends Component<Props, State> {
                   <label>{t('Email address:')}</label>
                   <input
                     value={this.state.email}
-                    onChange={e => this.setState({ email: e.target.value })}
+                    onChange={(e) =>
+                      this.setState({
+                        email: e.target.value,
+                      })
+                    }
                     className="form-control"
                     placeholder="Email"
                     required={true}
@@ -78,14 +89,26 @@ class RegisterForm extends Component<Props, State> {
                   <label>{t('Password:')}</label>
                   <input
                     value={this.state.password}
-                    onChange={e => this.setState({ password: e.target.value })}
+                    onChange={(e) =>
+                      this.setState({
+                        password: e.target.value,
+                      })
+                    }
                     type="password"
                     className="form-control"
                     placeholder="Password"
                     required={true}
                   />
                 </div>
-                <Button type="submit" variant="contained" color="primary" style={{ marginRight: 8 }}> {t('submit')} </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: 8 }}
+                >
+                  {' '}
+                  {t('submit')}{' '}
+                </Button>
                 <Link to="/account">{t('cancel')}</Link>
               </form>
             </Card>

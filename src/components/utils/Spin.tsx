@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import React from 'react'
-import './Spin.css'
+import './Spin.sass'
 
 export default function Spin() {
   const { t } = useTranslation()
@@ -10,4 +10,5 @@ export default function Spin() {
         {t('Try very hard to loading in')}...(*╹▽╹*)
       </div>
     </section>
-  )}
+  )
+}

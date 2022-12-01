@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
-import { moveModule } from '../../actions/module'
-import { fetchOwnedRepositoryList, fetchJoinedRepositoryList } from '../../actions/repository'
-import { Dialog, DialogTitle, DialogContent, SelectChangeEvent, Box } from '@mui/material'
-import _ from 'lodash'
-import { Button, Select, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material'
-import { useSelector, useDispatch } from 'react-redux'
+import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent } from '@mui/material'
 import { Module, Repository, RootState } from 'actions/types'
+import _ from 'lodash'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
+import { moveModule } from '../../actions/module'
+import { fetchJoinedRepositoryList, fetchOwnedRepositoryList } from '../../actions/repository'
 
 import Transition from 'components/common/Transition'
+import VersionSelect from 'components/RepoSettings/VersionSelect'
 
 export const OP_MOVE = 1
 export const OP_COPY = 2
@@ -31,6 +31,8 @@ export default function MoveModuleForm(props: Props) {
   const repositories = useSelector((state: RootState) => {
     return _.uniqBy([...state.ownedRepositories.data, ...state.joinedRepositories.data], 'id')
   })
+  const [versionId, setVersionId] = useState(repository?.version?.id || null)
+  const [showVersion, setShowVersion] = useState(!!versionId)
 
   useEffect(() => {
     if (!repositories.length) {
@@ -42,6 +44,7 @@ export default function MoveModuleForm(props: Props) {
   function onRepositoryChange(e: SelectChangeEvent<number>) {
     const repositoryId = e.target.value as number
     setRepositoryId(repositoryId)
+    setShowVersion(true)
   }
 
   const handleSubmit = (e?: React.MouseEvent<HTMLFormElement>) => {
@@ -50,12 +53,21 @@ export default function MoveModuleForm(props: Props) {
       modId,
       op,
       repositoryId,
+      versionId,
     }
     dispatch(
       moveModule(params, () => {
         onClose()
       })
     )
+  }
+  const handleVersionChange = (v) => {
+    if (v) {
+      setVersionId(v.id)
+    } else {
+      setVersionId(null)
+      setShowVersion(false)
+    }
   }
   return (
     <Dialog open={open} onClose={(_event, reason) => reason !== 'backdropClick' && onClose()} TransitionComponent={Transition}>
@@ -66,7 +78,7 @@ export default function MoveModuleForm(props: Props) {
             <div style={{ color: '#CC0000', fontSize: 16, marginBottom: 8 }}>{t('note')}</div>
             <Box sx={{ mb: 1 }}>
               <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Select the target repository:')}</Box>
-              <FormControl>
+              <FormControl style={{ width: '100%' }}>
                 <Select
                   onChange={onRepositoryChange}
                   value={repositoryId}
@@ -80,6 +92,14 @@ export default function MoveModuleForm(props: Props) {
                 </Select>
               </FormControl>
             </Box>
+            {showVersion && <Box sx={{ mb: 1 }}>
+              <VersionSelect
+                repositoryId={repositoryId}
+                label="TargetVersion"
+                onChange={handleVersionChange}
+                onListChange={handleVersionChange}
+              />
+            </Box>}
             <Box sx={{ mb: 1 }}>
               <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Operation type:')}</Box>
               <RadioGroup

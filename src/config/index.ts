@@ -1,7 +1,8 @@
-
+import configDev from './config.dev'
+import configProd from './config.prod'
 const config: IConfig =
   process.env.NODE_ENV === 'development' // development or production
-    ? require('./config.dev').default
-    : require('./config.prod').default
+    ? configDev
+    : configProd
 
 export default config

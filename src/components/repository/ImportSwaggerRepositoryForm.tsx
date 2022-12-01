@@ -1,18 +1,29 @@
-import { useTranslation } from 'react-i18next'
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { FormControlLabel, RadioGroup, Radio, Box } from '@mui/material'
-import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-mui'
-import * as Yup from 'yup'
-import { convert } from '../../utils/ImportUtils'
-import { Button, Dialog, DialogActions, DialogContentText, DialogContent, DialogTitle, Tooltip } from '@mui/material'
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Tooltip,
+} from '@mui/material'
 import Transition from 'components/common/Transition'
+import { Field, Form, Formik } from 'formik'
+import { TextField } from 'formik-mui'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useDispatch } from 'react-redux'
+import * as Yup from 'yup'
+import { importSwaggerRepository } from '../../actions/repository'
 import { ImportSwagger } from '../../actions/types'
 import RepositoryService from '../../relatives/services/Repository'
-import './ImportSwaggerRepositoryForm.css'
-import { importSwaggerRepository } from '../../actions/repository'
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import { convert } from '../../utils/ImportUtils'
+import './ImportSwaggerRepositoryForm.sass'
 
 const schema = Yup.object().shape({
   docUrl: Yup.string(),
@@ -20,7 +31,7 @@ const schema = Yup.object().shape({
 })
 export enum COVER_TYPE {
   CREATE = 1,
-  COVER = 2
+  COVER = 2,
 }
 const FORM_STATE_INIT: ImportSwagger = {
   version: 1,
@@ -39,6 +50,7 @@ interface Props {
   repositoryId?: number
   mode: string
   modId?: number
+  versionId?: number
 }
 
 export enum IMPORT_TYPE {
@@ -54,7 +66,7 @@ export enum IMPORT_TYPE {
 }
 
 function ImportSwaggerRepositoryForm(props: Props) {
-  const { open, onClose, orgId, mode, repositoryId, modId } = props
+  const { open, onClose, orgId, mode, repositoryId, modId, versionId } = props
   const dispatch = useDispatch()
   const [alertOpen, setAlertOpen] = useState({ op: false, msg: '' })
   const { t } = useTranslation()
@@ -65,12 +77,23 @@ function ImportSwaggerRepositoryForm(props: Props) {
         onClose={(_event, reason) => reason !== 'backdropClick' && onClose()}
         TransitionComponent={Transition}
       >
-        <DialogTitle>{t('Import repository')}<a href="https://github.com/infra-fe/rap-client/wiki/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5Data-Import"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <HelpOutlineOutlinedIcon sx={{ fontSize: '18px', color: '#3f51b5', cursor: 'pointer', marginTop: '-2px' }} />
-        </a></DialogTitle>
+        <DialogTitle>
+          {t('Import repository')}
+          <a
+            href="https://github.com/infra-fe/rap-client/wiki/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5Data-Import"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <HelpOutlineOutlinedIcon
+              sx={{
+                fontSize: '18px',
+                color: '#3f51b5',
+                cursor: 'pointer',
+                marginTop: '-2px',
+              }}
+            />
+          </a>
+        </DialogTitle>
         <DialogContent dividers={true}>
           <Box sx={{ minWidth: '500px', minHeight: '160px' }}>
             <Formik
@@ -99,8 +122,9 @@ function ImportSwaggerRepositoryForm(props: Props) {
                   } catch (error) {
                     setAlertOpen({
                       op: true,
-                      msg:
-                        t('Unable to obtain data, please check whether your service allows CORS, or use directly paste JSON import'),
+                      msg: t(
+                        'Unable to obtain data, please check whether your service allows CORS, or use directly paste JSON import'
+                      ),
                     })
                     actions.setSubmitting(false)
                     return
@@ -124,15 +148,24 @@ function ImportSwaggerRepositoryForm(props: Props) {
                   orgId,
                   repositoryId,
                   modId,
+                  versionId,
                 }
-                const submitPromise = new Promise(resolve => {
+                const submitPromise = new Promise((resolve) => {
                   dispatch(
                     importSwaggerRepository(importSwagger, (res: any) => {
                       if (res.isOk) {
-                        setAlertOpen({ op: true, msg: t('Import success') })
-                        window.location.reload()
+                        setAlertOpen({
+                          op: true,
+                          msg: res.type === 'async' ? t('Import async') : t('Import success'),
+                        })
+                        setTimeout(() => {
+                          window.location.reload()
+                        }, 4000)
                       } else {
-                        setAlertOpen({ op: true, msg: `${t('importFailed')}：${res.message || res.errMsg}.` })
+                        setAlertOpen({
+                          op: true,
+                          msg: `${t('importFailed')}：${res.message || res.errMsg}.`,
+                        })
                       }
                       onClose(true)
                       resolve(null)
@@ -141,7 +174,6 @@ function ImportSwaggerRepositoryForm(props: Props) {
                 })
 
                 await submitPromise
-
               }}
             >
               {({ isSubmitting, setFieldValue, values }) => {
@@ -153,12 +185,17 @@ function ImportSwaggerRepositoryForm(props: Props) {
                         <RadioGroup
                           name="radioListOp"
                           value={values.version}
-                          onChange={e => {
+                          onChange={(e) => {
                             setFieldValue('version', +e.target.value)
                           }}
                           row={true}
                         >
-                          <FormControlLabel disabled={isSubmitting} value={IMPORT_TYPE.SWAGGER_2_0} control={<Radio />} label="Swagger 2.0" />
+                          <FormControlLabel
+                            disabled={isSubmitting}
+                            value={IMPORT_TYPE.SWAGGER_2_0}
+                            control={<Radio />}
+                            label="Swagger 2.0"
+                          />
                           <FormControlLabel
                             disabled={isSubmitting}
                             value={IMPORT_TYPE.RAP2_ITF_BACKUP}
@@ -181,18 +218,32 @@ function ImportSwaggerRepositoryForm(props: Props) {
                       </Box>
                       <Box sx={{ fontSize: '14px' }}>
                         {t('Merge pattern')}：
-                        <Tooltip title={t('mergeTip')} placement="right-start"><HelpOutlineOutlinedIcon sx={{ fontSize: '18px', color: '#3f51b5', cursor: 'pointer', marginTop: '-2px' }} /></Tooltip>
+                        <Tooltip title={t('mergeTip')} placement="right-start">
+                          <HelpOutlineOutlinedIcon
+                            sx={{
+                              fontSize: '18px',
+                              color: '#3f51b5',
+                              cursor: 'pointer',
+                              marginTop: '-2px',
+                            }}
+                          />
+                        </Tooltip>
                       </Box>
                       <Box sx={{ mb: 1 }}>
                         <RadioGroup
                           name="radioListOp"
                           value={values.cover}
-                          onChange={e => {
+                          onChange={(e) => {
                             setFieldValue('cover', +e.target.value)
                           }}
                           row={true}
                         >
-                          <FormControlLabel disabled={isSubmitting} value={COVER_TYPE.CREATE} control={<Radio />} label={t('Add new')} />
+                          <FormControlLabel
+                            disabled={isSubmitting}
+                            value={COVER_TYPE.CREATE}
+                            control={<Radio />}
+                            label={t('Add new')}
+                          />
                           <FormControlLabel
                             disabled={isSubmitting}
                             value={COVER_TYPE.COVER}
@@ -201,7 +252,8 @@ function ImportSwaggerRepositoryForm(props: Props) {
                           />
                         </RadioGroup>
                       </Box>
-                      {(values.version === IMPORT_TYPE.SWAGGER_2_0 || values.version === IMPORT_TYPE.RAP2_ITF_BACKUP) &&
+                      {(values.version === IMPORT_TYPE.SWAGGER_2_0 ||
+                        values.version === IMPORT_TYPE.RAP2_ITF_BACKUP) && (
                         <Box sx={{ mb: 1 }}>
                           <Field
                             placeholder=""
@@ -213,12 +265,16 @@ function ImportSwaggerRepositoryForm(props: Props) {
                             disabled={isSubmitting}
                           />
                         </Box>
-                      }
+                      )}
                       <Box sx={{ mb: 1 }}>
                         <Field
                           placeholder=""
                           name="swagger"
-                          label={values.version === IMPORT_TYPE.SWAGGER_2_0 ? `${t('copySwaggerJson')}` : `${t('copyJson')}`}
+                          label={
+                            values.version === IMPORT_TYPE.SWAGGER_2_0
+                              ? `${t('copySwaggerJson')}`
+                              : `${t('copyJson')}`
+                          }
                           component={TextField}
                           fullWidth={true}
                           multiline={true}
@@ -259,7 +315,10 @@ function ImportSwaggerRepositoryForm(props: Props) {
       >
         <DialogTitle id="alert-dialog-title">{t('prompt')}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" sx={{ minWidth: '500px', minHeight: '7px' }}>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{ minWidth: '500px', minHeight: '7px' }}
+          >
             {alertOpen.msg}
           </DialogContentText>
         </DialogContent>

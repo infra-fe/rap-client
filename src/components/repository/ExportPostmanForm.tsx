@@ -1,26 +1,23 @@
-import { useTranslation } from 'react-i18next'
-import React from 'react'
-import config from '../../config'
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import Transition from 'components/common/Transition'
-
+import { useTranslation } from 'react-i18next'
+import config from '../../config'
+const addVersionId = (str, versionId) => {
+  return `${str}${versionId ? `&versionId=${versionId}` : ''}`
+}
 export default function ExportPostmanForm(props: {
   repoId: number
   repoToken: string
   open: boolean
   onClose: () => void
   title: string
+  versionId: number
 }) {
-  const { repoId, open, onClose, title, repoToken } = props
-  const postmanLink = `${config.serve}/export/openapi?id=${repoId}`
-  const markdownLink = `${config.serve}/export/markdown?id=${repoId}&origin=${window.location.origin}`
-  const docxLink = `${config.serve}/export/docx?id=${repoId}&origin=${window.location.origin}`
-  const rapLink =`${config.serve}/repository/get?id=${repoId}${repoToken? `&token=${repoToken}` : ''}`
+  const { repoId, open, onClose, title, repoToken, versionId } = props
+  const postmanLink = addVersionId(`${config.serve}/export/openapi?id=${repoId}`, versionId)
+  const markdownLink = addVersionId(`${config.serve}/export/markdown?id=${repoId}&origin=${window.location.origin}`, versionId)
+  const docxLink = addVersionId(`${config.serve}/export/docx?id=${repoId}&origin=${window.location.origin}`, versionId)
+  const rapLink = addVersionId(`${config.serve}/repository/get?id=${repoId}${repoToken? `&token=${repoToken}` : ''}`, versionId)
   const { t } = useTranslation()
   // const pdfLink = `${config.serve}/export/pdf?id=${repoId}&origin=${window.location.origin}`
   return (

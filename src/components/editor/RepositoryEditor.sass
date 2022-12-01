@@ -18,8 +18,17 @@
       white-space: pre-wrap
       margin: 1rem 0 .5rem 0
       color: #666
+      word-break: break-all
+    > .basePath
+      display: flex
+      align-items: center
+      margin-top: 10px
+      font-size: 14px
+      > .baseUrl
+        color: #FF3399
 
-.RelatedProjects 
+
+.RelatedProjects
   display: flex
   flex-wrap: wrap
   align-items: stretch
@@ -42,10 +51,6 @@
     margin-left: .5rem
 
 .RepositorySearcher.dropdown
-  position: absolute
-  top: 1.3rem
-  right: 1.3rem
-  left: auto
   > .dropdown-input
     margin-bottom: 0
     width: 20rem
@@ -136,7 +141,13 @@
       .toolbar
         display: inline-block
         // font-size: 1rem
-
+.moduleDesc
+    white-space: pre-wrap
+    padding: 1rem 0 .5rem 1.3rem
+    color: #666
+    background: #FFF
+    > .toolbar
+      display: inline-block
 .InterfaceWrapper
   display: flex
   flex-direction: row
@@ -347,7 +358,7 @@
           padding: .5rem
           width: 0.65rem
         &.name
-          width: 20rem
+          width: 10rem
           flex-grow: 3
         &.type
           width: 7rem
@@ -356,7 +367,7 @@
         &.value
           width: 10rem
         &.desc
-          width: 15rem
+          width: 25rem
       .th
         .helper
             margin-left: .5rem
@@ -384,6 +395,7 @@
           position: relative
           .name-wrapper
             flex-grow: 1
+            overflow: auto
           @for $i from 1 through 42
             &.depth-#{$i}
               padding-left: $i * 0.65rem + 0.75rem

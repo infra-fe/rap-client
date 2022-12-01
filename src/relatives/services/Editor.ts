@@ -10,8 +10,8 @@ export default {
       .then(json => json.data)
   },
   // 模块 Module
-  fetchModuleList({ repositoryId = '', name = '' }: any = {}) {
-    return fetch(`${serve}/module/list?repositoryId=${repositoryId}&name=${name}`, {
+  fetchModuleList({ repositoryId = '', name = '', versionId }: any = {}) {
+    return fetch(`${serve}/module/list?repositoryId=${repositoryId}&name=${name}${versionId? `&versionId=${versionId}` : ''}`, {
       ...CREDENTIALS,
     })
       .then(res => res.json())

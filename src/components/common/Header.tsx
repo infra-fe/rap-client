@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import './nprogress.css'
+import './nprogress.sass'
 import MainMenu from 'components/layout/MainMenu'
 import { RootState, User } from 'actions/types'
 const Header = ({ fetching, user = {} }: { fetching: number; user: User }) => {
@@ -24,7 +24,9 @@ const mapStateToProps = (state: RootState) => ({
   fetching: (() => {
     let fetching = 0
     for (const key in state) {
-      if (state[key] && state[key].fetching) { fetching += 1 }
+      if (state[key] && state[key].fetching) {
+        fetching += 1
+      }
     }
     return fetching
   })(), // state.fetching

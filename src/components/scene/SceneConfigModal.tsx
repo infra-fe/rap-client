@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useTranslation } from 'react-i18next'
-import { IconButton, Input, Button, FormControl, FormHelperText, Dialog, DialogTitle, DialogContent, Box } from '@mui/material'
-import { EditOutlined, Save, Cancel } from '@mui/icons-material'
+import { Cancel, Close, EditOutlined, Save } from '@mui/icons-material'
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
-import { Close } from '@mui/icons-material'
-import _ from 'lodash'
+import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, Input } from '@mui/material'
+import { RepositoryVersion } from 'actions/types'
+import { useConfirm } from 'hooks/useConfirm'
 import JSON5 from 'json5'
+import _ from 'lodash'
+import { useSnackbar } from 'notistack'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import MonacoEditor from 'react-monaco-editor'
+import { useDispatch } from 'react-redux'
+import { addScene, deleteScene, fetchScene, fetchSceneList, updateScene } from '../../actions/scene'
 import { serve } from '../../relatives/services/constant'
-import { getRelativeUrl } from '../../utils/URLUtils'
+import { getRelativeBathPath, getRelativeUrl } from '../../utils/URLUtils'
 import { Spin } from '../utils'
 import SceneList from './SceneList'
-import { addScene, updateScene, deleteScene, fetchSceneList, fetchScene } from '../../actions/scene'
-import MonacoEditor from 'react-monaco-editor'
-import { useSnackbar } from 'notistack'
 export enum SCENE_STATUS {
   NORMAL = 'normal',
   ACTIVE = 'active',
@@ -43,26 +44,37 @@ interface IModalProps {
   moduleId: number
   repositoryId: number
   interfaceId: number
+  version: RepositoryVersion
   showSceneConfig: boolean
+  basePath: string
   closeSceneConfig: (status: boolean) => void
 }
 
 interface ISceneConfig extends Partial<IModalProps> {
   id: number
+  versionId: number | undefined
+  isMaster: boolean
   mockUrl: string
 }
+
+export const SceneContext = createContext<{
+  json: string
+  jsonO: string
+  setJson: (val: string) => void
+  setJsonO: (val: string) => void
+} | null>(null)
 
 const SceneConfig = (props: ISceneConfig) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
-
+  const context = useContext(SceneContext)
+  const { json, jsonO, setJson, setJsonO } = context
   const [sceneKey, setSceneKey] = useState<string>()
   const [scene, setScene] = useState<IScene>()
   const [editable, setEditable] = useState(false)
-  const [json, setJson] = useState('{}')
   const [error, setError] = useState(false)
-  const [jsonO, setJsonO] = useState(json) // original JSON, use to distinguish whether JSON text changed
-  const { id } = props
+  const { id, versionId, isMaster } = props
+
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
@@ -78,6 +90,10 @@ const SceneConfig = (props: ISceneConfig) => {
     }
   }, [props.id])
 
+  // useEffect(() => {
+  //   setEditing(json !== jsonO)
+  // }, [json, jsonO])
+
   const handleSaveJson = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const result = validJSON()
@@ -87,7 +103,6 @@ const SceneConfig = (props: ISceneConfig) => {
         updateScene(res, (r) => {
           setScene({ ...scene, sceneData: json })
           setJsonO(json)
-          // dispatch(showMessage(t('Save Success'), MSG_TYPE.SUCCESS))
           enqueueSnackbar(t('Save Success'), { variant: 'success' })
         })
       )
@@ -113,7 +128,7 @@ const SceneConfig = (props: ISceneConfig) => {
   }
 
   const handleUrlWithScene = (url: string) => {
-    return `${url}${url.includes('?') ? '&' : '?'}__scene=${scene?.sceneKey}`
+    return `${url}${url.includes('?') ? '&' : '?'}__scene=${scene?.sceneKey}${!isMaster && versionId ? `&__ver=${versionId}` : ''}`
   }
 
   return (
@@ -219,7 +234,7 @@ const SceneConfig = (props: ISceneConfig) => {
                 </Button>
               </Box>
               <Box sx={{ border: '1px solid #d1d5da', borderRadius: 4, mt: 0.5 }}>
-                <MonacoEditor language="json" value={json} onChange={(value: string) => setJson(value)} height="27rem" theme="vs" options={{ tabSize: 2 }} />
+                <MonacoEditor language="json" value={json} onChange={(value: string) => {setJson(value)}} height="27rem" theme="vs" options={{ tabSize: 2 }} />
               </Box>
             </form>
           </> :
@@ -234,13 +249,16 @@ const SceneConfig = (props: ISceneConfig) => {
 export default function SceneConfigModal(props: IModalProps) {
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const confirm = useConfirm()
 
   const [list, setList] = useState<IScene[]>([])
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState<number>()
+  const [json, setJson] = useState(null)
+  const [jsonO, setJsonO] = useState(null)
 
-  const { itfMethod, repositoryId, moduleId, interfaceId, itfUrl, itfName } = props
-  const mockUrl = `${serve}/app/mock/${repositoryId}/${itfMethod.toLowerCase()}${getRelativeUrl(itfUrl || '')}`
+  const { itfMethod, repositoryId, moduleId, interfaceId, itfUrl, itfName, basePath, version } = props
+  const mockUrl = `${serve}/app/mock/${repositoryId}/${itfMethod.toLowerCase()}${getRelativeBathPath(basePath)}${getRelativeUrl(itfUrl)}`
 
   useEffect(() => {
     setLoading(true)
@@ -287,14 +305,7 @@ export default function SceneConfigModal(props: IModalProps) {
   }
 
   const updateSceneList = (key: number) => {
-    const newList = list.map(s => {
-      return {
-        ...s,
-        status: s.id === key ? SCENE_STATUS.EDITING : SCENE_STATUS.NORMAL,
-      }
-    })
-    setList(newList)
-    setCurrent(key)
+    handleConfirmSwitchScene(key, SCENE_STATUS.EDITING)
   }
 
   const saveSceneList = (key: number, sceneName: string) => {
@@ -317,13 +328,29 @@ export default function SceneConfigModal(props: IModalProps) {
     props.closeSceneConfig(false)
   }
 
-  const switchSceneList = (key: number) => {
+  const handleSwitchScene = (key: number, status: SCENE_STATUS) => {
     setCurrent(key)
     const newList = list.map(s => ({
       ...s,
-      status: s.id === key ? SCENE_STATUS.ACTIVE : SCENE_STATUS.NORMAL,
+      status: s.id === key ? status : SCENE_STATUS.NORMAL,
     }))
     setList(newList)
+  }
+
+  const handleConfirmSwitchScene = (key: number, status: SCENE_STATUS) => {
+    if (key !== current && json !== jsonO) {
+      confirm({
+        content: t('Switch scene confirm'),
+      }).then(() => {
+        handleSwitchScene(key, status)
+      })
+    } else {
+      handleSwitchScene(key, status)
+    }
+  }
+
+  const switchSceneList = (key: number) => {
+    handleConfirmSwitchScene(key, SCENE_STATUS.ACTIVE)
   }
 
   return (
@@ -351,7 +378,7 @@ export default function SceneConfigModal(props: IModalProps) {
               <Box sx={{ m: '0 auto', '& .Spin': { position: 'relative', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' } }}>
                 <Spin />
               </Box> :
-              <>
+              <SceneContext.Provider value={{json, setJson, jsonO, setJsonO}}>
                 <Box sx={{ width: 240, overflow: 'auto', pr: 2, borderRight: '1px solid #d1d5da' }}>
                   <SceneList
                     deleteSceneList={deleteSceneList}
@@ -366,6 +393,8 @@ export default function SceneConfigModal(props: IModalProps) {
                     <SceneConfig
                       id={current}
                       interfaceId={interfaceId}
+                      versionId={version?.id}
+                      isMaster={!!version?.isMaster}
                       mockUrl={mockUrl}
                       itfUrl={itfUrl}
                       itfName={itfName}
@@ -376,7 +405,7 @@ export default function SceneConfigModal(props: IModalProps) {
                     </Box>
                   }
                 </Box>
-              </>
+              </SceneContext.Provider>
           }
         </Box>
       </DialogContent>

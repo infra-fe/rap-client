@@ -1,7 +1,7 @@
-import axios, { Method } from 'axios'
+import axios, { Method, AxiosRequestConfig } from 'axios'
 import { InvokeParams, IBaseServerSettingData } from './types'
 import { BODY_OPTION } from '../editor/InterfaceSummary'
-const config = require('../../config').default
+import config from '../../config'
 
 /**
  * 对axios的请求进行全局拦截
@@ -25,7 +25,7 @@ const config = require('../../config').default
   return Promise.reject(error)
 }) */
 
-const axiosConfig = {
+const axiosConfig: AxiosRequestConfig = {
   // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
   /* transformResponse: (data: any) => {
     return data
@@ -40,6 +40,9 @@ const axiosConfig = {
     // 允许[200,600)的状态码通过，在调用逻辑里拦截
     return status >= 200 && status < 600
   },
+
+  // 接口请求超时限制，要略大于额服务端代理超时设置
+  timeout: 35 * 1000,
 }
 
 const XHRErrorType = {
@@ -66,8 +69,7 @@ export async function invoke(invokeParams: InvokeParams, useLib: string = 'axios
 
   if (byProxy || protocolType === 'rpc') {
     // 使用代理方式调用第三方服务
-    invokeByProxy(invokeParams)
-    return
+    return await invokeByProxy(invokeParams)
   }
 
   if (protocolType === 'websocket') {
@@ -286,9 +288,38 @@ export function invokeWS(invokeParams: InvokeParams) {
   /* 未实现 */
 }
 
+export async function invokeByProxy(invokeParams: InvokeParams) {
+  const { protocolType } = invokeParams.baseServer
+  const { url, method, headers, body } = createFetchParams(invokeParams)
 
-export function invokeByProxy(invokeParams: InvokeParams) {
-  /* 未实现 */
+  let proxyServer = `${config.serve}/proxy`
+  switch (protocolType) {
+    case 'http':
+      proxyServer = `${proxyServer}/restful`
+      break
+    case 'websocket':
+      proxyServer = `${proxyServer}/websocket`
+      break
+    case 'rpc':
+      proxyServer = `${proxyServer}/rpc`
+      break
+    default:
+      proxyServer = `${proxyServer}/restful`
+  }
+
+  try {
+    const response = await axios({
+      ...axiosConfig,
+      url: `${proxyServer}?target=${encodeURIComponent(url)}`, // 接口完成地址，带query参数
+      method: method as Method, // 接口调用方法
+      headers, // 全局头信息和业务头信息
+      data: body,
+    })
+
+    return response?.data
+  } catch (error) {
+    throw error
+  }
 }
 
 function createBaseUrl(baseServer: IBaseServerSettingData) {

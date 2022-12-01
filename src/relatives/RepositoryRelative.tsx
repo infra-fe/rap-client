@@ -1,12 +1,12 @@
-import * as PropertyAction from '../actions/property'
-import * as PropertyEffects from './effects/property'
-import * as InterfaceAction from '../actions/interface'
-import * as InterfaceEffects from './effects/interface'
-import * as ModuleAction from '../actions/module'
-import * as ModuleEffects from './effects/module'
-import * as RepositoryAction from '../actions/repository'
-import * as RepositoryEffects from './effects/repository'
 import _ from 'lodash'
+import * as InterfaceAction from '../actions/interface'
+import * as ModuleAction from '../actions/module'
+import * as PropertyAction from '../actions/property'
+import * as RepositoryAction from '../actions/repository'
+import * as InterfaceEffects from './effects/interface'
+import * as ModuleEffects from './effects/module'
+import * as PropertyEffects from './effects/property'
+import * as RepositoryEffects from './effects/repository'
 export default {
   reducers: {
     repository(
@@ -40,6 +40,22 @@ export default {
           return {
             data: {},
             fetching: false,
+          }
+        case RepositoryAction.refreshTokenSucceeded({token: ''}).type:
+          return {
+            ...state,
+            data: {
+              ...state.data,
+              token: action.payload.token,
+            },
+          }
+        case RepositoryAction.initVersionSucceeded(undefined).type:
+          return {
+            ...state,
+            data: {
+              ...state.data,
+              version: action.payload,
+            },
           }
         case InterfaceAction.lockInterfaceSucceeded(undefined, undefined).type:
           modules = state.data.modules
@@ -473,6 +489,10 @@ export default {
       RepositoryEffects.fetchDefaultVals,
     [RepositoryAction.updateDefaultVals(0, []).type]:
       RepositoryEffects.updateDefaultVals,
+    [RepositoryAction.refreshToken(0).type]:
+      RepositoryEffects.refreshToken,
+    [RepositoryAction.initVersion(0).type]:
+      RepositoryEffects.initVersion,
     [ModuleAction.sortModuleList(undefined, undefined).type]:
       ModuleEffects.sortModuleList,
     [InterfaceAction.fetchInterfaceCount().type]:

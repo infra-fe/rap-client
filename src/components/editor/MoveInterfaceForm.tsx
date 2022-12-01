@@ -1,14 +1,14 @@
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
-import { moveInterface } from '../../actions/interface'
-import { fetchOwnedRepositoryList, fetchJoinedRepositoryList } from '../../actions/repository'
 import EditorService from 'relatives/services/Editor'
+import { moveInterface } from '../../actions/interface'
+import { fetchJoinedRepositoryList, fetchOwnedRepositoryList } from '../../actions/repository'
 
-import { Dialog, DialogTitle, DialogContent, SelectChangeEvent, Box } from '@mui/material'
-import _ from 'lodash'
-import { Button, Select, MenuItem, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material'
-import { useSelector, useDispatch } from 'react-redux'
+import { Box, Button, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent } from '@mui/material'
 import { Module, Repository, RootState } from 'actions/types'
+import VersionSelect from 'components/RepoSettings/VersionSelect'
+import _ from 'lodash'
+import { useDispatch, useSelector } from 'react-redux'
 
 export const OP_MOVE = 1
 export const OP_COPY = 2
@@ -21,7 +21,6 @@ interface Props {
   mod: Module
   onClose: () => void
 }
-
 export default function MoveInterfaceForm(props: Props) {
   const { repository, title, itfId, onClose, open, mod } = props
   const [repositoryId, setRepositoryId] = useState(repository.id)
@@ -30,11 +29,21 @@ export default function MoveInterfaceForm(props: Props) {
   const [modules, setModules] = useState(repository.modules)
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const [versionId, setVersionId] = useState(repository?.version?.id || null)
+  const [showVersion, setShowVersion] = useState(!!versionId)
 
   const repositories = useSelector((state: RootState) => {
     return _.uniqBy([...state.ownedRepositories.data, ...state.joinedRepositories.data], 'id')
   })
-
+  const fetchModuleList = (repositoryId: number, versionId: number) => {
+    EditorService.fetchModuleList({
+      repositoryId,
+      versionId,
+    }).then(res => {
+      setModules(res)
+      setModId(res[0] && res[0].id)
+    })
+  }
   useEffect(() => {
     if (!repositories.length) {
       dispatch(fetchJoinedRepositoryList())
@@ -45,12 +54,8 @@ export default function MoveInterfaceForm(props: Props) {
   function onRepositoryChange(e: SelectChangeEvent<number>) {
     const repositoryId = e.target.value as number
     setRepositoryId(repositoryId)
-    EditorService.fetchModuleList({
-      repositoryId,
-    }).then(res => {
-      setModules(res)
-      setModId(res[0] && res[0].id)
-    })
+    fetchModuleList(repositoryId, versionId)
+    setShowVersion(true)
   }
 
   const handleSubmit = (e?: React.MouseEvent<HTMLFormElement>) => {
@@ -67,6 +72,16 @@ export default function MoveInterfaceForm(props: Props) {
       })
     )
   }
+  const handleVersionChange = (v) => {
+    if (v) {
+      setVersionId(v.id)
+      fetchModuleList(repositoryId, v.id)
+    } else {
+      setVersionId(null)
+      setShowVersion(false)
+      fetchModuleList(repositoryId, null)
+    }
+  }
   return (
     <Dialog open={open} onClose={(_event, reason) => reason !== 'backdropClick' && onClose()}>
       <DialogTitle>{title}</DialogTitle>
@@ -75,7 +90,7 @@ export default function MoveInterfaceForm(props: Props) {
           <div className="rmodal-body">
             <Box sx={{ mb: 1 }}>
               <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Select the target repository:')}</Box>
-              <FormControl>
+              <FormControl style={{ width: '100%' }}>
                 <Select
                   onChange={onRepositoryChange}
                   value={repositoryId}
@@ -89,9 +104,17 @@ export default function MoveInterfaceForm(props: Props) {
                 </Select>
               </FormControl>
             </Box>
+            {showVersion && <Box sx={{ mb: 1 }}>
+              <VersionSelect
+                repositoryId={repositoryId}
+                label="TargetVersion"
+                onChange={handleVersionChange}
+                onListChange={handleVersionChange}
+              />
+            </Box>}
             <Box sx={{ mb: 1 }}>
               <Box sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: 9 }}>{t('Select the target module:')}</Box>
-              <FormControl>
+              <FormControl style={{ width: '100%' }}>
                 <Select
                   onChange={e => setModId(+((e.target.value as any) as string))}
                   value={modId}

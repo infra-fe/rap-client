@@ -1,4 +1,4 @@
-import './assets/index.css'
+import './assets/index.sass'
 import 'animate.css'
 
 import React from 'react'
@@ -16,16 +16,15 @@ import * as AccountAction from './actions/account'
 import AccountService from './relatives/services/Account'
 import { CACHE_KEY } from 'utils/consts'
 import { AnyAction } from 'redux'
+import './utils/monacaEditor'
 
 // 渲染整站开屏动画
 function* renderOpeningScreenAdvertising() {
   yield new Promise((resolve) => {
     render(
-      (
-        <div className="OpeningScreenAdvertising">
-          <Spin />
-        </div>
-      ),
+      <div className="OpeningScreenAdvertising">
+        <Spin />
+      </div>,
       document.getElementById('root'),
       () => {
         resolve(null)
@@ -48,14 +47,15 @@ function* authenticate() {
       return
     }
     const hasOriginal = pathname !== '/'
-    window.location.href = `/account/login${hasOriginal ? `?original=${encodeURIComponent(pathname + search + hash)}` : ''}`
+    window.location.href = `/account/login${
+      hasOriginal ? `?original=${encodeURIComponent(pathname + search + hash)}` : ''
+    }`
     yield Promise.reject()
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  Family
-    .addRelative(AccountRelative)
+  Family.addRelative(AccountRelative)
     .addRelative(HomeRelative)
     .addRelative(StatusRelative)
     .addRelative(OrganizationRelative)

@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
-import { YUP_MSG } from '../../family/UIConst'
-import { Formik, Field, Form } from 'formik'
-import { TextField } from 'formik-mui'
-import * as Yup from 'yup'
-import { Button, Dialog, DialogContent, DialogTitle, Box } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import Transition from 'components/common/Transition'
+import { Field, Form, Formik } from 'formik'
+import { TextField } from 'formik-mui'
+import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
+import * as Yup from 'yup'
+import { addModule, updateModule } from '../../actions/module'
 import { Module, Repository, RootState } from '../../actions/types'
-import { updateModule, addModule } from '../../actions/module'
+import { YUP_MSG } from '../../family/UIConst'
 
 
 const FORM_STATE_INIT: Module = {
@@ -57,6 +57,7 @@ function ModuleForm(props: Props) {
                 ...values,
                 creatorId: auth.id,
                 repositoryId: repository!.id,
+                versionId: repository.version?.id,
               }
               dispatch(addOrUpdateModule(module, () => {
                 onClose(true)

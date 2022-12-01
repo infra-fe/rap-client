@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { findDOMNode } from 'react-dom'
 import Sortable from 'sortablejs'
-import './RSortable.css'
+import './RSortable.sass'
 
 type RSortableState = any
 type RSortableProps = any
@@ -17,7 +17,9 @@ class RSortable extends Component<RSortableProps, RSortableState> {
       handle: '.sortable',
       animation: 150,
       onEnd: (e: any) => {
-        if (onChange) { onChange(e, $sortable) }
+        if (onChange) {
+          onChange(e, $sortable)
+        }
       },
       ...restProps,
     })
@@ -32,11 +34,7 @@ class RSortable extends Component<RSortableProps, RSortableState> {
 
 export class RSortableHandle extends Component<any, any> {
   render() {
-    return (
-      <div className="sortable">
-        {this.props.children}
-      </div>
-    )
+    return <div className="sortable">{this.props.children}</div>
   }
 }
 
