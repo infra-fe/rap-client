@@ -3,7 +3,7 @@ server {
     server_name  localhost;
 
     root /rapclient;
-    
+
     location ^~/api/ {
       proxy_pass ${RAP_SERVER}/;
     }
