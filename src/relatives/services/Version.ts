@@ -15,7 +15,7 @@ export default {
     start = 1,
     limit = 5,
   }: { repositoryId: number; name?: string; start?: number; limit?: number }) {
-    if (!repositoryId) { return [] }
+    if (!repositoryId) { return Promise.resolve([]) }
     return fetch(
       `${serve}/repository/version/list?name=${name}&start=${start}&limit=${limit}&repositoryId=${repositoryId}`,
       {

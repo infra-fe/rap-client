@@ -62,17 +62,17 @@ export default function ModuleOperation(props: Props) {
         repository.canUserEdit ? (
           <div className="toolbar">
             <span onClick={() => setModuleFormOpen(true)} className="g-link edit mr1">
-              <GoPencil className="fontsize-14" />  {t('modify module')}
+              <GoPencil className="fontsize-14" />  {t('Modify module')}
             </span>
             <span onClick={() => setMoveModuleFormOpen(true)} className="g-link edit mr1">
-              <GoRepoClone className="fontsize-14" /> {t('Move/copy module')}
+              <GoRepoClone className="fontsize-14" /> {t('Move/Copy module')}
             </span>
             <span onClick={handleDeleteModule} className="g-link edit mr1">
               <GoTrashcan className="fontsize-14" />  {t('Delete module')}
             </span>
             {moduleFormOpen && (
               <ModuleForm
-                title={t('modify module')}
+                title={t('Modify module')}
                 module={mod}
                 repository={repository}
                 open={moduleFormOpen}
@@ -82,7 +82,7 @@ export default function ModuleOperation(props: Props) {
 
             {moveModuleFormOpen && (
               <MoveModuleForm
-                title={t('Move/copy module')}
+                title={t('Move/Copy module')}
                 mod={mod}
                 repository={repository}
                 open={moveModuleFormOpen}

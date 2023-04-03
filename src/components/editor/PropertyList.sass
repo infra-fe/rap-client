@@ -28,3 +28,17 @@
     color: #ffffff
 .operations
   min-width: 96px
+.descEditor
+  position: relative
+  width: 100%
+  .MuiInputBase-input
+    text-overflow: ellipsis
+  .descEditorBtn
+    position: absolute
+    right: 9px
+    top: 50%
+    transform: translateY(-50%)
+    padding: 4px
+    display: none
+  &:hover .descEditorBtn
+    display: inline-block

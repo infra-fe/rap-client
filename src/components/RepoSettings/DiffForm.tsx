@@ -34,14 +34,14 @@ function VersionForm(props: Props) {
         <Box sx={{ minWidth: '500px' }}>
           <Formik
             initialValues={{
-              ...{ version1: DefaultVersion, version2: DefaultVersion },
+              ...{ source: DefaultVersion, target: DefaultVersion },
             }}
             onSubmit={async (values) => {
-              const { version1, version2 } = values
-              if (version1.id === version2.id) {
+              const { source, target } = values
+              if (source.id === target.id) {
                 enqueueSnackbar(t('They are the same version'), { variant: 'error' })
               } else {
-                window.open(`${window.location.origin}/repository/diff/${repositoryId}/${repositoryId}/${version1.id}/${version2.id}`, '_blank')
+                window.open(`${window.location.origin}/repository/diff/${repositoryId}/${repositoryId}/${source.id}/${target.id}`, '_blank')
                 onClose(true)
               }
             }}
@@ -54,10 +54,10 @@ function VersionForm(props: Props) {
                     <Box sx={{ mb: 1 }}>
                       <VersionSelect
                         repositoryId={repositoryId}
-                        label="Version1"
+                        label={t('Source')}
                         onChange={v => {
                           if (v) {
-                            setFieldValue('version1', v)
+                            setFieldValue('source', v)
                           }
                         }}
                       />
@@ -65,10 +65,10 @@ function VersionForm(props: Props) {
                     <Box sx={{ mb: 1 }}>
                       <VersionSelect
                         repositoryId={repositoryId}
-                        label="Version2"
+                        label={t('Target')}
                         onChange={v => {
                           if (v) {
-                            setFieldValue('version2', v)
+                            setFieldValue('target', v)
                           }
                         }}
                       />

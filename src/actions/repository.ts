@@ -17,7 +17,7 @@ export const updateRepository = (repository: any, onResolved: () => void) => ({ 
 export const updateRepositorySucceeded = (repository: any) => ({ type: 'REPOSITORY_UPDATE_SUCCEEDED', repository })
 export const updateRepositoryFailed = (message: string) => ({ type: 'REPOSITORY_UPDATE_FAILED', message })
 
-export const deleteRepository = (id: number) => ({ type: 'REPOSITORY_DELETE', id })
+export const deleteRepository = (id: number, onResolved?: () => void) => ({ type: 'REPOSITORY_DELETE', id, onResolved })
 export const deleteRepositorySucceeded = (id: number) => ({ type: 'REPOSITORY_DELETE_SUCCEEDED', id })
 export const deleteRepositoryFailed = (message: string) => ({ type: 'REPOSITORY_DELETE_FAILED', message })
 

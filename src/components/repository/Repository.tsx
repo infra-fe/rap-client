@@ -36,9 +36,10 @@ function RepositoryCom(props: Props) {
       content: message,
     }).then(() => {
       const { deleteRepository } = props
-      deleteRepository(repository.id)
-      const { pathname, hash, search } = router.location
-      replace(pathname + hash + search)
+      deleteRepository(repository.id, function() {
+        const { pathname, hash, search } = router.location
+        replace(pathname + hash + search)
+      })
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     }).catch(()=>{})
   }

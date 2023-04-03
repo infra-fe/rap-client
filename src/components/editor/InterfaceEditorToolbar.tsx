@@ -165,11 +165,12 @@ function InterfaceEditorToolbar(props: Props) {
             <Tooltip title={t('To move or copy the interface')} arrow={true}>
               <Button
                 sx={{ m: 1 }}
+                data-ga-function-name="Move/Copy interface" data-ga-function-type="create"
                 onClick={handleMoveInterface}
                 variant="contained"
                 size="small"
               >
-                {t('Move/copy interface')}
+                {t('Move/Copy interface')}
                 <KeyboardTab sx={{ ml: 1 }} />
               </Button>
             </Tooltip>

@@ -6,7 +6,7 @@
  * @Description:
  */
 import { Close } from '@mui/icons-material'
-import { Box, Dialog, DialogContent, DialogTitle, IconButton, Button } from '@mui/material'
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, Button, DialogActions } from '@mui/material'
 import { Interface } from 'actions/types'
 import { useTranslation } from 'react-i18next'
 import { MonacoDiffEditor } from 'react-monaco-editor'
@@ -15,7 +15,6 @@ import {  RootState } from '../../actions/types'
 import { useSelector } from 'react-redux'
 import Editor from '../../relatives/services/Editor'
 import { Tree } from '../utils'
-import _ from 'lodash'
 
 interface IModalProps {
   close: (status?: boolean) => void
@@ -63,7 +62,25 @@ function handleDisplayCode(code) {
   }
   return {}
 }
-
+export function getUpdateParams(itf: Interface, newItf: Interface, authId: number){
+  return {
+    id: itf.id,
+    name: newItf.name,
+    status: newItf.status,
+    bodyOption: newItf.bodyOption,
+    description: newItf.description,
+    properties: newItf.properties.map(v => ({
+      ...v,
+      creatorId: authId,
+      id: `memory-${v.id}`,
+      interfaceId: itf.id,
+      memory: true,
+      moduleId: itf.moduleId,
+      parentId: `${v.parentId === -1 ? v.parentId : `memory-${v.parentId}`}`,
+      repositoryId: itf.repositoryId,
+    })),
+  }
+}
 export default function ItfDiffModal(props: IModalProps) {
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -76,34 +93,14 @@ export default function ItfDiffModal(props: IModalProps) {
     close(false)
   }
   const handleUpdate = () => {
-    const itf = value.code
-    const newItf = original.code
-    const message = `${_.upperFirst(t('confirm'))} ${t(' update')} API [${itf.name}] ${_.lowerCase(t('Version'))} ${value.name}  ${t('from version')} ${original.name}`
+    const itf = original.code
+    const newItf = value.code
+    const message = `${t('Confirm to update version')} ${original.name}?`
     confirm({
       title: t('confirm') + t(' update'),
       content: message,
     }).then(async () => {
-      const params = {
-        id: itf.id,
-        name: newItf.name,
-        status: newItf.status,
-        description: newItf.description,
-        properties: newItf.properties.map(v => ({
-          creatorId: auth.id,
-          description: v.description,
-          id: `memory-${v.id}`,
-          interfaceId: itf.id,
-          memory: true,
-          moduleId: itf.moduleId,
-          name: v.name,
-          parentId: `${v.parentId === -1 ? v.parentId : `memory-${v.parentId}`}`,
-          repositoryId: itf.repositoryId,
-          scope: v.scope,
-          type: v.type,
-          value: v.value,
-          rule: v.rule,
-        })),
-      }
+      const params = getUpdateParams(itf, newItf, auth.id)
       await Editor.updateInterface(params)
       refresh()
       handleClose()
@@ -115,13 +112,17 @@ export default function ItfDiffModal(props: IModalProps) {
     <Dialog open={visible} onClose={handleClose} maxWidth="lg">
       <DialogTitle className="rmodal-header">
         <span className="rmodal-title">
-          <div>{t('Current')}{t('Version')}: {value?.name}<IconButton
-            aria-label="close"
-            onClick={handleClose}
-            style={{ float: 'right' }}
-            size="large">
-            <Close />
-          </IconButton></div>
+          <div>
+            <span>
+              {original?.name} vs. {value?.name}
+            </span>
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              style={{ float: 'right' }}
+              size="large">
+              <Close />
+            </IconButton></div>
           <div style={{ fontSize: '14px' }}>
             <a href={`${prefix}id=${itf?.repositoryId}&mod=${itf?.moduleId}&itf=${itf?.id}`} target="_blank"
               rel="noopener noreferrer">[{itf?.name}] {itf?.method} {itf?.url}</a>
@@ -129,10 +130,6 @@ export default function ItfDiffModal(props: IModalProps) {
         </span>
       </DialogTitle>
       <DialogContent dividers={true}>
-        <h1 style={{ marginTop: 0 }}>
-          {original.name} {'<'}---{'>'} {value?.name}{' '}
-          <Button variant="contained" size="small" onClick={handleUpdate}>{t(' update')}</Button>
-        </h1>
         <Box className="rmodal-body" sx={{ display: 'flex', width: '100%', height: 500 }}>
           <MonacoDiffEditor
             width="800"
@@ -144,6 +141,10 @@ export default function ItfDiffModal(props: IModalProps) {
           />
         </Box>
       </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={handleClose}>{t('cancel')}</Button>
+        <Button variant="contained" color="primary" onClick={handleUpdate}>{t('Update')}</Button>
+      </DialogActions>
     </Dialog>
   )
 }

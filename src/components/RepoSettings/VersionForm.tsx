@@ -66,7 +66,7 @@ function VersionForm(props: Props) {
                     <Box sx={{ mb: 1 }}>
                       <VersionSelect
                         repositoryId={repositoryId}
-                        label="TargetVersion"
+                        label={`${t('Target')}${t('Version')}`}
                         onChange={v => {
                           if (v) {
                             setFieldValue('target', v.label)

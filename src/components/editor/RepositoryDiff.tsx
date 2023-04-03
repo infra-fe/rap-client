@@ -1,27 +1,22 @@
-import { Box, Grid, Paper, List, ListItemButton, ListItemIcon, ListItemText, Collapse, IconButton } from '@mui/material'
+import { Box, Grid, Paper, Button, LinearProgress, Typography, LinearProgressProps, Modal } from '@mui/material'
 import _ from 'lodash'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { CREDENTIALS, serve } from '../../relatives/services/constant'
 import { Tree } from '../utils'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import FiberNewIcon from '@mui/icons-material/FiberNew'
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'
-import ExpandLess from '@mui/icons-material/ExpandLess'
-import ExpandMore from '@mui/icons-material/ExpandMore'
-import SwapVertIcon from '@mui/icons-material/SwapVert'
-import ReplayIcon from '@mui/icons-material/Replay'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import SyncIcon from '@mui/icons-material/Sync'
-import { Interface } from 'actions/types'
+import { Interface, Repository } from 'actions/types'
 import Spin from '../../components/utils/Spin'
-import './InterfaceList.sass'
-import ItfDiffModal from './ItfDiffModal'
-import RestoreInterfaceForm from './RestoreInterfaceForm'
+import ItfDiffModal, { getUpdateParams } from './ItfDiffModal'
 import { useConfirm } from 'hooks/useConfirm'
 import { useTranslation } from 'react-i18next'
-import { deleteInterface } from 'actions/interface'
+import { addInterface, deleteInterface } from 'actions/interface'
+import Editor from '../../relatives/services/Editor'
 import { useDispatch } from 'react-redux'
+import DiffDataList, { ICheckStatus } from './DiffDataList'
+import {  RootState } from '../../actions/types'
+import { useSelector } from 'react-redux'
+
+let running = false
 
 const isEqual = function(v1, v2) {
   const list = ['description', 'name', 'pos', 'required', 'rule', 'type', 'value']
@@ -53,14 +48,14 @@ const getData = function(r, v) {
     {
       ...CREDENTIALS,
     }
-  ).then(res => res.json()).then(data => data?.data || {})
+  ).then(res => res.json()).then(data => data?.data || {isOk: false})
 }
-const getDiffData = function(itfList1, itfList2, pool1, pool2) {
+const getDiffData = function(sourceList, targetList, sourcePool, targetPool) {
   const deleted = []
   const modified = []
   const added = []
-  itfList1?.forEach(itf => {
-    const find = pool2[`${itf.method}_${itf.url}`]
+  sourceList?.forEach(itf => {
+    const find = targetPool[`${itf.method}_${itf.url}`]
     if (find) {
       const fields = ['name', 'bodyOption', 'description', 'status']
       let i = 0
@@ -94,8 +89,8 @@ const getDiffData = function(itfList1, itfList2, pool1, pool2) {
       added.push(itf)
     }
   })
-  itfList2?.forEach(itf => {
-    if (!pool1[`${itf.method}_${itf.url}`]) {
+  targetList?.forEach(itf => {
+    if (!sourcePool[`${itf.method}_${itf.url}`]) {
       deleted.push(itf)
     }
   })
@@ -105,166 +100,108 @@ const getDiffData = function(itfList1, itfList2, pool1, pool2) {
     added,
   }
 }
-function DataList(props: {
-  added: any[]
-  deleted: any[]
-  modified: any[]
-  versionId: number
-  versionId2: number
-  handleDiff: (data: Interface) => void
-  handleAdd: (itf: Interface) => void
-  handleDelete: (itf: Interface) => void
-}) {
-  const { t } = useTranslation()
-  const [delOpen, setDelOpen] = useState(true)
-  const [addOpen, setAddOpen] = useState(true)
-  const [modOpen, setModOpen] = useState(true)
-  const { added, deleted, modified, versionId, versionId2, handleDiff, handleAdd, handleDelete } = props
-  const handleDelClick = () => {
-    setDelOpen(!delOpen)
-  }
-  const handleAddClick = () => {
-    setAddOpen(!addOpen)
-  }
-  const handleModClick = () => {
-    setModOpen(!modOpen)
-  }
-  const prefix = `${window.location.origin}/repository/editor?`
-  const prefix1 = prefix + `${isNaN(versionId) ? '' : `versionId=${versionId}&`}`
-  const prefix2 = prefix + `${isNaN(versionId2) ? '' : `versionId=${versionId2}&`}`
-
+function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
-    <List
-      sx={{ width: '100%', bgcolor: 'background.paper' }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-    >
-      <ListItemButton onClick={handleDelClick}>
-        <ListItemIcon>
-          <DeleteForeverIcon />
-        </ListItemIcon>
-        <ListItemText>
-          {_.upperFirst(t('deleted'))} <span style={{ color: '#cf1322' }}>{deleted?.length || 0}</span> APIs
-        </ListItemText>
-        {delOpen ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={delOpen} timeout="auto" unmountOnExit={true}>
-        <List component="div" disablePadding={true}>
-          {deleted?.length > 0 ? deleted?.map(v => (
-            <div className="diffDiv" key={v.id}><span><span className={`methodTag tagDELETE`}>{_.upperFirst(t('deleted'))}</span><a href={`${prefix2}id=${v.repositoryId}&mod=${v.moduleId}&itf=${v.id}`} target="_blank"
-              rel="noopener noreferrer">[{v.name}] {v.method} {v.url}</a></span><IconButton onClick={() => {
-              handleAdd(v)
-            }}><ReplayIcon /></IconButton></div>
-          )) : <div className="diffDiv">{t('There is no data')}</div>}
-        </List>
-      </Collapse>
-      <ListItemButton onClick={handleAddClick}>
-        <ListItemIcon>
-          <FiberNewIcon />
-        </ListItemIcon>
-        <ListItemText>
-          {_.upperFirst(t('created'))} <span style={{ color: 'green' }}>{added?.length || 0}</span> APIs
-        </ListItemText>
-        {addOpen ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={addOpen} timeout="auto" unmountOnExit={true}>
-        <List component="div" disablePadding={true}>
-          {added?.length > 0 ? added?.map(v => (
-            <div className="diffDiv" key={v.id}><span><span className={`methodTag tagPOST`}>{_.upperFirst(t('created'))}</span><a href={`${prefix1}&id=${v.repositoryId}&mod=${v.moduleId}&itf=${v.id}`} target="_blank"
-              rel="noopener noreferrer">[{v.name}] {v.method} {v.url}</a></span><IconButton onClick={() => {
-              handleDelete(v)
-            }}><DeleteOutlineIcon /></IconButton></div>
-          )) : <div className="diffDiv">{t('There is no data')}</div>}
-        </List>
-      </Collapse>
-      <ListItemButton onClick={handleModClick}>
-        <ListItemIcon>
-          <AutoFixHighIcon />
-        </ListItemIcon>
-        <ListItemText>
-          {_.upperFirst(t('modified'))} <span style={{ color: '#d46b08' }}>{modified?.length || 0}</span> APIs
-        </ListItemText>
-        {addOpen ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={modOpen} timeout="auto" unmountOnExit={true}>
-        <List component="div" disablePadding={true}>
-          {modified?.length > 0 ? modified?.map(v => (
-            <div className="diffDiv" key={v.id}><span><span className={`methodTag tagPUT`}>{_.upperFirst(t('modified'))}</span><a href={`${prefix1}&id=${v.repositoryId}&mod=${v.moduleId}&itf=${v.id}`} target="_blank"
-              rel="noopener noreferrer">[{v.name}] {v.method} {v.url}</a></span>
-            <IconButton onClick={() => {
-              handleDiff(v)
-            }}><SwapVertIcon /></IconButton>
-            </div>
-          )) : <div className="diffDiv">{t('There is no data')}</div>}
-        </List>
-      </Collapse>
-    </List>
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.value
+        )}%`}</Typography>
+      </Box>
+    </Box>
   )
 }
+type IData = Partial<Repository> & {isOk?: boolean}
+
 export default function RepositoryDiff() {
   const [loading, setLoading] = useState(true)
-  const [data1, setData1] = useState()
-  const [data2, setData2] = useState()
+  const [sourceData, setSourceData] = useState<IData>({})
+  const [targetData, setTargetData] = useState<IData>({})
   const confirm = useConfirm()
   const { t } = useTranslation()
   const dispatch = useDispatch()
+  const auth = useSelector((state: RootState) => state.auth)
+  const {
+    r1: sourceRepoId,
+    r2: targetRepoId,
+    v1: sourceVersionId,
+    v2: targetVersionId,
+  } = useParams<{ r1: string; r2: string; v1: string; v2: string }>()
+
   const fetchData = async () => {
     setLoading(true)
-    const [d1, d2] = await Promise.all([getData(r1, v1), getData(r2, v2)])
-    setData1(d1)
-    setData2(d2)
+    const [fromData, toData] = await Promise.all([getData(sourceRepoId, sourceVersionId), getData(targetRepoId, targetVersionId)])
+    setSourceData(fromData)
+    setTargetData(toData)
     setLoading(false)
   }
-  const { r1, r2, v1, v2 } = useParams<{ r1: string; r2: string; v1: string; v2: string }>()
+
   const [diffModalData, setDiffModalData] = useState({
     original: { name: '', code: null },
     value: { name: '', code: null },
     itf: null,
   })
   const [visible, setVisible] = useState(false)
-  const [restoreOpen, setRestoreOpen] = useState(false)
-  const [addModalData, setAddModalData] = useState({
-    repositoryId: null,
-    itfId: null,
-    modules: [],
-    itfName: '',
-  })
+  const routePrefix = `${window.location.origin}/repository/editor?`
+  const sourcePrefix = routePrefix + `${isNaN(+sourceVersionId) ? '' : `versionId=${sourceVersionId}&`}`
+  const targetPrefix = routePrefix + `${isNaN(+targetVersionId) ? '' : `versionId=${targetVersionId}&`}`
 
-  const itfList1 = data1?.modules?.reduce((prev, cur) => [...prev, ...(cur?.interfaces || [])], [])
-  const itfList2 = data2?.modules?.reduce((prev, cur) => [...prev, ...(cur?.interfaces || [])], [])
-  const pool1 = _.keyBy(itfList1, (o) => `${o.method}_${o.url}`)
-  const pool2 = _.keyBy(itfList2, (o) => `${o.method}_${o.url}`)
-  const versionName1 = data1?.version?.versionName
-  const versionName2 = data2?.version?.versionName
-  const handleDiff = (source: string, code: Interface) => {
-    const { url, method } = code
-    const oriData = source === versionName1 ? pool2 : pool1
-    const oriCode = oriData[`${method}_${url}`]
-    const valueVersionId = source === versionName1 ? +v1 : +v2
+  const sourceList = sourceData?.modules?.reduce((prev, cur) => [...prev, ...(cur?.interfaces || [])], [])
+  const targetList = targetData?.modules?.reduce((prev, cur) => [...prev, ...(cur?.interfaces || [])], [])
+  const sourcePool = _.keyBy(sourceList, (o) => `${o.method}_${o.url}`)
+  const targetPool = _.keyBy(targetList, (o) => `${o.method}_${o.url}`)
+  const itfPool = _.keyBy([...(sourceList || []), ...(targetList|| [])], 'id')
+
+  const sourceName = sourceData?.version?.versionName
+  const targetName = targetData?.version?.versionName
+
+  const handleDiff = (itf: Interface) => {
+    const { url, method } = itf
+    const oriCode = targetPool[`${method}_${url}`]
     setDiffModalData({
       original: {
-        name: source === versionName1 ? versionName2 : versionName1,
+        name: targetName,
         code: oriCode,
       },
       value: {
-        name: source,
-        code,
+        name: sourceName,
+        code: itf,
       },
-      itf: { ...code, versionId: valueVersionId },
+      itf: { ...itf, versionId: sourceVersionId },
     })
     setVisible(true)
   }
-  const handleAdd = (source: string, itf: Interface) => {
-    setAddModalData({
-      repositoryId: source === versionName1 ? r1 : r2,
-      modules: source === versionName1 ? [...data1?.modules] : [...data2?.modules],
-      itfId: itf.id,
-      itfName: itf.name,
+  const getAddParams = (itf: Interface) => {
+    const sourceModule = sourceData.modules.find(m => m.id === itf.moduleId)
+    return {
+      sourceId: itf.id,
+      sourceName: itf.name,
+      sourceModuleDesc: sourceModule.description,
+      targetRepoId,
+      targetModuleName: sourceModule.name,
+      ...(
+        targetVersionId !== 'null' ? {
+          targetVersionId,
+        } : {}
+      ),
+    }
+  }
+  const handleAdd = (itf: Interface) => {
+    const message = `${t('Are you sure to add this API into ')}${targetName}?`
+    confirm({
+      title: t('Confirm add'),
+      content: message,
+    }).then(() => {
+      dispatch(addInterface(getAddParams(itf), () => {
+        fetchData()
+      }))
     })
-    setRestoreOpen(true)
   }
   const handleDelete = (itf: Interface) => {
-    const message = `${t('Unrecoverable after the interface is deleted')}！\n${t('Confirm delete')}『#${itf!.id} ${itf!.name}』${t('?')}`
+    const message = `${t('Are you sure to remove ')}${targetName}${t('\'s this API')}?`
     confirm({
       title: t('Confirm delete'),
       content: message,
@@ -274,53 +211,136 @@ export default function RepositoryDiff() {
       }))
     })
   }
+  const [progress, setProgress] = useState(0)
+  const [batchOpen, setBatchOpen] = useState(false)
+  const handleCloseBatch = () => {
+    running = false
+    setBatchOpen(false)
+    setProgress(0)
+    setCheckStatus({
+      checkDel: [],
+      checkAdd: [],
+      checkModify: [],
+    })
+    fetchData()
+  }
+  const onCloseBatch = ()=>{
+    const message = `${t('The executed operations cannot be undone, are you sure you want to cancel the remaining tasks')}?`
+    confirm({
+      title: `${t('Confirm')}`,
+      content: message,
+    }).then(() => {
+      handleCloseBatch()
+    })
+  }
+  const handleBatch = () => {
+    const message = `${t('Are you sure to apply all these operations to ')}${targetName}?`
+    confirm({
+      title: t('Confirm'),
+      content: message,
+    }).then(() => {
+      const operations = _.flatten(Object.keys(checkStatus).map(key => checkStatus[key].map(id => ({
+        key,
+        id,
+      }))))
+      const step = 100 / operations.length
+      const run = async (ops, current) => {
+        if (ops.length > 0 && running) {
+          const action = ops.shift()
+          const newProgress = ((current + step > 100) || ops.length === 0) ? 100 : current + step
+          const itf = itfPool[action.id]
+          switch(action.key) {
+            case 'checkDel':
+              await Editor.deleteInterface(itf.id)
+              break
+            case 'checkAdd':
+              await Editor.addInterface(getAddParams(itf))
+              break
+            case 'checkModify':
+              const { url, method } = itf
+              const oriItf = targetPool[`${method}_${url}`]
+              await Editor.updateInterface(getUpdateParams(oriItf, itf, auth.id))
+              break
+          }
+          setProgress(newProgress)
+          if (ops.length > 0) {
+            run(ops, newProgress)
+          } else {
+            handleCloseBatch()
+          }
+        }
+      }
+      running = true
+      setBatchOpen(true)
+      run(operations, 0)
+    })
+  }
   useEffect(() => {
     fetchData()
   }, [])
-  const diffData = getDiffData(itfList1, itfList2, pool1, pool2)
+  const diffData = getDiffData(sourceList, targetList, sourcePool, targetPool)
+  const [checkStatus, setCheckStatus] = useState<ICheckStatus>({
+    checkDel: [],
+    checkAdd: [],
+    checkModify: [],
+  })
+  const onSelect = (type: string, ids: number[]) => {
+    const status = {
+      ...checkStatus,
+    }
+    status[type] = ids
+    setCheckStatus(status)
+  }
   return (
     loading ? <Spin /> : <Box sx={{ flexGrow: 1 }}>
       <Grid container={true} spacing={1}>
-        <Grid item={true} xs={6}>
-          <h1 style={{ paddingLeft: '20px' }}>{versionName1 || 'master'}<IconButton onClick={() => {
-            fetchData()
-          }}><SyncIcon /></IconButton></h1>
-          <Paper style={{ minHeight: '500px', wordBreak: 'break-all' }}>
-            <DataList added={diffData.added}
-              modified={diffData.modified} deleted={diffData.deleted}
-              versionId={+v1} versionId2={+v2}
-              handleDelete={handleDelete}
-              handleDiff={(data) => { handleDiff(versionName1, data) }}
-              handleAdd={(data) => { handleAdd(versionName1, data) }} />
-          </Paper>
-        </Grid>
-        <Grid item={true} xs={6}>
-          <h1 style={{ paddingLeft: '20px' }}>{versionName2 || 'master'}<IconButton onClick={() => {
-            fetchData()
-          }}><SyncIcon /></IconButton></h1>
-          <Paper style={{ minHeight: '500px', wordBreak: 'break-all' }}>
-            <DataList added={diffData.deleted}
-              modified={diffData.modified.map(o => pool2[`${o.method}_${o.url}`])} deleted={diffData.added}
-              versionId={+v2} versionId2={+v1}
-              handleDelete={handleDelete}
-              handleDiff={(data) => { handleDiff(versionName2, data) }}
-              handleAdd={(data) => { handleAdd(versionName2, data) }} />
+        <Grid item={true} xs={12}>
+          <h1 style={{ paddingLeft: '20px' }}>
+            {t('Merge')}&nbsp;
+            <a href={`${sourcePrefix}id=${sourceRepoId}`} target="_blank" rel="noreferrer">{sourceName || 'master'}</a>
+            &nbsp;{t('into')}&nbsp;
+            <a href={`${targetPrefix}id=${targetRepoId}`} target="_blank" rel="noreferrer">{targetName || 'master'}</a>
+            <Button variant="contained" style={{padding: '4px', marginLeft: '8px'}}
+              disabled={
+                !(checkStatus.checkAdd.length || checkStatus.checkDel.length || checkStatus.checkModify.length)
+              }
+              onClick={()=>{handleBatch()}}
+            >
+              {t('Batch Operation')}
+            </Button>
+          </h1>
+          <Paper className="diffPaper">
+            {sourceData?.isOk === false ?
+              <div className="diffNoAuth">
+                {t('Sorry, you have no access to visit this data')}
+              </div>
+              :<DiffDataList added={diffData.added}
+                modified={diffData.modified} deleted={diffData.deleted}
+                prefix1={sourcePrefix} prefix2={targetPrefix}
+                handleDelete={handleDelete}
+                handleDiff={handleDiff}
+                handleAdd={handleAdd}
+                checkStatus={checkStatus}
+                onSelect={onSelect}
+              />
+            }
           </Paper>
         </Grid>
       </Grid>
       <ItfDiffModal visible={visible} close={() => { setVisible(false) }}
         refresh={fetchData}
         original={diffModalData.original} value={diffModalData.value} itf={diffModalData.itf} />
-      <RestoreInterfaceForm
-        title={t('Restore interface')}
-        modules={addModalData.modules}
-        repositoryId={addModalData.repositoryId}
-        itfId={addModalData.itfId}
-        itfName={addModalData.itfName}
-        open={restoreOpen}
-        refresh={fetchData}
-        onClose={() => { setRestoreOpen(false) }}
-      />
+      <Modal
+        open={batchOpen}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+        disableEscapeKeyDown={true}
+      >
+        <Box className="diffBatchDiv">
+          <LinearProgressWithLabel value={progress} />
+          <Button style={{marginTop: '8px'}} variant="outlined" onClick={onCloseBatch}>{t('cancel')}</Button>
+        </Box>
+      </Modal>
     </Box>
   )
 }

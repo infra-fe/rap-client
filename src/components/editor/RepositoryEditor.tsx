@@ -63,7 +63,6 @@ import ModuleOperation from './ModuleOperation'
 import RapperInstallerModal from './RapperInstallerModal'
 import './RepositoryEditor.sass'
 import RepositorySearcher from './RepositorySearcher'
-
 // DONE 2.1 import Spin from '../utils/Spin'
 // TODO 2.2 缺少测试器
 // DONE 2.2 各种空数据下的视觉效果：空仓库、空模块、空接口、空属性
@@ -170,7 +169,7 @@ class RepositoryEditor extends Component<Props, States> {
         <Translation>
           {(t) => (
             <div className="p100 fontsize-30 text-center">
-              {t('Corresponding to the repository was not found')}
+              {t('Sorry, you have no access to visit this data')}
             </div>
           )}
         </Translation>
@@ -305,6 +304,7 @@ class RepositoryEditor extends Component<Props, States> {
                   }}
                   versionId={repository?.version?.id}
                   repositoryId={repository.id}
+                  versionName={repository?.version?.versionName}
                   orgId={(repository.organization || {}).id}
                   modId={+mod?.id || 0}
                   mode="manual"

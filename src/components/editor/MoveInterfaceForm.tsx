@@ -107,7 +107,7 @@ export default function MoveInterfaceForm(props: Props) {
             {showVersion && <Box sx={{ mb: 1 }}>
               <VersionSelect
                 repositoryId={repositoryId}
-                label="TargetVersion"
+                label={`${t('Target')}${t('Version')}`}
                 onChange={handleVersionChange}
                 onListChange={handleVersionChange}
               />

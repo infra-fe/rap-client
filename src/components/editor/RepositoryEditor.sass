@@ -365,7 +365,7 @@
         &.rule
           width: 10rem
         &.value
-          width: 10rem
+          width: 15rem
         &.desc
           width: 25rem
       .th
@@ -410,13 +410,14 @@
                 opacity: .5
                 border-right: 1px dashed #707070
         &.payload.value
-          max-height: 30vh
           overflow: auto
           hyphens: auto
           overflow-wrap: break-word
           span.value-container
-            white-space: pre
+            white-space: pre-line
             margin: auto 0
+            overflow-wrap: break-word
+            word-break: break-word
         &.payload.required
           padding: 0
         &.payload.desc

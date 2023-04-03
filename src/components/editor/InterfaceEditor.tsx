@@ -3,7 +3,7 @@ import { updateProperties } from 'actions/property'
 import { Property, Repository, RootState } from 'actions/types'
 import _ from 'lodash'
 import { ProviderContext, withSnackbar } from 'notistack'
-import { Component } from 'react'
+import { Component, createContext } from 'react'
 import { Translation, useTranslation } from 'react-i18next'
 import { fetchRepository } from '../../actions/repository'
 import Spin from '../../components/utils/Spin'
@@ -13,6 +13,11 @@ import InterfaceEditorToolbar from './InterfaceEditorToolbar'
 import InterfaceSummary from './InterfaceSummary'
 import MoveInterfaceForm from './MoveInterfaceForm'
 import PropertyList from './PropertyList'
+import PropertyModal, { PropertyModalProps } from './PropertyModal'
+
+
+export const PropertyModalContext = createContext<{toggleModal: (config: PropertyModalProps) => void}>(null)
+
 export const RequestPropertyList = (props: any) => {
   const { t } = useTranslation()
   return <PropertyList scope="request" title={t('Request Parameters')} label={t('Request')} {...props} />
@@ -42,6 +47,7 @@ type InterfaceEditorState = {
   properties: Property[]
   editable: boolean
   moveInterfaceDialogOpen: boolean
+  modalConfig: PropertyModalProps
 }
 // TODO 2.x 参考 MySQL Workbench 的字段编辑器
 // TODO 2.x 支持复制整个接口到其他模块、其他项目
@@ -65,6 +71,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         bodyOption: props.bodyOption,
       },
       moveInterfaceDialogOpen: false,
+      modalConfig: {},
     }
     this.summaryStateChange = this.summaryStateChange.bind(this)
   }
@@ -178,7 +185,11 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
         />
 
         {this.state.properties ? (
-          <>
+          <PropertyModalContext.Provider value={{
+            toggleModal: (config: PropertyModalProps) => {
+              this.setState({modalConfig: config})
+            },
+          }}>
             <RequestPropertyList
               properties={this.state.properties}
               auth={auth}
@@ -209,7 +220,8 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
               handleCopyProperty={this.handleCopyProperty}
               handleUnlockInterface={this.handleUnlockInterface}
             />
-          </>
+            <PropertyModal {...this.state.modalConfig} />
+          </PropertyModalContext.Provider>
         ) : (
           <Spin />
         )}
@@ -218,7 +230,7 @@ class InterfaceEditor extends Component<InterfaceEditorProps, InterfaceEditorSta
           <Translation>
             {(t) => (
               <MoveInterfaceForm
-                title={t('Move/copy interface')}
+                title={t('Move/Copy interface')}
                 mod={mod}
                 repository={repository}
                 itfId={itf.id}

@@ -21,7 +21,7 @@ export default function ConfirmDialog(props: Props) {
   return (
     <Dialog open={props.open} onClose={props.onCancel} TransitionComponent={Transition}>
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{fontSize: '14px'}}>
         {props.content}
       </DialogContent>
       <DialogActions>

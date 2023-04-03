@@ -3,12 +3,11 @@ import React, { Component, PureComponent } from 'react'
 import { Link, PropTypes } from '../../family'
 import {
   Tree,
-  SmartTextarea,
   RModal,
   RSortable,
   CopyToClipboard,
 } from '../utils'
-import { TYPES } from '../../utils/consts'
+import { mockRuleGenerator, TYPES } from '../../utils/consts'
 import PropertyForm from './PropertyForm'
 import Importer from './Importer'
 import Previewer from './InterfacePreviewer'
@@ -21,7 +20,7 @@ import {
 } from 'react-icons/go'
 import { AiOutlineCopy } from 'react-icons/ai'
 import './PropertyList.sass'
-import { ButtonGroup, Button, Checkbox, Tooltip } from '@mui/material'
+import { ButtonGroup, Button, Checkbox, Tooltip, Autocomplete, styled, TextField, Box, IconButton, Popper } from '@mui/material'
 import classNames from 'classnames'
 import _ from 'lodash'
 import Mock from 'mockjs'
@@ -39,6 +38,19 @@ import { connect } from 'react-redux'
 import { withSnackbar } from 'notistack'
 import { DefaultStorage, ExpireTimeEnum } from 'utils/Storage'
 import i18n from '../../i18n'
+import { CgExpand } from 'react-icons/cg'
+import { PropertyModalContext } from './InterfaceEditor'
+
+const CssTextField = styled(TextField)({
+  ' & .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: 'transparent!important',
+    },
+    '& input': {
+      fontSize: '12px',
+    },
+  },
+})
 
 const MAX_STRING_RULE = 10000 // NOTE: mockjs底层以for循环生成随机字符串，因此需要限制最大长度避免长时间循环，导致页面卡死
 const filter = (arr: Property[], pos: POS_TYPE) =>
@@ -351,6 +363,14 @@ SortableTreeTableRowState
       itf,
       copyId,
     } = this.props
+    const handleValueChange = (
+      id, value
+    ) =>
+      handleChangePropertyField(
+        id,
+        'value',
+        value
+      )
     return (
       isExpanding && (
         <RSortable
@@ -364,6 +384,7 @@ SortableTreeTableRowState
           <div className={`RSortableWrapper depth${property.depth}`}>
             <Translation>
               {(t) => {
+                const MOCK_RULE = mockRuleGenerator(t)
                 const { children } = property
                 let list = []
                 if (
@@ -771,30 +792,56 @@ SortableTreeTableRowState
                               </span>
                             </CopyToClipboard>
                           ) : (
-                            <SmartTextarea
-                              value={
-                                item.value ?? ''
-                              }
-                              onChange={(
-                                e: any
-                              ) =>
-                                handleChangePropertyField(
-                                  item.id,
-                                  'value',
-                                  e.target
-                                    .value
-                                )
-                              }
-                              disabled={
-                                isNoValueType(
-                                  item.type
-                                ) && !item.value
-                              }
-                              rows="1"
-                              className="form-control editable ignore"
-                              spellCheck={false}
-                              placeholder=""
-                            />
+                            <PropertyModalContext.Consumer>
+                              {({toggleModal}) => (
+                                <Autocomplete
+                                  freeSolo={true}
+                                  fullWidth={true}
+                                  value={
+                                    item.value ?? ''
+                                  }
+                                  disabled={
+                                    isNoValueType(
+                                      item.type
+                                    ) && !item.value
+                                  }
+                                  onChange={(_, value) => {handleValueChange(item.id, value)}}
+                                  onInputChange={(_, value) => {handleValueChange(item.id, value)}}
+                                  options={Object.keys(MOCK_RULE)}
+                                  clearIcon={<CgExpand onClick={(e) => {
+                                    e.stopPropagation()
+                                    toggleModal({
+                                      open: true,
+                                      initialValues: item.value,
+                                      title: t('Initial value'),
+                                      placeholder: t('Please input the initial value'),
+                                      onClose: () => {
+                                        toggleModal({
+                                          open: false,
+                                        })
+                                      },
+                                      onConfirm: (v) => {
+                                        handleValueChange(item.id, v)
+                                      },
+                                    })
+                                  }}/>}
+                                  PopperComponent={
+                                    (props) => <Popper {...props} style={{ width: 500 }} />
+                                  }
+                                  renderInput={(params) => <CssTextField {...params} variant="outlined" />}
+                                  renderOption={
+                                    (props, option) => (
+                                      <li {...props}>
+                                        <Box>
+                                          <span>{option}</span>
+                                          <span style={{position: 'absolute', right: 14}}>{MOCK_RULE[option]}</span>
+                                        </Box>
+                                      </li>
+                                    )
+                                  }
+                                />
+                              )}
+                            </PropertyModalContext.Consumer>
                           )}
                         </div>
                         <div className="td payload desc">
@@ -811,26 +858,48 @@ SortableTreeTableRowState
                               </span>
                             </CopyToClipboard>
                           ) : (
-                            <SmartTextarea
-                              value={
-                                item.description ||
-                                                                ''
-                              }
-                              onChange={(
-                                e: any
-                              ) =>
-                                handleChangePropertyField(
-                                  item.id,
-                                  'description',
-                                  e.target
-                                    .value
-                                )
-                              }
-                              rows="1"
-                              className="form-control editable ignore"
-                              spellCheck={false}
-                              placeholder=""
-                            />
+                            <div className="descEditor" style={{}}>
+                              <CssTextField
+                                style={{width: '100%', paddingRight: '39px'}}
+                                value={
+                                  item.description || ''
+                                }
+                                onChange={(
+                                  e: any
+                                ) =>
+                                  handleChangePropertyField(
+                                    item.id,
+                                    'description',
+                                    e.target
+                                      .value
+                                  )
+                                }
+                                variant="outlined" />
+                              <PropertyModalContext.Consumer>
+                                {({toggleModal}) => (
+                                  <IconButton size="medium" className="descEditorBtn" onClick={(e) => {
+                                    toggleModal({
+                                      open: true,
+                                      initialValues: item.description,
+                                      title: t('Introduction'),
+                                      placeholder: t('Introduction'),
+                                      onClose: () => {
+                                        toggleModal({
+                                          open: false,
+                                        })
+                                      },
+                                      onConfirm: (v) => {
+                                        handleChangePropertyField(
+                                          item.id,
+                                          'description',
+                                          v
+                                        )
+                                      },
+                                    })
+                                  }}><CgExpand /></IconButton>
+                                )}
+                              </PropertyModalContext.Consumer>
+                            </div>
                           )}
                         </div>
                       </div>

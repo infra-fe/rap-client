@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import * as Yup from 'yup'
 import { Repository, RepositoryFormData, RootState } from '../../actions/types'
-import { YUP_MSG } from '../../family/UIConst'
-// import UserList from '../common/UserList'
 import AsyncSelect from 'components/common/AsyncSelect'
 import Transition from 'components/common/Transition'
 import _ from 'lodash'
@@ -15,6 +13,8 @@ import { refresh } from '../../actions/common'
 import { fetchJoinedOrganizationList, fetchOwnedOrganizationList } from '../../actions/organization'
 import { addRepository, updateRepository } from '../../actions/repository'
 import AccountService from '../../relatives/services/Account'
+import RadioList from '../utils/RadioList'
+import { FORM, YUP_MSG } from '../../family/UIConst'
 
 export function AddMembers(users, members) {
   members.forEach(value => {
@@ -43,6 +43,7 @@ const FORM_STATE_INIT: RepositoryFormData = {
   organizationId: undefined,
   collaborators: [],
   collaboratorIdstring: '',
+  visibility: true,
 }
 interface Props {
   title?: string
@@ -73,6 +74,7 @@ function RepositoryForm(props: Props) {
   }).map(org => ({
     label: org.name,
     value: org.id,
+    visibility: org.visibility,
   }))
 
   const dispatch = useDispatch()
@@ -128,6 +130,7 @@ function RepositoryForm(props: Props) {
             }}
           >
             {({ isSubmitting, setFieldValue, values }) => {
+              const isShowRepositoryVisibility = organizations.find(item=>item.value === values.organizationId)?.visibility
               const membersFetcher = async (query: string) => {
                 const users = (await AccountService.fetchUserList({ name: query })).data
                 if (values.members) {
@@ -208,6 +211,16 @@ function RepositoryForm(props: Props) {
                         </Select>
                       </Box>
                     )}
+                    {isShowRepositoryVisibility && (<>
+                      <Box sx={{ color: 'rgba(0, 0, 0, 0.6)' }}>{t('Visibility')}:</Box>
+                      <Box sx={{ mb: 1 }}>
+                        <RadioList
+                          data={FORM(t).RADIO_LIST_DATA_VISIBILITY}
+                          curVal={values.visibility}
+                          name="visibility"
+                          onChange={(val: any) => setFieldValue('visibility', val)}
+                        />
+                      </Box></>)}
                     <Box sx={{ mb: 1 }}>
                       <Field
                         name="collaboratorIdstring"

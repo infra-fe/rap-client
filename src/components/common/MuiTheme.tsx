@@ -37,6 +37,11 @@ export const theme: ThemeOptions = {
       defaultProps: {
         color: 'inherit',
       },
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
     },
     MuiCssBaseline: {
       styleOverrides: {

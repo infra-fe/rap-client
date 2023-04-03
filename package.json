@@ -13,7 +13,6 @@
     "build-docker": "docker build --rm -f \"Dockerfile\" -t udfteam/rap-client:latest ."
   },
   "resolutions": {
-    "//": "See https://github.com/facebook/create-react-app/issues/11773",
     "react-error-overlay": "6.0.9",
     "react-floater": "0.8.2"
   },
@@ -54,7 +53,7 @@
     "notistack": "^2.0.3",
     "nprogress": "0.2.0",
     "prop-types": "15.7.2",
-    "protobufjs": "^6.11.2",
+    "rap-import-utils": "^0.0.3",
     "rc-tooltip": "^5.1.1",
     "react": "^17.0.2",
     "react-custom-scroll": "^4.3.0",
